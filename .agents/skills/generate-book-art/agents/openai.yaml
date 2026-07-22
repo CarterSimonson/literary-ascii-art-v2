@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Book Art"
+  short_description: "Create literary art for character conversion"
+  default_prompt: "Use $generate-book-art to create a conversion-ready illustration for a classic book."
