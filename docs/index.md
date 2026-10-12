@@ -6,10 +6,12 @@
 - [Agent instructions](../AGENTS.md): working conventions and product rules.
 - [Architecture](../ARCHITECTURE.md): implemented workflow and intended boundaries.
 - [Bootstrap](BOOTSTRAP.md): establish the first reproducible pipeline journey.
-- [Project tracking](project-tracking.md): Linear project, initial queue, and
+- [Odyssey tracer bullet](exec-plans/active/odyssey-tracer-bullet.md): legacy source
+  findings, Go defaults, and the first visible poster outcome.
+- [Project tracking](project-tracking.md): Linear project, work queue, and
   verification and review conventions.
-- [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,
-  verification, and remaining work.
+- [Starter alignment](exec-plans/completed/starter-alignment.md): historical
+  standards baseline; the Odyssey plan supersedes its original implementation scope.
 
 ## Growing the documentation
 

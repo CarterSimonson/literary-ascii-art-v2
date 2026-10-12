@@ -12,20 +12,27 @@
 
 - Linear project: [Literary ASCII Art v2](https://linear.app/codekips/project/literary-ascii-art-v2-6cfd6b18fd52).
 - Linear team: Codekips (`COD`).
-- [Tracking conventions and initial queue](docs/project-tracking.md). Linear owns
+- [Tracking conventions and work queue](docs/project-tracking.md). Linear owns
   current issue status and dependencies; keep durable designs and plans here.
 
 ## Product
 
-We're building an end-to-end system for selling literary character art:
+Modernize the working legacy generator through small, visible tracer bullets:
 
-1. Create original book-inspired source artwork.
-2. Convert each opaque source pixel into a monospaced character from the book; skip transparent pixels and preserve source colors.
-3. Render print-ready posters.
-4. Create dropshipping products, mockups, metadata, and listings.
-5. Operate and maintain the online store.
+1. Generate, convert, and display one Odyssey poster from Project Gutenberg text.
+2. Build a local web app to review, promote, scrap, and iterate on candidates.
+3. Integrate one promoted poster with Printful; explore mugs afterward.
 
-Favor reproducible pipeline stages with explicit inputs, outputs, metadata, and validation. Keep generated masters, converted art, print files, mockups, product records, and store state distinct.
+Each opaque pixel in the prepared character grid becomes one monospaced book
+character; transparent pixels are skipped and source colors are preserved.
+Storefronts and sales are outside the current scope.
+
+Use Go for the first pipeline, with Go modules, the standard library, and
+`golang.org/x/image` for resizing and font rendering. Favor the smallest working
+path and tune from a displayed result; measure before optimizing.
+
+Keep retained masters, text, converted data, posters, review records, and Printful
+outputs distinct. Simple local files and small run metadata are enough to start.
 
 ## Working conventions
 

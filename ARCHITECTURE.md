@@ -1,58 +1,54 @@
 # Architecture
 
-## Implemented today
+## Current and planned implementation
 
-The only domain workflow is the
-[generate-book-art skill](.agents/skills/generate-book-art/SKILL.md), with agent UI
-metadata in `.agents/skills/generate-book-art/agents/openai.yaml`. It guides an
-agent through concepts, image generation, review, and refinement. It does not
-implement character conversion, poster rendering, or store operations.
+Today only the [source-art skill](.agents/skills/generate-book-art/SKILL.md) exists.
+The legacy [Node source](https://github.com/CarterSimonson/literary-ascii-art/tree/2feebc79a376ee63fc3757aebe8bc74dd61f1e41/src)
+was reviewed as a behavioral reference: Jimp prepares a grid, Canvas draws colored
+characters, and poster settings add dimensions and margins. This repo's Go
+implementation has not been built yet.
 
-There is no application stack or source layout yet. The boundaries below describe
-the intended pipeline, not existing modules or enforced interfaces. Update this
-map with actual code locations and checks as stages are implemented.
+Start with Go modules, the standard library, and `golang.org/x/image`. A CLI and a
+few cohesive functions are enough for the first poster. Prefer measured font metrics to the
+old fixed aspect-ratio assumption. Separate the retained master, sampled grid,
+character mapping, and rendered poster without inventing a framework around them.
 
-## Intended stage boundaries
+## First working path
 
-| Stage | Inputs | Outputs | Validation needed |
-| --- | --- | --- | --- |
-| Source artwork | Book identity, approved concept, palette | Transparent PNG master and generation metadata | Composition, transparency, palette, and visual legibility |
-| Character conversion | Approved master, identified book text, conversion settings | Character placement and source-color data with provenance | Pixel coverage, transparent-pixel skipping, character order, and color preservation |
-| Poster rendering | Converted art, font, layout, poster background, print settings | Print file and render metadata | Dimensions, resolution, font behavior, margins, and visual proof |
-| Product preparation | Validated print file, provider settings, editorial metadata | Mockups, product records, and listing drafts | Asset references and provider-specific requirements |
-| Store operations | Approved product records and external service responses | Published listings and separately recorded store state | External response validation and reconciliation |
+```text
+Gutenberg text + generated transparent master
+    -> prepared text and character grid
+    -> colored character mapping
+    -> poster PNG + browser preview
+```
 
-## Dependency rules
+Image generation uses the existing skill and approval workflow; rerendering uses
+cached inputs. Standard-library PNG support and `x/image` handle images and glyphs.
+The CLI owns input/output paths and simple settings. Keep source pixels/colors and text
+order inspectable, and record the font, input identities, prompt, palette, grid,
+and output dimensions in a small run record.
 
-- Conversion consumes approved artwork and book text without invoking image
-  generation or depending on a store or dropshipping service.
-- Rendering consumes converted data without changing the master or character
-  mapping. The poster background is a render input; it is not painted into the
-  transparent master.
-- Product preparation consumes validated print files. Publishing and store
-  reconciliation belong at the external-service boundary.
-- A downstream stage must not silently modify an upstream artifact. Changed
-  inputs produce a new result with its own provenance.
-- Keep generated masters, converted art, print files, mockups, product records,
-  and store state distinct. Select their actual storage layout during bootstrap.
+Nearest-neighbor preparation makes each sampled nontransparent pixel one character
+cell. Transparent cells consume no text. Preserve the sampled RGB colors and
+compensate for the actual monospaced cell shape so the artwork is not distorted.
+Rendering consumes the mapping; it does not change assignments or overwrite inputs.
 
-## Reproducibility and external boundaries
+## Next additions
 
-Record the book and text source, master identity, stage settings, tool versions,
-and input/output identities with each result. Image generation also needs its
-prompt and approval context; retaining the selected master makes downstream work
-reproducible even when generation itself cannot be replayed exactly.
+The curation web app reuses generation/conversion/rendering functions and adds
+persistent promote/scrap decisions and variant links. Start with the smallest local
+interface that supports this loop; choose its web stack when implementing it.
 
-Validate imported images, text, fonts, provider responses, and store responses
-where they enter the system. Keep credentials in ignored local configuration or
-the execution environment. Define schemas, versioning, and retry behavior when
-the corresponding integration exists.
+Printful then consumes promoted poster files and adds catalog/template/mockup
+references. Use `net/http` for a thin adapter over its
+[REST API](https://developers.printful.com/docs/). Storefront publishing and sales
+are outside the plan. A mug is a later layout experiment, not an upfront product
+abstraction.
 
-## Checks and open decisions
+## Verification
 
-No executable pipeline checks exist yet. The
-[bootstrap guide](docs/BOOTSTRAP.md) defines the first feedback loop and the
-behavior that its checks should cover. Runtime, character-grid rules, text
-normalization, font metrics, print format, asset storage, and external providers
-remain undecided. Record decisions and their rationale through the
-[documentation map](docs/index.md).
+The first loop needs one real Odyssey proof and a small offline fixture checking
+transparent skipping, text order, colors, and output dimensions. Record runtime
+and output size on the real poster before optimizing. Add checks when they protect
+observed behavior; CI and general schemas are not prerequisites to seeing the
+first result. Detailed defaults and progress belong in the [active plan](docs/exec-plans/active/odyssey-tracer-bullet.md).

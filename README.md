@@ -1,43 +1,39 @@
 # Literary ASCII Art v2
 
-An end-to-end system for creating and selling literary character art. Each opaque
-source-image pixel becomes a monospaced character from the book, preserving the
-pixel's color; transparent pixels are skipped. The resulting artwork becomes a
-print-ready poster and, eventually, a product in an online store.
+Modernize the [original Node generator](https://github.com/CarterSimonson/literary-ascii-art/tree/master/src)
+by first making one Odyssey poster work from image generation through character
+conversion to display. Then build a small curation web app and integrate Printful.
+Storefronts and sales are outside the current scope.
 
 ## Current state
 
-This repository contains project guidance and a
-[source-art generation skill](.agents/skills/generate-book-art/SKILL.md). The skill
-defines concept selection, transparent 2:3 PNG masters, limited palettes, and
-visual review. It requires an image-generation tool supplied by the agent's
-environment.
+This repo contains documentation and the [source-art skill](.agents/skills/generate-book-art/SKILL.md).
+The legacy script worked; its source has been reviewed. The new pipeline has not
+been implemented. **Go** is the chosen starting point, with Go modules for
+dependencies, the standard library, and `golang.org/x/image` for image/font work.
 
-There is no application implementation, selected runtime, dependency manifest,
-automated test suite, or CI workflow yet. No generated artwork, converted art,
-print files, product records, or store state are checked in.
+## Implementation path
 
-## Intended pipeline
+1. **One Odyssey poster:** cache the Gutenberg text, generate and approve a
+   transparent master, convert it into colored monospaced characters, and open
+   a preview. Deliver a PNG and enough settings to rerun it.
+2. **Curation web app:** browse variants, promote or scrap them, and iterate while
+   preserving earlier candidates and review decisions.
+3. **Printful poster:** prepare one promoted design for an actual catalog variant
+   and generate its mockup or product template.
+4. **Other formats:** try a mug after the poster integration works.
 
-1. Create and approve original book-inspired source artwork.
-2. Convert opaque pixels to characters from an identified book text.
-3. Render and validate print-ready posters.
-4. Create dropshipping products, mockups, metadata, and listings.
-5. Operate and maintain the online store.
-
-Each stage should have explicit inputs, outputs, metadata, and validation. Keep
-the stage outputs distinct and retain enough provenance to reproduce a result.
-The [architecture map](ARCHITECTURE.md) describes the intended boundaries and what
-exists today.
+The [active plan](docs/exec-plans/active/odyssey-tracer-bullet.md) contains first-pass
+defaults and acceptance checks. [Architecture](ARCHITECTURE.md) maps the small
+planned pipeline; [tracking](docs/project-tracking.md) links the Linear queue.
 
 ## Working locally
 
-Only Git and a text editor are needed to work on the current repository. There are
-no install, application run, or test commands yet. Start with [AGENTS.md](AGENTS.md)
-and follow the [bootstrap guide](docs/BOOTSTRAP.md) when implementing the pipeline.
-Document actual setup, run, and verification commands here as tooling is added.
+There are no install, generation, or application test commands yet. Implementation
+will pin the supported Go toolchain, commit `go.mod` and `go.sum`, and document
+the actual `go run`, `go build`, and `go test` commands.
 
-Useful checks for the current documentation-only repository:
+Current documentation checks:
 
 ```sh
 git status --short --branch
@@ -45,15 +41,8 @@ git diff --check
 git diff --cached --check
 ```
 
-Editor defaults are in `.editorconfig`. Local environment files, agent worktrees,
-and scratch outputs under `.artifacts/` are ignored. `.artifacts/` is for disposable
-local work; durable production assets still need an explicit storage and versioning
-decision during bootstrap.
+Use `.artifacts/` for disposable local runs. Keep retained masters, source text,
+converted data, posters, and review records distinct; start with local files and
+small JSON metadata. Decide durable binary storage when the first real assets exist.
 
-## Project knowledge
-
-- [Agent instructions](AGENTS.md)
-- [Architecture](ARCHITECTURE.md)
-- [Documentation map and execution-plan conventions](docs/index.md)
-- [Bootstrap guide](docs/BOOTSTRAP.md)
-- [Linear project and work queue](docs/project-tracking.md)
+Start with [AGENTS.md](AGENTS.md) and the [documentation map](docs/index.md).
