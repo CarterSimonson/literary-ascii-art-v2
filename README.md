@@ -50,7 +50,8 @@ visible cells in order, stopping when the poster fills; it never repeats the boo
 
 Outputs live in `.artifacts/books/<request-id>/` unless `--out` is supplied. The
 final JSON prints that directory and candidate IDs. Open its `preview.html` for a
-contact sheet with source masters, actual character posters, and rationale.
+gallery of the character posters. Click a poster to open it at full size. Concepts
+and provenance remain in the run's JSON files.
 Default posters are 3600 × 5400 pixels (12 × 18 inches at 300 DPI), with 225-pixel
 margins and 420 character columns. All candidates remain drafts.
 
