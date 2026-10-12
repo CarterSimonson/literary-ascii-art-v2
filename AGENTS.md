@@ -7,6 +7,7 @@
 - [Documentation](docs/index.md): decisions, designs, and execution plans.
 - [Bootstrap](docs/BOOTSTRAP.md): remaining work to establish the first working pipeline.
 - [Generate book art](.agents/skills/generate-book-art/SKILL.md): source-art workflow.
+- [Grab](.agents/skills/grab/SKILL.md): pick up one actionable Linear ticket.
 
 ## Project tracking
 

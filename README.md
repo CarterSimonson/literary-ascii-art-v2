@@ -5,6 +5,13 @@ by first making one Odyssey poster work from image generation through character
 conversion to display. Then build a small curation web app and integrate Printful.
 Storefronts and sales are outside the current scope.
 
+## Project tracking
+
+- Linear project: [Literary ASCII Art v2](https://linear.app/codekips/project/literary-ascii-art-v2-6cfd6b18fd52).
+- Team: Codekips (`COD`). Tickets apply to this repository.
+- [Grab skill](.agents/skills/grab/SKILL.md): select and complete one actionable
+  ticket using current status, dependencies, and linked PRs.
+
 ## Current state
 
 This repo contains documentation and the [source-art skill](.agents/skills/generate-book-art/SKILL.md).
