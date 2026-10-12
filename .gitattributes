@@ -1,0 +1,2 @@
+assets/proofs/**/raw.txt -text -diff
+assets/proofs/** linguist-generated=true

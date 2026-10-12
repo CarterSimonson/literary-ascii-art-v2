@@ -1,0 +1,36 @@
+{
+  "source": "https://www.gutenberg.org/ebooks/345.txt.utf-8",
+  "bookId": "gutenberg-345",
+  "title": "Dracula",
+  "rawHash": "96cd16eacdbfebae8fdda5591f66e0cc8ee76be18e0cd1aca02bc00615782d28",
+  "bodyHash": "c91ec4b827d91214e7bfead73fb99c18e7ce43c7a247d0afbabc7dc83b49f613",
+  "boundaries": {
+    "first": 20,
+    "last": 2162,
+    "reason": "Begins with Harker\u2019s first journal narrative and includes his in-story epilogue and signature; excludes front matter, THE END, and publisher advertisements."
+  },
+  "coverage": [
+    {
+      "first": "p21",
+      "last": "p481",
+      "paragraphs": 461
+    },
+    {
+      "first": "p482",
+      "last": "p1163",
+      "paragraphs": 682
+    },
+    {
+      "first": "p1164",
+      "last": "p1726",
+      "paragraphs": 563
+    },
+    {
+      "first": "p1727",
+      "last": "p2163",
+      "paragraphs": 437
+    }
+  ],
+  "status": "concepts-ready",
+  "imagesGenerated": 0
+}

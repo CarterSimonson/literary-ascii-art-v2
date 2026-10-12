@@ -1,0 +1,103 @@
+{
+  "concepts": [
+    {
+      "id": "the-hidden-passenger",
+      "name": "The Hidden Passenger",
+      "dominantMass": "One monumental ram in side profile, its heavy fleece forming a continuous mass. Its body spans about 78% of canvas width; the horn, back, legs and concealed passenger together span about 75% of canvas height.",
+      "subject": "Primary thumbnail read: a powerful ram with an oversized curled horn and blunt, unmistakable muzzle.",
+      "negativeSpace": "A broad transparent channel beneath the belly reveals a crouched human profile, bent knees and gripping arms. The human silhouette remains attached to the fleece through the hands; generous openings separate the limbs and distinguish the passenger from the animal.",
+      "secondaryMotif": "Discovery: Ulysses concealed beneath the ram. The animal’s apparent independence resolves into a coordinated escape. The compact pose and enlarged horn are pictorial interpretation; concealment beneath the fleece is literal.",
+      "rationale": "Transforms livestock into the architecture of survival: brute animal mass shelters human cunning. The reversed hierarchy makes the hero a hidden passenger rather than a commanding warrior. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills.",
+      "evidence": [
+        {
+          "paragraphId": "p418",
+          "quote": "carried a heavy black fleece,"
+        },
+        {
+          "paragraphId": "p418",
+          "quote": "the thick wool under his belly,"
+        },
+        {
+          "paragraphId": "p418",
+          "quote": "There was to be a man under the middle sheep,"
+        },
+        {
+          "paragraphId": "p415",
+          "quote": "Noman is killing me by fraud;"
+        }
+      ],
+      "dominant": "#183D43",
+      "accent": null,
+      "background": "#F5EEDD",
+      "conversionRationale": "One color carries 100% of visible artwork. Broad fleece provides ample text-bearing area; omit wool texture. Make the horn opening, human-profile channel and leg separations at least 2% of canvas width, and every essential connecting stroke at least 1.5%. Recognition rests on silhouette and large openings, without facial details or thin bindings."
+    },
+    {
+      "id": "the-bed-that-cannot-leave",
+      "name": "The Bed That Cannot Leave",
+      "dominantMass": "A compact bed-and-root tableau, viewed obliquely: a substantial mattress and thick bed rails join one stout olive-trunk post descending into broad roots. The unified construction occupies about 78% of canvas height and 75% of its width.",
+      "subject": "Primary thumbnail read: a bed physically rooted in the earth.",
+      "negativeSpace": "The open space beneath the mattress exposes the continuous trunk-to-root connection. Above the mattress, two inward-facing head profiles are cut from one broad, joined silhouette, leaving a clear transparent interval between their faces.",
+      "secondaryMotif": "Discovery: the reunited couple rests upon the very construction that proves identity. The rooted centre-post is literal; exposed roots and the couple’s compressed placement are interpretive visualization of fixed belonging and shared knowledge. Do not add a living canopy: Ulysses fashioned the tree into the bedpost.",
+      "rationale": "Makes homecoming tangible through an object that cannot travel. Penelope’s cautious recognition becomes the composition’s structural principle: their shared life rests on a secret construction. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills.",
+      "evidence": [
+        {
+          "paragraphId": "p1058",
+          "quote": "a young olive growing within the precincts of the house,"
+        },
+        {
+          "paragraphId": "p1058",
+          "quote": "the centre-post of my bed,"
+        },
+        {
+          "paragraphId": "p1051",
+          "quote": "there are tokens with which we two are alone acquainted,"
+        },
+        {
+          "paragraphId": "p1059",
+          "quote": "you know all about our bed"
+        },
+        {
+          "paragraphId": "p1059",
+          "quote": "We have suffered, both of us."
+        }
+      ],
+      "dominant": "#344938",
+      "accent": "#8C302D",
+      "background": "#F5EEDD",
+      "conversionRationale": "Olive green carries at least 90% of visible artwork; a single crimson mattress inset recalls the reported leather without rendering texture. Keep bed rails and roots thick, root forks sparse, and all essential strokes and gaps at least 1.5% of canvas width. Broad mattress, trunk and joined figures support continuous character fields."
+    },
+    {
+      "id": "the-horse-inside-the-mantle",
+      "name": "The Horse Inside the Mantle",
+      "dominantMass": "A seated, bowed figure wrapped in one immense mantle, forming a tall, continuous shoulder-to-knee mass occupying about 80% of canvas height and 70% of its width.",
+      "subject": "Primary thumbnail read: a person covering their face in grief, with one enlarged hand holding the mantle over the brow.",
+      "negativeSpace": "A single large horse-shaped transparent aperture occupies the mantle’s torso. Its back, muzzle and widely separated legs remain readable within the surrounding cloth mass.",
+      "secondaryMotif": "Discovery: the wooden horse recalled in song sits inside the mourner’s silhouette. This aperture is explicitly interpretive—memory made visible, rather than a literal opening, garment ornament or horse present beside Ulysses.",
+      "rationale": "Connects public heroic fame with private suffering. The recognizable Trojan horse emerges only after the viewer reads the covered face, making the celebrated exploit inseparable from the grief it reawakens. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills.",
+      "evidence": [
+        {
+          "paragraphId": "p342",
+          "quote": "Ulysses drew his purple mantle over his head and covered his face,"
+        },
+        {
+          "paragraphId": "p380",
+          "quote": "the wooden horse which Epeus made with the assistance of Minerva,"
+        },
+        {
+          "paragraphId": "p379",
+          "quote": "for all the pain his lays may cause me"
+        },
+        {
+          "paragraphId": "p388",
+          "quote": "rekindle my own sad memories"
+        }
+      ],
+      "dominant": "#512C59",
+      "accent": null,
+      "background": "#F5EEDD",
+      "conversionRationale": "Purple carries 100% of visible artwork. The mantle supplies a large continuous character field. Enlarge the horse aperture to roughly half the mantle’s width; simplify its legs and omit planks, wheels and mane details. Every essential stroke and opening must exceed 1.5% of canvas width, with at least 3% around the horse’s narrowest negative-space features."
+    }
+  ],
+  "recommendedId": "the-hidden-passenger",
+  "recommendation": "Recommend The Hidden Passenger. It combines a recognizable animal silhouette with an unusually specific Odyssey discovery: the hero concealed beneath its fleece. The belly channel gives negative space a literal narrative function, and the broad ram body should remain resilient under character replacement. The rooted bed offers greater emphasis on marital homecoming but needs more object interpretation; the mourning mantle carries strong emotional meaning but depends on a more complex internal horse cutout. For all three, keep the stated poster background separate from the transparent master and exclude typography, borders, decorative detail, texture and tonal effects."
+}

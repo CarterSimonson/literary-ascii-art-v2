@@ -1,0 +1,23 @@
+{
+  "name": "literary-ascii-art-v2",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.3.14",
+  "scripts": {
+    "art": "bun run src/cli.ts",
+    "test": "bun test",
+    "check": "tsc --noEmit",
+    "build:go": "go build -o .artifacts/bin/literary-art ./cmd/literary-art",
+    "format:check": "prettier --check src tests scripts package.json tsconfig.json",
+    "smoke": "bun run scripts/smoke.ts"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "0.162.1",
+    "zod": "4.6.6"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.2",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2"
+  }
+}

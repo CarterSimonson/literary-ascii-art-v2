@@ -4,3 +4,4 @@
 !.env.example
 .worktrees/
 .artifacts/
+node_modules/

@@ -5,9 +5,10 @@
 - [README](../README.md): purpose, current state, and actual development commands.
 - [Agent instructions](../AGENTS.md): working conventions and product rules.
 - [Architecture](../ARCHITECTURE.md): implemented workflow and intended boundaries.
-- [Bootstrap](BOOTSTRAP.md): establish the first reproducible pipeline journey.
-- [Odyssey tracer bullet](exec-plans/active/odyssey-tracer-bullet.md): legacy source
+- [Odyssey tracer bullet](exec-plans/completed/odyssey-tracer-bullet.md): legacy source
   findings, Go defaults, and the first visible poster outcome.
+- [COD-67 proof](references/cod-67-proof.md): actual commands, visual evidence, and replay checks.
+- [Go artifact jobs](references/artifact-jobs.md): prepare/map/render manifest contracts.
 - [Project tracking](project-tracking.md): Linear project, work queue, and
   verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): historical

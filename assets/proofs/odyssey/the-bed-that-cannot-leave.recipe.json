@@ -1,0 +1,42 @@
+{
+  "version": "book-drafts-v1",
+  "bookId": "gutenberg-1727",
+  "bodyHash": "c663f465390ecd9219fb5136c4bf97bc78ac730dfa76e2c3d6800e3d0f8029cc",
+  "researchHash": "7752c2be99e88d910704d6752eb597ea0729116945f4c544a096c8d38690b7a1",
+  "concept": {
+    "id": "the-bed-that-cannot-leave",
+    "name": "The Bed That Cannot Leave",
+    "dominantMass": "A compact bed-and-root tableau, viewed obliquely: a substantial mattress and thick bed rails join one stout olive-trunk post descending into broad roots. The unified construction occupies about 78% of canvas height and 75% of its width.",
+    "subject": "Primary thumbnail read: a bed physically rooted in the earth.",
+    "negativeSpace": "The open space beneath the mattress exposes the continuous trunk-to-root connection. Above the mattress, two inward-facing head profiles are cut from one broad, joined silhouette, leaving a clear transparent interval between their faces.",
+    "secondaryMotif": "Discovery: the reunited couple rests upon the very construction that proves identity. The rooted centre-post is literal; exposed roots and the couple’s compressed placement are interpretive visualization of fixed belonging and shared knowledge. Do not add a living canopy: Ulysses fashioned the tree into the bedpost.",
+    "rationale": "Makes homecoming tangible through an object that cannot travel. Penelope’s cautious recognition becomes the composition’s structural principle: their shared life rests on a secret construction. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills.",
+    "evidence": [
+      {
+        "paragraphId": "p1058",
+        "quote": "a young olive growing within the precincts of the house,"
+      },
+      {
+        "paragraphId": "p1058",
+        "quote": "the centre-post of my bed,"
+      },
+      {
+        "paragraphId": "p1051",
+        "quote": "there are tokens with which we two are alone acquainted,"
+      },
+      {
+        "paragraphId": "p1059",
+        "quote": "you know all about our bed"
+      },
+      {
+        "paragraphId": "p1059",
+        "quote": "We have suffered, both of us."
+      }
+    ],
+    "dominant": "#344938",
+    "accent": "#8C302D",
+    "background": "#F5EEDD",
+    "conversionRationale": "Olive green carries at least 90% of visible artwork; a single crimson mattress inset recalls the reported leather without rendering texture. Keep bed rails and roots thick, root forks sparse, and all essential strokes and gaps at least 1.5% of canvas width. Broad mattress, trunk and joined figures support continuous character fields."
+  },
+  "prompt": "Generate one original literary illustration inspired by The Odyssey: Rendered into English prose for the use of those who cannot read the original by Homer. Use the built-in image generation tool exactly once, with transparent_background=true. No paid APIs, API keys, scripts, vector placeholders, or alternate providers.\nConcept: A compact bed-and-root tableau, viewed obliquely: a substantial mattress and thick bed rails join one stout olive-trunk post descending into broad roots. The unified construction occupies about 78% of canvas height and 75% of its width.. Primary subject: Primary thumbnail read: a bed physically rooted in the earth.. Negative space: The open space beneath the mattress exposes the continuous trunk-to-root connection. Above the mattress, two inward-facing head profiles are cut from one broad, joined silhouette, leaving a clear transparent interval between their faces.. Integrate: Discovery: the reunited couple rests upon the very construction that proves identity. The rooted centre-post is literal; exposed roots and the couple’s compressed placement are interpretive visualization of fixed belonging and shared knowledge. Do not add a living canopy: Ulysses fashioned the tree into the bedpost.. Literary meaning: Makes homecoming tangible through an object that cannot travel. Penelope’s cautious recognition becomes the composition’s structural principle: their shared life rests on a secret construction. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills..\nPalette: solid #344938 with optional accent #8C302D. Intended finished-poster background #F5EEDD; DO NOT paint that background.\nPurely pictorial 2:3 portrait with a truly transparent RGBA background and deliberate transparent perimeter. One dominant text-bearing mass or compact tableau, occupying 65–85% of the canvas extent. A recognizable primary subject plus an integrated secondary literary discovery. Strong negative-space storytelling, large continuous shapes, crisp clean contours. Every essential stroke and negative-space gap at least 1% of canvas width. Flat fully opaque fills: one dominant artwork color carries at least 80% of visible artwork; at most one accent. Strong contrast with separate warm off-white or near-black poster background. No titles, authors, words, letters, numbers, logos, signatures, watermarks, borders, frames, mockups, paper, checkerboard, gradients, shading, lighting, glow, blur, haze, semitransparency, grain, texture, halftones, hairlines, tiny decorative details, photorealism, or 3D. The subject must survive replacement by monospaced book characters.\nDeliver a native 2:3 portrait transparent PNG. Inspect the result without calling generation again. Return success and the original generated PNG absolute path under generated_images. Do not copy or edit the PNG; the application retains/prepares it. If the tool cannot generate, return success false and an empty path. Aesthetic review/promotion happen later, so do not ask for concept approval."
+}

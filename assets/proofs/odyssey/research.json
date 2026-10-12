@@ -1,0 +1,3841 @@
+{
+  "bodyHash": "c663f465390ecd9219fb5136c4bf97bc78ac730dfa76e2c3d6800e3d0f8029cc",
+  "coverage": [
+    {
+      "first": "p44",
+      "last": "p412",
+      "paragraphs": 369
+    },
+    {
+      "first": "p413",
+      "last": "p807",
+      "paragraphs": 395
+    },
+    {
+      "first": "p808",
+      "last": "p1116",
+      "paragraphs": 309
+    }
+  ],
+  "notes": [
+    {
+      "summary": "The supplied section follows Ulysses’ obstructed homecoming, Telemachus’ search for his father, the suitors’ consumption of the household and their ambush plot, and Ulysses’ passage from Calypso’s captivity through shipwreck to Phaeacian hospitality. Songs and recollections expose the grief and violence behind heroic fame. Ulysses then identifies himself and recounts the Cicons, Lotus-eaters, and Cyclops. The section ends inside the Cyclops’ cave: Ulysses has prepared an olive-wood weapon, intoxicated the monster, and called himself Noman; the Cyclops promises to eat him last. The planned attack and escape have not occurred within the supplied text.",
+      "themes": [
+        {
+          "name": "Homecoming and attachment to place",
+          "meaning": "Home remains the central desire despite captivity, wealth, divine beauty, and offered immortality. Ithaca’s ruggedness strengthens rather than diminishes its emotional value.",
+          "evidence": [
+            {
+              "paragraphId": "p48",
+              "quote": "the smoke of his own chimneys."
+            },
+            {
+              "paragraphId": "p255",
+              "quote": "Nevertheless, I want to get home, and can think of nothing else."
+            },
+            {
+              "paragraphId": "p389",
+              "quote": "It is a rugged island, but it breeds brave men,"
+            }
+          ]
+        },
+        {
+          "name": "Human responsibility and divine interference",
+          "meaning": "The narrative repeatedly places human folly beside divine causation. These explanations coexist and sometimes differ between speakers.",
+          "evidence": [
+            {
+              "paragraphId": "p44",
+              "quote": "they perished through their own sheer folly"
+            },
+            {
+              "paragraphId": "p47",
+              "quote": "how men lay blame upon us gods"
+            },
+            {
+              "paragraphId": "p127",
+              "quote": "Jove saw fit to vex the Argives on their homeward voyage;"
+            },
+            {
+              "paragraphId": "p390",
+              "quote": "my men very foolishly would not obey me,"
+            }
+          ]
+        },
+        {
+          "name": "Hospitality tested, upheld, and inverted",
+          "meaning": "Receiving strangers with food, washing, shelter, and assistance establishes a recurring ethical test. The suitors exploit hospitality; the Cyclops turns the expected guest-gift into a threat of consumption.",
+          "evidence": [
+            {
+              "paragraphId": "p52",
+              "quote": "he was vexed that a stranger should be kept waiting for admittance."
+            },
+            {
+              "paragraphId": "p158",
+              "quote": "show the strangers in that they may have supper;"
+            },
+            {
+              "paragraphId": "p383",
+              "quote": "treat a guest and a suppliant as though he were his own brother."
+            },
+            {
+              "paragraphId": "p412",
+              "quote": "This is the present that I will make him."
+            }
+          ]
+        },
+        {
+          "name": "The household under siege",
+          "meaning": "Eating, courtship, and political intimidation become mechanisms for exhausting an estate and threatening its surviving heir. The later ambush makes the danger explicit.",
+          "evidence": [
+            {
+              "paragraphId": "p81",
+              "quote": "my house is being disgraced and ruined."
+            },
+            {
+              "paragraphId": "p101",
+              "quote": "divide up his property amongst us:"
+            },
+            {
+              "paragraphId": "p212",
+              "quote": "I will lie in wait for him in the straits between Ithaca and Samos;"
+            }
+          ]
+        },
+        {
+          "name": "Coming of age through speech and action",
+          "meaning": "Telemachus moves from private brooding to public assembly, independent travel, and questioning elders. Courage remains assisted by Minerva rather than becoming effortless confidence.",
+          "evidence": [
+            {
+              "paragraphId": "p65",
+              "quote": "she had given Telemachus courage,"
+            },
+            {
+              "paragraphId": "p82",
+              "quote": "Telemachus dashed his staff to the ground and burst into tears."
+            },
+            {
+              "paragraphId": "p117",
+              "quote": "I have never yet been used to holding long conversations with people,"
+            },
+            {
+              "paragraphId": "p124",
+              "quote": "Telemachus answered boldly,"
+            }
+          ]
+        },
+        {
+          "name": "Inheritance, resemblance, and threatened continuity",
+          "meaning": "Fatherhood connects bodily resemblance, reputation, property, and political authority. Telemachus’ uncertain knowledge of his father and Penelope’s fear of losing her son make continuity precarious.",
+          "evidence": [
+            {
+              "paragraphId": "p60",
+              "quote": "I inherit nothing but dismay."
+            },
+            {
+              "paragraphId": "p167",
+              "quote": "His hands and feet are just like Ulysses;"
+            },
+            {
+              "paragraphId": "p219",
+              "quote": "trying to exterminate his own race and that of Ulysses."
+            }
+          ]
+        },
+        {
+          "name": "Cunning, concealment, and control of identity",
+          "meaning": "Disguise and withheld identity allow gods and mortals to act under unequal conditions. Ulysses’ resourcefulness culminates here in preparation and the name Noman, without a completed escape.",
+          "evidence": [
+            {
+              "paragraphId": "p175",
+              "quote": "entered the enemy’s city looking like a menial or a beggar,"
+            },
+            {
+              "paragraphId": "p306",
+              "quote": "Minerva shed a thick mist all round him"
+            },
+            {
+              "paragraphId": "p405",
+              "quote": "I answered with a lie;"
+            },
+            {
+              "paragraphId": "p411",
+              "quote": "my name is Noman;"
+            }
+          ]
+        },
+        {
+          "name": "Memory, song, and grief",
+          "meaning": "Songs preserve heroic deeds while reopening private suffering. The section eventually compares Ulysses’ tears to those of a bereaved woman carried into slavery, widening the emotional perspective beyond victorious warriors.",
+          "evidence": [
+            {
+              "paragraphId": "p67",
+              "quote": "it breaks my sorrowful heart,"
+            },
+            {
+              "paragraphId": "p342",
+              "quote": "Ulysses drew his purple mantle over his head and covered his face,"
+            },
+            {
+              "paragraphId": "p382",
+              "quote": "carry her off into slavery, to a life of labour and sorrow,"
+            },
+            {
+              "paragraphId": "p388",
+              "quote": "rekindle my own sad memories"
+            }
+          ]
+        },
+        {
+          "name": "Forgetting as comfort and danger",
+          "meaning": "Sleep and Helen’s drug ease sorrow, while lotus consumption extinguishes the desire to return. Relief from painful memory can restore a traveller or interrupt his purpose.",
+          "evidence": [
+            {
+              "paragraphId": "p174",
+              "quote": "an herb that banishes all care, sorrow, and ill humour."
+            },
+            {
+              "paragraphId": "p274",
+              "quote": "made him lose all memories of his sorrows."
+            },
+            {
+              "paragraphId": "p392",
+              "quote": "those who ate of it left off caring about home,"
+            }
+          ]
+        },
+        {
+          "name": "Endurance, bodily vulnerability, and recovery",
+          "meaning": "Heroic capability survives exhaustion, hunger, torn skin, nakedness, and tears. Shelter, food, clothing, and bathing visibly restore Ulysses before his athletic demonstration.",
+          "evidence": [
+            {
+              "paragraphId": "p269",
+              "quote": "the rocks tear the skin from his strong hands,"
+            },
+            {
+              "paragraphId": "p272",
+              "quote": "lay swooning from sheer exhaustion;"
+            },
+            {
+              "paragraphId": "p296",
+              "quote": "ate and drank ravenously,"
+            },
+            {
+              "paragraphId": "p350",
+              "quote": "flew beyond any mark that had been made yet."
+            }
+          ]
+        },
+        {
+          "name": "Craft overcoming superior strength",
+          "meaning": "Making, binding, weaving, and shaping offer alternatives to brute force. Vulcan’s trap supplies an explicit parallel to Ulysses’ emerging plan against the physically overwhelming Cyclops.",
+          "evidence": [
+            {
+              "paragraphId": "p257",
+              "quote": "fitted the timbers together with bolts and rivets."
+            },
+            {
+              "paragraphId": "p359",
+              "quote": "the weak confound the strong."
+            },
+            {
+              "paragraphId": "p408",
+              "quote": "charring the end in the fire to make it harder."
+            }
+          ]
+        },
+        {
+          "name": "Marriage, fidelity, and coercion",
+          "meaning": "Marriage appears as mutual household harmony, political exchange, pressured courtship, divine jealousy, and betrayal. Calypso’s confinement and Alcinous’ voluntary offer create markedly different conditions for remaining abroad.",
+          "evidence": [
+            {
+              "paragraphId": "p249",
+              "quote": "he was forced to sleep with her in the cave by night,"
+            },
+            {
+              "paragraphId": "p290",
+              "quote": "man and wife should be of one mind in a house."
+            },
+            {
+              "paragraphId": "p330",
+              "quote": "no one (heaven forbid) shall keep you here against your own wish,"
+            },
+            {
+              "paragraphId": "p354",
+              "quote": "defiled King Vulcan’s marriage bed,"
+            }
+          ]
+        },
+        {
+          "name": "Revenge, warning, and accountability",
+          "meaning": "Orestes’ revenge repeatedly serves as an example for Telemachus. Ignored warnings recur in Aegisthus’ story, the suitors’ response to omens, and the Cyclops’ rejection of divine protection.",
+          "evidence": [
+            {
+              "paragraphId": "p47",
+              "quote": "Mercury told him this in all good will but he would not listen,"
+            },
+            {
+              "paragraphId": "p131",
+              "quote": "Would that heaven might grant me to do like vengeance"
+            },
+            {
+              "paragraphId": "p88",
+              "quote": "birds are always flying about in the sunshine somewhere or other, but they seldom mean anything."
+            },
+            {
+              "paragraphId": "p404",
+              "quote": "We Cyclopes do not care about Jove"
+            }
+          ]
+        },
+        {
+          "name": "Public order and collective failure",
+          "meaning": "Assemblies distinguish organized civic life from isolated power, but institutions do not guarantee justice. Ithaca’s people remain passive, while Phaeacian collective action supplies an escort.",
+          "evidence": [
+            {
+              "paragraphId": "p91",
+              "quote": "you all sit still without even trying to stop such scandalous goings on"
+            },
+            {
+              "paragraphId": "p338",
+              "quote": "man her with two and fifty of our smartest young sailors."
+            },
+            {
+              "paragraphId": "p393",
+              "quote": "They have no laws nor assemblies of the people,"
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Ithaca: rugged homeland and occupied house",
+          "meaning": "A forested, uneven island and an endangered domestic estate give homecoming its concrete destination. The house’s threshold, court, cloisters, storeroom, and upper rooms offer distinct staging spaces.",
+          "evidence": [
+            {
+              "paragraphId": "p204",
+              "quote": "the country is more fit for goats than horses,"
+            },
+            {
+              "paragraphId": "p75",
+              "quote": "Telemachus’s room was high up in a tower"
+            },
+            {
+              "paragraphId": "p102",
+              "quote": "the lofty and spacious store-room"
+            }
+          ]
+        },
+        {
+          "name": "Ogygia: Calypso’s cave and cultivated surroundings",
+          "meaning": "Luxuriant vegetation, running water, fragrance, and weaving surround a captive who spends his days grieving on the shore. The beautiful setting does not satisfy his desire for home.",
+          "evidence": [
+            {
+              "paragraphId": "p243",
+              "quote": "A vine loaded with grapes"
+            },
+            {
+              "paragraphId": "p243",
+              "quote": "four running rills of water"
+            },
+            {
+              "paragraphId": "p244",
+              "quote": "looking out upon the barren ocean with tears in his eyes,"
+            }
+          ]
+        },
+        {
+          "name": "Pylos: sacrificial shore and hospitable household",
+          "meaning": "The shore initially appears as a large organized ritual gathering; Nestor’s house then provides lodging, instruction, and the means for onward travel.",
+          "evidence": [
+            {
+              "paragraphId": "p115",
+              "quote": "offer sacrifice of black bulls to Neptune"
+            },
+            {
+              "paragraphId": "p119",
+              "quote": "soft sheepskins that were lying on the sands"
+            },
+            {
+              "paragraphId": "p146",
+              "quote": "benches of white and polished marble"
+            }
+          ]
+        },
+        {
+          "name": "Lacedaemon: Menelaus’ glittering palace",
+          "meaning": "A wedding feast and brilliant imported materials frame grief that wealth cannot repair. Helen’s textile equipment adds a specific domestic focal point.",
+          "evidence": [
+            {
+              "paragraphId": "p155",
+              "quote": "the low lying city of Lacedaemon,"
+            },
+            {
+              "paragraphId": "p162",
+              "quote": "the gleam of bronze and gold—of amber,40 ivory, and silver."
+            },
+            {
+              "paragraphId": "p163",
+              "quote": "I have no pleasure in being lord of all this wealth."
+            }
+          ]
+        },
+        {
+          "name": "Pharos: becalmed island and seal-haunted sea cave",
+          "meaning": "Menelaus’ embedded story supplies a distinct setting of hunger, stalled ships, a sea cave, and an ambush beneath animal skins.",
+          "evidence": [
+            {
+              "paragraphId": "p183",
+              "quote": "the gods becalmed me twenty days"
+            },
+            {
+              "paragraphId": "p188",
+              "quote": "goes to sleep in a great sea cave,"
+            },
+            {
+              "paragraphId": "p191",
+              "quote": "dug four pits for us to lie in,"
+            }
+          ]
+        },
+        {
+          "name": "Asteris: double-harboured ambush island",
+          "meaning": "A small rocky site gives the suitors’ concealed violence a precise location. Their attack remains pending in the supplied section.",
+          "evidence": [
+            {
+              "paragraphId": "p235",
+              "quote": "a rocky islet called Asteris,"
+            },
+            {
+              "paragraphId": "p235",
+              "quote": "a harbour on either side of it"
+            }
+          ]
+        },
+        {
+          "name": "Scheria: dangerous coast and sheltered river mouth",
+          "meaning": "Surf-beaten rocks initially deny landing; the river offers an answered prayer and a transition from drowning danger to terrestrial shelter.",
+          "evidence": [
+            {
+              "paragraphId": "p268",
+              "quote": "the coast is rocky and surf-beaten,"
+            },
+            {
+              "paragraphId": "p270",
+              "quote": "the mouth of a river,"
+            },
+            {
+              "paragraphId": "p272",
+              "quote": "kissed the bounteous earth."
+            }
+          ]
+        },
+        {
+          "name": "Scheria: washing place, sacred grove, and maritime city",
+          "meaning": "Domestic work at the stream leads to rescue, then to a grove and a city organized around ships and shipbuilding.",
+          "evidence": [
+            {
+              "paragraphId": "p285",
+              "quote": "a high beach of shingle,"
+            },
+            {
+              "paragraphId": "p299",
+              "quote": "a beautiful grove of poplars"
+            },
+            {
+              "paragraphId": "p297",
+              "quote": "a temple of Neptune in the middle of it,"
+            }
+          ]
+        },
+        {
+          "name": "Alcinous’ palace and perpetual garden",
+          "meaning": "Metallic architecture, crafted guardians, torch-bearing figures, woven furnishings, and continuous fruitfulness make the palace a concentrated setting of abundance and skill.",
+          "evidence": [
+            {
+              "paragraphId": "p313",
+              "quote": "the cornice was of blue enamel."
+            },
+            {
+              "paragraphId": "p314",
+              "quote": "gold and silver mastiffs"
+            },
+            {
+              "paragraphId": "p314",
+              "quote": "golden figures of young men with lighted torches in their hands,"
+            },
+            {
+              "paragraphId": "p315",
+              "quote": "The fruits never rot nor fail all the year round,"
+            }
+          ]
+        },
+        {
+          "name": "Ismarus and the Cicon shore",
+          "meaning": "A raid, captured women, shared booty, prolonged feasting, and a retaliatory battle complicate Ulysses’ role as a sufferer by showing him as an aggressor.",
+          "evidence": [
+            {
+              "paragraphId": "p390",
+              "quote": "There I sacked the town and put the people to the sword."
+            },
+            {
+              "paragraphId": "p390",
+              "quote": "They set the battle in array near the ships,"
+            }
+          ]
+        },
+        {
+          "name": "Goat island and the Cyclops’ enclosed cave",
+          "meaning": "An uninhabited fertile island contrasts with a carefully managed dairy cave whose immense doorway stone turns shelter into imprisonment.",
+          "evidence": [
+            {
+              "paragraphId": "p394",
+              "quote": "a wooded and fertile island"
+            },
+            {
+              "paragraphId": "p398",
+              "quote": "a great cave overhung with laurels."
+            },
+            {
+              "paragraphId": "p400",
+              "quote": "His cheese-racks were loaded with cheeses,"
+            },
+            {
+              "paragraphId": "p401",
+              "quote": "he rolled a huge stone to the mouth of the cave"
+            }
+          ]
+        },
+        {
+          "name": "Ships, sails, oars, and the constructed raft",
+          "meaning": "Vessels connect search, trade, rescue, raiding, and ambush. Ulysses’ hand-built raft displays competence yet remains vulnerable; the Phaeacian ships are described as understanding their passengers’ intentions.",
+          "evidence": [
+            {
+              "paragraphId": "p111",
+              "quote": "ropes of twisted ox hide."
+            },
+            {
+              "paragraphId": "p257",
+              "quote": "He also made a mast with a yard arm, and a rudder to steer with."
+            },
+            {
+              "paragraphId": "p265",
+              "quote": "the raft, which then went to pieces"
+            },
+            {
+              "paragraphId": "p384",
+              "quote": "the ships themselves understand what it is that we are thinking about and want;"
+            }
+          ]
+        },
+        {
+          "name": "Clothing, veils, and mantles",
+          "meaning": "Textiles mark dignity, grief, modesty, recognition, and rescue. Their functions change: Calypso’s clothes impede swimming, Ino’s veil protects, and the Phaeacian clothes reveal a connection to Arete’s household.",
+          "evidence": [
+            {
+              "paragraphId": "p164",
+              "quote": "he held his cloak before his face with both hands."
+            },
+            {
+              "paragraphId": "p261",
+              "quote": "the clothes Calypso had given him weighed him down;"
+            },
+            {
+              "paragraphId": "p263",
+              "quote": "take my veil and put it round your chest;"
+            },
+            {
+              "paragraphId": "p324",
+              "quote": "as the work of herself and of her maids;"
+            }
+          ]
+        },
+        {
+          "name": "Looms, distaffs, yarn, and the unfinished pall",
+          "meaning": "Weaving links domestic labour, cultivated skill, and Penelope’s resistance through delay. Calypso, Helen, Arete, and Phaeacian servants extend the textile imagery across settings.",
+          "evidence": [
+            {
+              "paragraphId": "p83",
+              "quote": "a pall for the hero Laertes,"
+            },
+            {
+              "paragraphId": "p84",
+              "quote": "at night she would unpick the stitches again by torchlight."
+            },
+            {
+              "paragraphId": "p165",
+              "quote": "a distaff charged with violet coloured wool"
+            },
+            {
+              "paragraphId": "p243",
+              "quote": "shooting her golden shuttle through the warp"
+            },
+            {
+              "paragraphId": "p299",
+              "quote": "spinning her purple wool by firelight."
+            }
+          ]
+        },
+        {
+          "name": "Wine, mixing bowls, cups, and travel stores",
+          "meaning": "Wine sustains travellers, accompanies sacrifice and friendship, enables excess, suppresses grief, and finally becomes an instrument against the Cyclops.",
+          "evidence": [
+            {
+              "paragraphId": "p103",
+              "quote": "Let me have twelve jars,"
+            },
+            {
+              "paragraphId": "p174",
+              "quote": "She drugged the wine"
+            },
+            {
+              "paragraphId": "p205",
+              "quote": "of pure silver, except the rim, which is inlaid with gold."
+            },
+            {
+              "paragraphId": "p408",
+              "quote": "an ivy-wood bowl of black wine"
+            },
+            {
+              "paragraphId": "p411",
+              "quote": "three times did he drain it without thought or heed;"
+            }
+          ]
+        },
+        {
+          "name": "Livestock, sacrificial grain, and fire",
+          "meaning": "Animals appear as wealth, provisions, offerings, and stolen or consumed resources. Similar materials serve radically different moral situations.",
+          "evidence": [
+            {
+              "paragraphId": "p44",
+              "quote": "the cattle of the Sun-god Hyperion;"
+            },
+            {
+              "paragraphId": "p148",
+              "quote": "the smith gilded the horns of the heifer"
+            },
+            {
+              "paragraphId": "p149",
+              "quote": "wrapped them round in two layers of fat,"
+            },
+            {
+              "paragraphId": "p221",
+              "quote": "some bruised barley into a basket"
+            },
+            {
+              "paragraphId": "p406",
+              "quote": "a drink of neat milk,"
+            }
+          ]
+        },
+        {
+          "name": "Water vessels, baths, and anointing oil",
+          "meaning": "Repeated washing and oiling make hospitality and restored bodily dignity visible. These practices recur from royal banquets to Nausicaa’s improvised assistance.",
+          "evidence": [
+            {
+              "paragraphId": "p54",
+              "quote": "a beautiful golden ewer"
+            },
+            {
+              "paragraphId": "p54",
+              "quote": "a silver basin"
+            },
+            {
+              "paragraphId": "p293",
+              "quote": "the little golden cruse of oil,"
+            },
+            {
+              "paragraphId": "p375",
+              "quote": "a tripod full of bath water"
+            }
+          ]
+        },
+        {
+          "name": "Birds, divine flight, and omens",
+          "meaning": "Bird imagery connects revelation, divine travel, and warning. Some appearances are explicit transformations; others are comparisons and should be illustrated accordingly.",
+          "evidence": [
+            {
+              "paragraphId": "p86",
+              "quote": "Jove sent two eagles"
+            },
+            {
+              "paragraphId": "p144",
+              "quote": "she flew away in the form of an eagle,"
+            },
+            {
+              "paragraphId": "p242",
+              "quote": "like a cormorant"
+            },
+            {
+              "paragraphId": "p262",
+              "quote": "rising like a sea-gull from the waves,"
+            }
+          ]
+        },
+        {
+          "name": "Dawn, stars, clouds, and winds",
+          "meaning": "Repeated dawns structure departures and renewals. Stars guide navigation, while winds and cloud turn the sea into an arena of divine obstruction and assistance.",
+          "evidence": [
+            {
+              "paragraphId": "p78",
+              "quote": "rosy-fingered Dawn,"
+            },
+            {
+              "paragraphId": "p258",
+              "quote": "the Pleiads, on late-setting Bootes, and on the Bear"
+            },
+            {
+              "paragraphId": "p260",
+              "quote": "Winds from East, South, North, and West"
+            },
+            {
+              "paragraphId": "p266",
+              "quote": "she bound the ways of all the winds except one,"
+            }
+          ]
+        },
+        {
+          "name": "Olive wood, leaves, and preserved fire",
+          "meaning": "Olive imagery supports shelter, toolmaking, and planned resistance. The leaf-covered survivor is compared to a hidden ember, suggesting life preserved through exhaustion.",
+          "evidence": [
+            {
+              "paragraphId": "p274",
+              "quote": "two shoots of olive that grew from a single stock"
+            },
+            {
+              "paragraphId": "p274",
+              "quote": "hides a brand as fire-seed in the ashes"
+            },
+            {
+              "paragraphId": "p257",
+              "quote": "a beautiful olive-wood handle"
+            },
+            {
+              "paragraphId": "p408",
+              "quote": "it was of green olive wood,"
+            }
+          ]
+        },
+        {
+          "name": "Lyres and the wooden horse",
+          "meaning": "The lyre mediates public entertainment and painful recollection. The wooden horse is explicitly present in remembered and sung events, linking craftsmanship, concealment, and the destruction of Troy.",
+          "evidence": [
+            {
+              "paragraphId": "p55",
+              "quote": "a lyre to Phemius,"
+            },
+            {
+              "paragraphId": "p340",
+              "quote": "He hung the lyre for him on a peg over his head,"
+            },
+            {
+              "paragraphId": "p380",
+              "quote": "the wooden horse which Epeus made with the assistance of Minerva,"
+            },
+            {
+              "paragraphId": "p381",
+              "quote": "issued from the horse, and sacked the town,"
+            }
+          ]
+        },
+        {
+          "name": "Discs, dancing balls, and sporting ground",
+          "meaning": "Games test reputation and provoke Ulysses’ renewed assertion of strength. Ball play also initiates his encounter with Nausicaa, creating a recurring connection between leisure and recognition.",
+          "evidence": [
+            {
+              "paragraphId": "p286",
+              "quote": "threw a ball at one of the maids,"
+            },
+            {
+              "paragraphId": "p350",
+              "quote": "a disc, larger, more massive and much heavier"
+            },
+            {
+              "paragraphId": "p367",
+              "quote": "a red ball which Polybus had made for them,"
+            }
+          ]
+        },
+        {
+          "name": "Bonds, knots, nets, and enclosure",
+          "meaning": "Binding can protect possessions, restrain companions, expose adultery, or trap vulnerable bodies. The motif links literal devices with similes of threatened capture.",
+          "evidence": [
+            {
+              "paragraphId": "p354",
+              "quote": "chains like cobwebs;"
+            },
+            {
+              "paragraphId": "p227",
+              "quote": "Like a lioness caught in the toils"
+            },
+            {
+              "paragraphId": "p377",
+              "quote": "a bond that Circe had taught him."
+            },
+            {
+              "paragraphId": "p392",
+              "quote": "made them fast under the benches."
+            }
+          ]
+        },
+        {
+          "name": "Proteus’ transformations and seal-skin disguise",
+          "meaning": "A sequence of changing forms provides an explicitly narrated visual subject in Menelaus’ recollection. The enacted transformations differ slightly from Idothea’s advance description.",
+          "evidence": [
+            {
+              "paragraphId": "p191",
+              "quote": "threw a seal skin over each of us."
+            },
+            {
+              "paragraphId": "p192",
+              "quote": "a lion with a great mane;"
+            },
+            {
+              "paragraphId": "p192",
+              "quote": "a dragon, a leopard, a wild boar;"
+            },
+            {
+              "paragraphId": "p192",
+              "quote": "he was running water, and then again directly he was a tree,"
+            }
+          ]
+        },
+        {
+          "name": "Lotus flower-food",
+          "meaning": "The lotus provides a small, potent object whose pleasurable consumption dissolves the purpose of the voyage. Its botanical identity is unspecified.",
+          "evidence": [
+            {
+              "paragraphId": "p392",
+              "quote": "a food that comes from a kind of flower."
+            },
+            {
+              "paragraphId": "p392",
+              "quote": "without thinking further of their return;"
+            }
+          ]
+        },
+        {
+          "name": "The Cyclops’ olive-wood weapon and promised guest-gift",
+          "meaning": "The final scene juxtaposes hidden preparation, intoxication, and verbal deception with the monster’s murderous parody of generosity. The weapon is prepared but not yet used.",
+          "evidence": [
+            {
+              "paragraphId": "p408",
+              "quote": "cut off about six feet of it;"
+            },
+            {
+              "paragraphId": "p408",
+              "quote": "I hid it under dung,"
+            },
+            {
+              "paragraphId": "p408",
+              "quote": "bore it into the monster’s eye while he was asleep."
+            },
+            {
+              "paragraphId": "p412",
+              "quote": "will keep Noman for the last."
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Minerva and Ulysses’ family",
+          "meaning": "Minerva advocates for Ulysses, mentors Telemachus through disguises, and comforts Penelope through a vision. Her help often operates without open recognition.",
+          "evidence": [
+            {
+              "paragraphId": "p48",
+              "quote": "it is for Ulysses that my heart bleeds,"
+            },
+            {
+              "paragraphId": "p96",
+              "quote": "in the likeness and with the voice of Mentor."
+            },
+            {
+              "paragraphId": "p231",
+              "quote": "it is she who has compassion upon you,"
+            },
+            {
+              "paragraphId": "p302",
+              "quote": "she would not show herself to him openly,"
+            }
+          ]
+        },
+        {
+          "name": "Neptune, Polyphemus, and Ulysses",
+          "meaning": "Neptune’s hostility is explicitly connected to his son’s injured eye. The later retrospective cave narrative begins to supply the circumstances behind that hostility.",
+          "evidence": [
+            {
+              "paragraphId": "p49",
+              "quote": "Polyphemus is son to Neptune"
+            },
+            {
+              "paragraphId": "p49",
+              "quote": "having blinded an eye of Polyphemus king of the Cyclopes."
+            },
+            {
+              "paragraphId": "p259",
+              "quote": "he shall have plenty of hardship yet"
+            }
+          ]
+        },
+        {
+          "name": "Calypso and Ulysses",
+          "meaning": "Care, desire, captivity, and coercion coexist. Calypso offers immortality, obeys the divine release order, and helps build and provision the departure, while Ulysses continues to choose home.",
+          "evidence": [
+            {
+              "paragraphId": "p247",
+              "quote": "had set my heart on making him immortal,"
+            },
+            {
+              "paragraphId": "p249",
+              "quote": "it was she, not he, that would have it so."
+            },
+            {
+              "paragraphId": "p252",
+              "quote": "I mean you no sort of harm,"
+            },
+            {
+              "paragraphId": "p255",
+              "quote": "I want to get home,"
+            }
+          ]
+        },
+        {
+          "name": "Penelope, Ulysses, and Telemachus",
+          "meaning": "The absent husband and endangered son concentrate Penelope’s grief. Telemachus asserts authority over her speech yet refuses to expel her from the household.",
+          "evidence": [
+            {
+              "paragraphId": "p68",
+              "quote": "for speech is man’s matter,"
+            },
+            {
+              "paragraphId": "p85",
+              "quote": "how can I drive the mother who bore me from my father’s house?"
+            },
+            {
+              "paragraphId": "p230",
+              "quote": "I am even more anxious about him than about my husband;"
+            }
+          ]
+        },
+        {
+          "name": "The suitors and the household",
+          "meaning": "The suitors blame Penelope’s delaying tactics, deny Telemachus’ effective authority, consume his resources, and ultimately organize his murder.",
+          "evidence": [
+            {
+              "paragraphId": "p83",
+              "quote": "It is your mother’s fault not ours,"
+            },
+            {
+              "paragraphId": "p84",
+              "quote": "so long shall we go on eating up your estate;"
+            },
+            {
+              "paragraphId": "p235",
+              "quote": "intent on murdering Telemachus."
+            }
+          ]
+        },
+        {
+          "name": "Euryclea and Telemachus’ family",
+          "meaning": "Euryclea’s purchased status coexists with long-standing care, household responsibility, and protective affection. Her oath temporarily places loyalty to Telemachus in tension with informing Penelope.",
+          "evidence": [
+            {
+              "paragraphId": "p75",
+              "quote": "Laertes had bought her with his own money"
+            },
+            {
+              "paragraphId": "p75",
+              "quote": "she had nursed him when he was a baby."
+            },
+            {
+              "paragraphId": "p220",
+              "quote": "he made me take my solemn oath"
+            }
+          ]
+        },
+        {
+          "name": "Nestor, Menelaus, Pisistratus, and Telemachus",
+          "meaning": "Friendship with Ulysses extends into hospitality and guidance for his son. Pisistratus becomes an escort and sympathetic peer; the elders’ knowledge remains incomplete.",
+          "evidence": [
+            {
+              "paragraphId": "p126",
+              "quote": "He and I never had any kind of difference"
+            },
+            {
+              "paragraphId": "p130",
+              "quote": "the reports that have reached me"
+            },
+            {
+              "paragraphId": "p168",
+              "quote": "My father, Nestor, sent me to escort him hither,"
+            },
+            {
+              "paragraphId": "p169",
+              "quote": "the son of a very dear friend,"
+            }
+          ]
+        },
+        {
+          "name": "Agamemnon, Clytemnestra, Aegisthus, and Orestes",
+          "meaning": "The betrayed returning ruler and avenging son form a repeated cautionary parallel to Ithaca. The supplied accounts describe seduction, murder, revenge, and funeral rites without fully narrating every death.",
+          "evidence": [
+            {
+              "paragraphId": "p136",
+              "quote": "cajoled Agamemnon’s wife Clytemnestra with incessant flattery."
+            },
+            {
+              "paragraphId": "p198",
+              "quote": "killed him when the banquet was over"
+            },
+            {
+              "paragraphId": "p138",
+              "quote": "killed the murderer of his father."
+            }
+          ]
+        },
+        {
+          "name": "Helen, Menelaus, and Ulysses’ remembered exploits",
+          "meaning": "Helen describes recognizing and protecting Ulysses in Troy; Menelaus recalls her testing the men hidden in the horse by imitating their wives. Together these recollections complicate her relation to the opposing sides.",
+          "evidence": [
+            {
+              "paragraphId": "p175",
+              "quote": "I alone recognised him"
+            },
+            {
+              "paragraphId": "p175",
+              "quote": "a solemn oath not to betray him"
+            },
+            {
+              "paragraphId": "p176",
+              "quote": "mimicked all our wives"
+            }
+          ]
+        },
+        {
+          "name": "Nausicaa and Ulysses",
+          "meaning": "A frightened encounter becomes material rescue, admiration, and practical guidance. Nausicaa manages the danger of public gossip; Ulysses later thanks her and protects her from her father’s criticism.",
+          "evidence": [
+            {
+              "paragraphId": "p288",
+              "quote": "the daughter of Alcinous stood firm,"
+            },
+            {
+              "paragraphId": "p298",
+              "quote": "I am afraid of the gossip and scandal"
+            },
+            {
+              "paragraphId": "p329",
+              "quote": "Pray do not scold her,"
+            },
+            {
+              "paragraphId": "p378",
+              "quote": "for it was you who saved me."
+            }
+          ]
+        },
+        {
+          "name": "Arete, Alcinous, and the foreign suppliant",
+          "meaning": "Arete’s respected position makes her goodwill central to Ulysses’ reception. Alcinous provides public support, gifts, and a voluntary escort, then asks for identity and the cause of grief.",
+          "evidence": [
+            {
+              "paragraphId": "p312",
+              "quote": "respected beyond measure"
+            },
+            {
+              "paragraphId": "p316",
+              "quote": "he laid his hands upon the knees of the queen,"
+            },
+            {
+              "paragraphId": "p330",
+              "quote": "I will attend tomorrow to the matter of your escort."
+            },
+            {
+              "paragraphId": "p384",
+              "quote": "tell me the name"
+            }
+          ]
+        },
+        {
+          "name": "Bards, listeners, and attentive hosts",
+          "meaning": "Phemius is compelled to perform, while Demodocus is honoured as a gifted singer. Alcinous notices the pain that entertaining songs cause his guest and intervenes.",
+          "evidence": [
+            {
+              "paragraphId": "p55",
+              "quote": "whom they compelled perforce to sing to them."
+            },
+            {
+              "paragraphId": "p340",
+              "quote": "she had robbed him of his eyesight."
+            },
+            {
+              "paragraphId": "p379",
+              "quote": "for all the pain his lays may cause me"
+            },
+            {
+              "paragraphId": "p383",
+              "quote": "let Demodocus cease his song,"
+            }
+          ]
+        },
+        {
+          "name": "Vulcan, Venus, Mars, and Neptune",
+          "meaning": "The embedded song turns marital betrayal into capture, public humiliation, and negotiated compensation. Neptune’s guarantee secures release.",
+          "evidence": [
+            {
+              "paragraphId": "p356",
+              "quote": "caught in the toils which cunning Vulcan had spread for them,"
+            },
+            {
+              "paragraphId": "p359",
+              "quote": "Mars will be cast in heavy damages."
+            },
+            {
+              "paragraphId": "p364",
+              "quote": "I will pay you myself."
+            }
+          ]
+        },
+        {
+          "name": "Idothea, Proteus, and Menelaus",
+          "meaning": "A divine daughter assists a mortal in trapping her father to obtain knowledge. The encounter links disguise and endurance to information about both homecoming and absent companions.",
+          "evidence": [
+            {
+              "paragraphId": "p191",
+              "quote": "she meant playing a trick upon her father."
+            },
+            {
+              "paragraphId": "p192",
+              "quote": "we stuck to him and never lost hold,"
+            },
+            {
+              "paragraphId": "p201",
+              "quote": "Ulysses who dwells in Ithaca."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and his crew",
+          "meaning": "Leadership involves rescue, discipline, shared loss, and fallible decisions. The Cicon episode shows disobedient men, while the cave episode shows Ulysses rejecting their safer proposal.",
+          "evidence": [
+            {
+              "paragraphId": "p390",
+              "quote": "we lost half a dozen men from every ship"
+            },
+            {
+              "paragraphId": "p392",
+              "quote": "though they wept bitterly I forced them back to the ships"
+            },
+            {
+              "paragraphId": "p400",
+              "quote": "It would have been indeed better if we had done so but I would not listen to them,"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses, his companions, and the Cyclops",
+          "meaning": "A request for protected hospitality meets divine defiance and cannibalism. Ulysses restrains immediate violence because the doorway stone prevents escape, then develops a coordinated deception. The final promise to eat Noman last leaves the relationship unresolved.",
+          "evidence": [
+            {
+              "paragraphId": "p403",
+              "quote": "we are your suppliants,"
+            },
+            {
+              "paragraphId": "p406",
+              "quote": "we should never be able to shift the stone"
+            },
+            {
+              "paragraphId": "p408",
+              "quote": "The lot fell upon the very four whom I should have chosen, and I myself made five."
+            },
+            {
+              "paragraphId": "p412",
+              "quote": "I will eat all Noman’s comrades before Noman himself,"
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "This analysis uses only the supplied prose translation. Footnote numbers and bracketed passages are present, but their explanatory notes are unavailable.",
+        "The section ends at p412. Although p49 already mentions Polyphemus’ blinded eye, the retrospective cave narrative has not yet enacted the attack or escape; neither should be presented as the closing scene.",
+        "The suitors’ ambush is established at Asteris in p235, but its outcome is not narrated here. Jove’s assurances in p240 are divine statements about what will happen.",
+        "Sparta and Lacedaemon name the destination in this translation; detailed modern geographical identifications, including Ithaca’s orientation in p389, cannot be established from the extract alone.",
+        "Mentes’ trading voyage in p57 and Mentor’s proposed debt-collection journey in p143 are statements made within Minerva’s disguises, not independently established mortal journeys.",
+        "Descriptions supplied by Nestor, Helen, Menelaus, Proteus, and Ulysses are embedded accounts. Their differing explanations of disaster or release should retain their speakers rather than be flattened into a single causal account.",
+        "The lotus species and Helen’s grief-banishing herb are unidentified. No modern plant or drug identification is supported.",
+        "Idothea predicts fire and water transformations in p189; Menelaus’ enacted list in p192 includes animals, running water, and a tree, but does not explicitly include fire.",
+        "Bird and animal comparisons are not always literal transformations. Mercury’s cormorant comparison, Ulysses’ lion comparison, Penelope’s lioness comparison, and the bereaved-woman comparison require this distinction.",
+        "Nausicaa’s imminent marriage is asserted by Minerva’s dream-disguise. No specific fiancé or completed marriage is established.",
+        "Arete is named only after Nausicaa initially describes her mother. The genealogy in p310–p311 makes her Alcinous’ niece as well as wife; no additional family details should be supplied.",
+        "The text mentions funeral rites for Clytemnestra in p138 but does not explicitly narrate who killed her.",
+        "The olive shoots and hidden fire-seed in p274 support a visual association with preserved life; that symbolic meaning is interpretive rather than an explicit explanation by the narrator.",
+        "Calypso’s and Ulysses’ accounts stress different aspects of their relationship. The explicit coercion in p249 should remain visible alongside later descriptions of care.",
+        "Ulysses remains unnamed to the Phaeacians until p389, despite the narrator naming him throughout. Earlier recognition should not be invented."
+      ]
+    },
+    {
+      "summary": "The section follows Ulysses from the blinding of Polyphemus through failed homeward voyages, Circe’s enchantments, consultation of the dead, the Sirens, Scylla and Charybdis, and the destruction of his crew after they kill the sun-god’s cattle. He reaches Ithaca through Phaeacian hospitality, returns under Minerva’s disguise, reunites secretly with Telemachus, and tests loyalties while enduring abuse. The ending brings Argos’s recognition and death, Antinous’s assault with a footstool, and Penelope’s request to question the unknown beggar about her husband. Strong visual material includes concealed bodies, bound winds, animal transformations, blood-fed ghosts, memorial oars, predatory birds, mist, thresholds, humble meals, and the contrast between lavish abundance and denied hospitality.",
+      "themes": [
+        {
+          "name": "Cunning, concealment, and unstable identity",
+          "meaning": "Cleverness saves lives through false names, concealment, and disguise, but also makes recognition and trust difficult.",
+          "evidence": [
+            {
+              "paragraphId": "p415",
+              "quote": "Noman is killing me by fraud;"
+            },
+            {
+              "paragraphId": "p418",
+              "quote": "There was to be a man under the middle sheep,"
+            },
+            {
+              "paragraphId": "p605",
+              "quote": "made up a lying story in the instinctive wiliness of his heart."
+            },
+            {
+              "paragraphId": "p730",
+              "quote": "At one moment she makes me like a beggar, and the next I am a young man with good clothes on my back;"
+            }
+          ]
+        },
+        {
+          "name": "Pride, provocation, and restraint",
+          "meaning": "Ulysses’s insistence on declaring himself exposes the survivors to revenge; his later endurance of humiliation serves a concealed plan.",
+          "evidence": [
+            {
+              "paragraphId": "p425",
+              "quote": "say it was the valiant warrior Ulysses, son of Laertes, who lives in Ithaca."
+            },
+            {
+              "paragraphId": "p559",
+              "quote": "In one thing only did I disobey Circe’s strict instructions—I put on my armour."
+            },
+            {
+              "paragraphId": "p775",
+              "quote": "he resolved, however, to endure it and keep himself in check,"
+            },
+            {
+              "paragraphId": "p801",
+              "quote": "he shook his head in silence as he brooded on his revenge."
+            }
+          ]
+        },
+        {
+          "name": "Hospitality as an ethical test",
+          "meaning": "Guests and suppliants meet protection, generosity, manipulation, cannibalism, or assault. The final request from Penelope continues the testing of the household through its treatment of a stranger.",
+          "evidence": [
+            {
+              "paragraphId": "p422",
+              "quote": "You wretch, eat up your visitors in your own house?"
+            },
+            {
+              "paragraphId": "p625",
+              "quote": "for all strangers and beggars are from Jove."
+            },
+            {
+              "paragraphId": "p664",
+              "quote": "One should treat a guest well as long as he is in the house and speed him when he wants to leave it."
+            },
+            {
+              "paragraphId": "p800",
+              "quote": "you cannot find it in you to give him even a piece of bread."
+            },
+            {
+              "paragraphId": "p807",
+              "quote": "I want to see him and ask him some questions."
+            }
+          ]
+        },
+        {
+          "name": "Hunger, feasting, and predation",
+          "meaning": "Food sustains fellowship but also becomes a trap, a violation of sacred limits, and a means of consuming another household’s wealth. Humans repeatedly become prey.",
+          "evidence": [
+            {
+              "paragraphId": "p444",
+              "quote": "the Laestrygonians speared them like fishes and took them home to eat them."
+            },
+            {
+              "paragraphId": "p450",
+              "quote": "she drugged it with wicked poisons to make them forget their homes,"
+            },
+            {
+              "paragraphId": "p568",
+              "quote": "All deaths are bad enough but there is none so bad as famine."
+            },
+            {
+              "paragraphId": "p781",
+              "quote": "a man cannot hide away the cravings of a hungry belly;"
+            },
+            {
+              "paragraphId": "p627",
+              "quote": "waste his estate by force, without fear or stint."
+            }
+          ]
+        },
+        {
+          "name": "Homecoming delayed and endangered",
+          "meaning": "Home appears within reach and repeatedly recedes. Even arrival does not immediately bring recognition, security, or reunion with Penelope.",
+          "evidence": [
+            {
+              "paragraphId": "p436",
+              "quote": "our native land showed on the horizon."
+            },
+            {
+              "paragraphId": "p437",
+              "quote": "away from our own country."
+            },
+            {
+              "paragraphId": "p600",
+              "quote": "He had been so long away that he did not know it again;"
+            },
+            {
+              "paragraphId": "p614",
+              "quote": "I should have come to much the same bad end in my own house as Agamemnon did,"
+            }
+          ]
+        },
+        {
+          "name": "Leadership, dissent, and responsibility",
+          "meaning": "The crew depends on Ulysses while resisting his decisions. He sometimes shares knowledge, sometimes conceals danger, and faces criticism from both Eurylochus and Telemachus.",
+          "evidence": [
+            {
+              "paragraphId": "p468",
+              "quote": "It was all through his sheer folly that those men lost their lives."
+            },
+            {
+              "paragraphId": "p553",
+              "quote": "whether we live or die we may do so with our eyes open."
+            },
+            {
+              "paragraphId": "p559",
+              "quote": "I said nothing about the awful monster Scylla,"
+            },
+            {
+              "paragraphId": "p563",
+              "quote": "You force me to yield, for you are many against one,"
+            },
+            {
+              "paragraphId": "p737",
+              "quote": "I do not think, however, the plan you propose will turn out well for either of us."
+            }
+          ]
+        },
+        {
+          "name": "Sleep, intoxication, and vulnerability",
+          "meaning": "Sleep and drink expose bodies and plans to danger, from Polyphemus’s blinding to opened winds, forbidden slaughter, and Elpenor’s fall. Sleep also permits a peaceful return and relief from grief.",
+          "evidence": [
+            {
+              "paragraphId": "p413",
+              "quote": "a deep sleep took hold upon him."
+            },
+            {
+              "paragraphId": "p439",
+              "quote": "they, and cruel sleep, have ruined me."
+            },
+            {
+              "paragraphId": "p480",
+              "quote": "he tumbled right off the roof and broke his neck,"
+            },
+            {
+              "paragraphId": "p570",
+              "quote": "the sleep into which you have sent me;"
+            },
+            {
+              "paragraphId": "p589",
+              "quote": "a deep, sweet, and almost deathlike slumber."
+            },
+            {
+              "paragraphId": "p749",
+              "quote": "Minerva shed sleep over her eyes."
+            }
+          ]
+        },
+        {
+          "name": "Divine protection, punishment, and uncertain favour",
+          "meaning": "Gods guide, disguise, and rescue, yet also withhold help or punish. Human generosity does not guarantee safety from divine anger.",
+          "evidence": [
+            {
+              "paragraphId": "p430",
+              "quote": "But he heeded not my sacrifice,"
+            },
+            {
+              "paragraphId": "p440",
+              "quote": "him whom heaven hates will I in no wise help."
+            },
+            {
+              "paragraphId": "p572",
+              "quote": "I will shiver their ship into little pieces with a bolt of white lightning"
+            },
+            {
+              "paragraphId": "p597",
+              "quote": "turned it into stone,"
+            },
+            {
+              "paragraphId": "p607",
+              "quote": "help you to hide the treasure"
+            }
+          ]
+        },
+        {
+          "name": "Mortality, grief, and the limits of heroic glory",
+          "meaning": "The dead retain sorrows, attachments, and disputes. Achilles rejects prestige in death, while Anticlea’s untouchable form makes loss physically visible.",
+          "evidence": [
+            {
+              "paragraphId": "p526",
+              "quote": "I would rather be a paid servant in a poor man’s house and be above ground than king of kings among the dead."
+            },
+            {
+              "paragraphId": "p499",
+              "quote": "Thrice I sprang towards her and tried to clasp her in my arms,"
+            },
+            {
+              "paragraphId": "p500",
+              "quote": "the soul flits away as though it were a dream."
+            },
+            {
+              "paragraphId": "p531",
+              "quote": "He would not answer, but turned away to Erebus"
+            }
+          ]
+        },
+        {
+          "name": "Burial, remembrance, and obligations to companions",
+          "meaning": "Elpenor’s unburied body interrupts the search for knowledge. His requested memorial is later completed, turning a working oar into a marker of remembrance.",
+          "evidence": [
+            {
+              "paragraphId": "p487",
+              "quote": "We had left his body unwaked and unburied in Circe’s house,"
+            },
+            {
+              "paragraphId": "p488",
+              "quote": "plant over my grave the oar I used to row with"
+            },
+            {
+              "paragraphId": "p542",
+              "quote": "at the top of the cairn we fixed the oar"
+            }
+          ]
+        },
+        {
+          "name": "Storytelling, credibility, and withheld knowledge",
+          "meaning": "Stories earn gifts and sympathy, convey memories, and conceal identity. Eumaeus distinguishes compassionate hospitality from belief in a traveller’s claims.",
+          "evidence": [
+            {
+              "paragraphId": "p517",
+              "quote": "as though you were a practiced bard;"
+            },
+            {
+              "paragraphId": "p523",
+              "quote": "it is not right to talk when one does not know."
+            },
+            {
+              "paragraphId": "p641",
+              "quote": "do not try to flatter me in this way with vain hopes."
+            },
+            {
+              "paragraphId": "p691",
+              "quote": "telling one another stories about our misfortunes;"
+            },
+            {
+              "paragraphId": "p807",
+              "quote": "he may have seen or heard something of my unhappy husband."
+            }
+          ]
+        },
+        {
+          "name": "Enchantment, attraction, and bodily transformation",
+          "meaning": "Beautiful song and luxurious interiors conceal danger. Magical changes alter outward form while leaving consciousness or identity intact.",
+          "evidence": [
+            {
+              "paragraphId": "p449",
+              "quote": "singing most beautifully as she worked at her loom,"
+            },
+            {
+              "paragraphId": "p450",
+              "quote": "but their senses were the same as before, and they remembered everything."
+            },
+            {
+              "paragraphId": "p545",
+              "quote": "warble him to death with the sweetness of their song."
+            },
+            {
+              "paragraphId": "p725",
+              "quote": "she made him younger and of more imposing presence;"
+            }
+          ]
+        },
+        {
+          "name": "Servitude, abduction, and social vulnerability",
+          "meaning": "Eumaeus’s history exposes the trade in people, while his present labour supports a household seized by others. Clothing and food reveal status and dependence.",
+          "evidence": [
+            {
+              "paragraphId": "p696",
+              "quote": "sell him in foreign parts."
+            },
+            {
+              "paragraphId": "p697",
+              "quote": "Laertes gave sundry of his chattels for me,"
+            },
+            {
+              "paragraphId": "p644",
+              "quote": "while others reap the fruit of our labour."
+            },
+            {
+              "paragraphId": "p777",
+              "quote": "sell you and pocket the money you will fetch."
+            },
+            {
+              "paragraphId": "p784",
+              "quote": "Jove takes half the goodness out of a man when he makes a slave of him."
+            }
+          ]
+        },
+        {
+          "name": "Recognition, loyalty, and concealed emotion",
+          "meaning": "Reunion brings tears, but secrecy requires restraint. The ending contrasts Argos’s immediate recognition with the household’s failure to recognise its returning master.",
+          "evidence": [
+            {
+              "paragraphId": "p731",
+              "quote": "Telemachus threw his arms about his father and wept."
+            },
+            {
+              "paragraphId": "p782",
+              "quote": "he dashed a tear from his eyes without Eumaeus seeing it,"
+            },
+            {
+              "paragraphId": "p785",
+              "quote": "Argos died as soon as he had recognised his master."
+            },
+            {
+              "paragraphId": "p805",
+              "quote": "though no tear fell from him, he shook his head in silence"
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Polyphemus’s cave and stone doorway",
+          "meaning": "A domestic enclosure becomes a prison; the doorway concentrates the danger of escape.",
+          "evidence": [
+            {
+              "paragraphId": "p417",
+              "quote": "he sat in the doorway and stretched his hands in front of it"
+            },
+            {
+              "paragraphId": "p413",
+              "quote": "his hideous yells made the cave ring again."
+            }
+          ]
+        },
+        {
+          "name": "Heated olive-wood beam",
+          "meaning": "A makeshift weapon combines fire, coordinated labour, and craft imagery in the blinding.",
+          "evidence": [
+            {
+              "paragraphId": "p413",
+              "quote": "the red hot beam into his eye,"
+            },
+            {
+              "paragraphId": "p413",
+              "quote": "the beam of olive wood,"
+            },
+            {
+              "paragraphId": "p413",
+              "quote": "boring a hole in a ship’s plank with an auger,"
+            }
+          ]
+        },
+        {
+          "name": "Sheep, ram, wool, and withies",
+          "meaning": "Livestock becomes moving concealment; the finest ram carries Ulysses and later becomes a sacrifice.",
+          "evidence": [
+            {
+              "paragraphId": "p418",
+              "quote": "carried a heavy black fleece,"
+            },
+            {
+              "paragraphId": "p418",
+              "quote": "bound them noiselessly in threes together,"
+            },
+            {
+              "paragraphId": "p418",
+              "quote": "the thick wool under his belly,"
+            },
+            {
+              "paragraphId": "p430",
+              "quote": "so I sacrificed it on the sea shore,"
+            }
+          ]
+        },
+        {
+          "name": "Rocks and mountain fragments",
+          "meaning": "Stones recur as missiles, overwhelming barriers, punishment, and petrified ship.",
+          "evidence": [
+            {
+              "paragraphId": "p423",
+              "quote": "he tore the top from off a high mountain,"
+            },
+            {
+              "paragraphId": "p444",
+              "quote": "They threw vast rocks at us from the cliffs"
+            },
+            {
+              "paragraphId": "p536",
+              "quote": "the pitiless stone"
+            },
+            {
+              "paragraphId": "p596",
+              "quote": "a rock near the land and looking like a ship."
+            }
+          ]
+        },
+        {
+          "name": "Aeolian island and wind sack",
+          "meaning": "A luxurious, enclosed island offers controlled passage through winds bound in an animal hide; opening the sack reverses the journey.",
+          "evidence": [
+            {
+              "paragraphId": "p434",
+              "quote": "iron bound with a wall that girds it."
+            },
+            {
+              "paragraphId": "p435",
+              "quote": "a prime ox-hide to hold the ways of the roaring winds,"
+            },
+            {
+              "paragraphId": "p435",
+              "quote": "bound the mouth so tightly with a silver thread"
+            },
+            {
+              "paragraphId": "p437",
+              "quote": "the wind flew howling forth"
+            }
+          ]
+        },
+        {
+          "name": "Telepylus’s enclosed harbour",
+          "meaning": "Sheltering geography becomes a killing trap for clustered ships; Ulysses’s vessel remains outside.",
+          "evidence": [
+            {
+              "paragraphId": "p442",
+              "quote": "land-locked under steep cliffs, with a narrow entrance between two headlands."
+            },
+            {
+              "paragraphId": "p442",
+              "quote": "I kept my own ship outside,"
+            },
+            {
+              "paragraphId": "p444",
+              "quote": "the ships crunching up against one another,"
+            }
+          ]
+        },
+        {
+          "name": "Circe’s forest house, loom, and tame predators",
+          "meaning": "Cut stone, coloured weaving, song, and unnaturally affectionate beasts create an attractive but alarming threshold.",
+          "evidence": [
+            {
+              "paragraphId": "p449",
+              "quote": "in the middle of the forest."
+            },
+            {
+              "paragraphId": "p449",
+              "quote": "wild mountain wolves and lions"
+            },
+            {
+              "paragraphId": "p449",
+              "quote": "drugged into subjection."
+            },
+            {
+              "paragraphId": "p449",
+              "quote": "a web so fine, so soft, and of such dazzling colours"
+            }
+          ]
+        },
+        {
+          "name": "Drugged vessels, wands, and pigsties",
+          "meaning": "Drinking and wand strokes make hospitality an instrument of transformation; a second drug restores the men.",
+          "evidence": [
+            {
+              "paragraphId": "p450",
+              "quote": "cheese, honey, meal, and Pramnian wine,"
+            },
+            {
+              "paragraphId": "p458",
+              "quote": "a golden goblet"
+            },
+            {
+              "paragraphId": "p450",
+              "quote": "turned them into pigs by a stroke of her wand,"
+            },
+            {
+              "paragraphId": "p465",
+              "quote": "anointed each with a second drug,"
+            }
+          ]
+        },
+        {
+          "name": "Moly",
+          "meaning": "A visually precise protective plant given by Mercury counters Circe’s spells.",
+          "evidence": [
+            {
+              "paragraphId": "p457",
+              "quote": "The root was black, while the flower was as white as milk;"
+            },
+            {
+              "paragraphId": "p457",
+              "quote": "the gods call it Moly,"
+            },
+            {
+              "paragraphId": "p456",
+              "quote": "will prevent her spells from working."
+            }
+          ]
+        },
+        {
+          "name": "Stag, spear, and improvised rope",
+          "meaning": "A solitary hunt supplies food and briefly restores morale after catastrophic loss.",
+          "evidence": [
+            {
+              "paragraphId": "p446",
+              "quote": "a fine antlered stag"
+            },
+            {
+              "paragraphId": "p446",
+              "quote": "the bronze point of the spear went clean through him,"
+            },
+            {
+              "paragraphId": "p446",
+              "quote": "rough grass and rushes"
+            },
+            {
+              "paragraphId": "p446",
+              "quote": "bound the four feet"
+            }
+          ]
+        },
+        {
+          "name": "Oceanus, Cimmerian darkness, and river junction",
+          "meaning": "The journey to the dead moves through perpetual darkness to a specified waterside ritual location.",
+          "evidence": [
+            {
+              "paragraphId": "p485",
+              "quote": "enshrouded in mist and darkness"
+            },
+            {
+              "paragraphId": "p485",
+              "quote": "one long melancholy night."
+            },
+            {
+              "paragraphId": "p476",
+              "quote": "groves of tall poplars and willows"
+            },
+            {
+              "paragraphId": "p476",
+              "quote": "the two roaring rivers run into one another."
+            }
+          ]
+        },
+        {
+          "name": "Blood trench, offerings, and guarding sword",
+          "meaning": "Blood allows communication with the dead; the sword regulates access to it.",
+          "evidence": [
+            {
+              "paragraphId": "p486",
+              "quote": "dug the trench a cubit each way."
+            },
+            {
+              "paragraphId": "p486",
+              "quote": "honey and milk, then with wine, and thirdly with water,"
+            },
+            {
+              "paragraphId": "p486",
+              "quote": "let the blood run into the trench,"
+            },
+            {
+              "paragraphId": "p489",
+              "quote": "my sword held over the blood,"
+            },
+            {
+              "paragraphId": "p495",
+              "quote": "Any ghost that you let taste of the blood will talk with you"
+            }
+          ]
+        },
+        {
+          "name": "Oars as labour, memorial, and prophetic token",
+          "meaning": "The same kind of implement propels ships, commemorates Elpenor, and marks the future boundary between maritime and inland life.",
+          "evidence": [
+            {
+              "paragraphId": "p431",
+              "quote": "smote the grey sea with their oars;"
+            },
+            {
+              "paragraphId": "p542",
+              "quote": "at the top of the cairn we fixed the oar"
+            },
+            {
+              "paragraphId": "p493",
+              "quote": "a winnowing shovel"
+            },
+            {
+              "paragraphId": "p493",
+              "quote": "fix the oar in the ground"
+            }
+          ]
+        },
+        {
+          "name": "Asphodel meadows and underworld emblems",
+          "meaning": "The dead occupy fields and halls where royal judgement, hunting, and heroic identity persist.",
+          "evidence": [
+            {
+              "paragraphId": "p528",
+              "quote": "a meadow full of asphodel,"
+            },
+            {
+              "paragraphId": "p532",
+              "quote": "his golden sceptre in his hand sitting in judgement on the dead,"
+            },
+            {
+              "paragraphId": "p533",
+              "quote": "a great bronze club"
+            },
+            {
+              "paragraphId": "p537",
+              "quote": "a wondrous golden belt"
+            }
+          ]
+        },
+        {
+          "name": "Tityus, Tantalus, and Sisyphus",
+          "meaning": "Distinct punishments offer bodily scale, inaccessible sustenance, and endlessly repeated effort.",
+          "evidence": [
+            {
+              "paragraphId": "p534",
+              "quote": "Two vultures on either side of him were digging their beaks into his liver,"
+            },
+            {
+              "paragraphId": "p535",
+              "quote": "it dried up and vanished,"
+            },
+            {
+              "paragraphId": "p535",
+              "quote": "pears, pomegranates, apples, sweet figs and juicy olives,"
+            },
+            {
+              "paragraphId": "p536",
+              "quote": "the sweat ran off him and the steam rose after him."
+            }
+          ]
+        },
+        {
+          "name": "Sirens’ field, bones, wax, and mast bonds",
+          "meaning": "Fatal song is opposed by blocked hearing and binding; Ulysses hears while his crew rows beyond temptation.",
+          "evidence": [
+            {
+              "paragraphId": "p545",
+              "quote": "a great heap of dead men’s bones"
+            },
+            {
+              "paragraphId": "p553",
+              "quote": "a field of flowers;"
+            },
+            {
+              "paragraphId": "p554",
+              "quote": "a large wheel of wax"
+            },
+            {
+              "paragraphId": "p554",
+              "quote": "bound me hands and feet to the mast"
+            },
+            {
+              "paragraphId": "p556",
+              "quote": "still stronger bonds"
+            }
+          ]
+        },
+        {
+          "name": "Scylla’s cliff and Charybdis’s whirlpool",
+          "meaning": "A narrow passage forces a choice between predatory loss and total engulfment. The fig tree later becomes Ulysses’s precarious refuge.",
+          "evidence": [
+            {
+              "paragraphId": "p547",
+              "quote": "its peak is lost in a dark cloud."
+            },
+            {
+              "paragraphId": "p547",
+              "quote": "twelve mis-shapen feet, and six necks"
+            },
+            {
+              "paragraphId": "p547",
+              "quote": "three rows of teeth"
+            },
+            {
+              "paragraphId": "p560",
+              "quote": "the bottom of the whirlpool all black with sand and mud,"
+            },
+            {
+              "paragraphId": "p578",
+              "quote": "clung on to like a bat."
+            }
+          ]
+        },
+        {
+          "name": "Thrinacian livestock and animate meat",
+          "meaning": "Sacred animals embody the prohibition on appetite. Their slaughter produces disturbing signs before the promised shipwreck.",
+          "evidence": [
+            {
+              "paragraphId": "p551",
+              "quote": "seven herds of cattle and seven flocks of sheep,"
+            },
+            {
+              "paragraphId": "p551",
+              "quote": "They do not breed, nor do they become fewer in number,"
+            },
+            {
+              "paragraphId": "p569",
+              "quote": "young oak-shoots instead of barley-meal,"
+            },
+            {
+              "paragraphId": "p574",
+              "quote": "the hides of the cattle crawled about,"
+            },
+            {
+              "paragraphId": "p574",
+              "quote": "the joints upon the spits began to low like cows,"
+            }
+          ]
+        },
+        {
+          "name": "Broken mast, keel, and ox-thong",
+          "meaning": "Wreckage becomes an improvised survival craft after every companion is lost.",
+          "evidence": [
+            {
+              "paragraphId": "p576",
+              "quote": "fire and brimstone"
+            },
+            {
+              "paragraphId": "p577",
+              "quote": "a backstay of stout ox-thong"
+            },
+            {
+              "paragraphId": "p577",
+              "quote": "I lashed the mast and keel together,"
+            }
+          ]
+        },
+        {
+          "name": "Phorcys’s haven, olive tree, Naiad cave, and mist",
+          "meaning": "Ithaca’s sheltered landing contains sacred stone vessels and looms. Mist delays recognition; the cave secures gifts, and the olive shelters planning.",
+          "evidence": [
+            {
+              "paragraphId": "p591",
+              "quote": "a haven of the old merman Phorcys,"
+            },
+            {
+              "paragraphId": "p591",
+              "quote": "great looms of stone"
+            },
+            {
+              "paragraphId": "p591",
+              "quote": "robes of sea purple"
+            },
+            {
+              "paragraphId": "p600",
+              "quote": "Minerva had made it a foggy day,"
+            },
+            {
+              "paragraphId": "p612",
+              "quote": "by the root of the great olive,"
+            }
+          ]
+        },
+        {
+          "name": "Gifts, cups, cauldrons, and embroidered clothing",
+          "meaning": "Portable wealth records hospitality and status across generations, contrasting with the disguised traveller’s poverty.",
+          "evidence": [
+            {
+              "paragraphId": "p583",
+              "quote": "a large tripod and a cauldron."
+            },
+            {
+              "paragraphId": "p587",
+              "quote": "the double cup"
+            },
+            {
+              "paragraphId": "p666",
+              "quote": "a mixing bowl of pure silver, except the rim, which is inlaid with gold,"
+            },
+            {
+              "paragraphId": "p666",
+              "quote": "it glittered like a star,"
+            },
+            {
+              "paragraphId": "p668",
+              "quote": "for your bride to wear upon her wedding day."
+            }
+          ]
+        },
+        {
+          "name": "Beggar’s rags, wallet, staff, and borrowed cloak",
+          "meaning": "Clothing creates an appearance of vulnerability and becomes a practical test of kindness.",
+          "evidence": [
+            {
+              "paragraphId": "p618",
+              "quote": "a tunic, tattered, filthy, and begrimed with smoke;"
+            },
+            {
+              "paragraphId": "p618",
+              "quote": "a staff and a wallet all in holes,"
+            },
+            {
+              "paragraphId": "p655",
+              "quote": "a great heavy cloak"
+            },
+            {
+              "paragraphId": "p773",
+              "quote": "his master followed after, looking like some broken down old tramp"
+            }
+          ]
+        },
+        {
+          "name": "Eumaeus’s hut, pig yards, and hearth",
+          "meaning": "A working rural enclosure offers modest shelter, equitable meals, and loyal care, contrasting with the occupied palace.",
+          "evidence": [
+            {
+              "paragraphId": "p622",
+              "quote": "a strong fence of oaken posts,"
+            },
+            {
+              "paragraphId": "p622",
+              "quote": "twelve styes near one another"
+            },
+            {
+              "paragraphId": "p626",
+              "quote": "a bowl of ivy-wood,"
+            },
+            {
+              "paragraphId": "p645",
+              "quote": "He made seven portions;"
+            },
+            {
+              "paragraphId": "p655",
+              "quote": "goatskins and sheepskins on the ground in front of the fire."
+            }
+          ]
+        },
+        {
+          "name": "Predatory birds and avian comparisons",
+          "meaning": "Birds signify interpreted dynastic victory, parental grief, helpless wreck victims, and fear among ghosts; their meanings depend on context.",
+          "evidence": [
+            {
+              "paragraphId": "p671",
+              "quote": "an eagle with a great white goose in its talons"
+            },
+            {
+              "paragraphId": "p702",
+              "quote": "a hawk, Apollo’s messenger."
+            },
+            {
+              "paragraphId": "p702",
+              "quote": "It held a dove in its talons,"
+            },
+            {
+              "paragraphId": "p731",
+              "quote": "like eagles or vultures with crooked talons"
+            },
+            {
+              "paragraphId": "p576",
+              "quote": "looking like so many sea-gulls,"
+            }
+          ]
+        },
+        {
+          "name": "Amber-and-gold necklace and stolen cups",
+          "meaning": "Attractive merchandise distracts Eumaeus’s household while his nurse abducts him; guest vessels become stolen cargo.",
+          "evidence": [
+            {
+              "paragraphId": "p697",
+              "quote": "a necklace of gold with amber beads strung among it;"
+            },
+            {
+              "paragraphId": "p697",
+              "quote": "she snatched up three cups"
+            },
+            {
+              "paragraphId": "p697",
+              "quote": "while I followed her, for I knew no better."
+            }
+          ]
+        },
+        {
+          "name": "Town fountain and nymph altar",
+          "meaning": "A public sacred stopping place becomes the setting for Melanthius’s abuse and Eumaeus’s prayer.",
+          "evidence": [
+            {
+              "paragraphId": "p773",
+              "quote": "water-loving poplars planted in a circle all round it,"
+            },
+            {
+              "paragraphId": "p773",
+              "quote": "the clear cold water"
+            },
+            {
+              "paragraphId": "p773",
+              "quote": "an altar to the nymphs,"
+            },
+            {
+              "paragraphId": "p776",
+              "quote": "grant my prayer that heaven may send him home."
+            }
+          ]
+        },
+        {
+          "name": "Palace thresholds, cloister, and footstool",
+          "meaning": "The returning owner occupies the margin of his own house. A furnishing associated with comfort becomes an instrument of assault.",
+          "evidence": [
+            {
+              "paragraphId": "p779",
+              "quote": "the doors are double folding,"
+            },
+            {
+              "paragraphId": "p787",
+              "quote": "the threshold of ash-wood"
+            },
+            {
+              "paragraphId": "p787",
+              "quote": "a bearing-post of cypress-wood"
+            },
+            {
+              "paragraphId": "p801",
+              "quote": "he threw a footstool at him,"
+            },
+            {
+              "paragraphId": "p801",
+              "quote": "hit him on the right shoulder blade near the top of his back."
+            }
+          ]
+        },
+        {
+          "name": "Argos on the manure heap",
+          "meaning": "The neglected hunting dog makes the household’s deterioration and enduring recognition visible immediately before his death.",
+          "evidence": [
+            {
+              "paragraphId": "p782",
+              "quote": "heaps of mule and cow dung"
+            },
+            {
+              "paragraphId": "p782",
+              "quote": "he was full of fleas."
+            },
+            {
+              "paragraphId": "p782",
+              "quote": "he dropped his ears and wagged his tail,"
+            },
+            {
+              "paragraphId": "p785",
+              "quote": "Argos died as soon as he had recognised his master."
+            }
+          ]
+        },
+        {
+          "name": "Dawn, darkness, and weather",
+          "meaning": "Repeated dawns structure departures, recovery, funerals, and reunions; darkness can conceal action or express danger and grief.",
+          "evidence": [
+            {
+              "paragraphId": "p542",
+              "quote": "the child of morning, rosy-fingered Dawn,"
+            },
+            {
+              "paragraphId": "p552",
+              "quote": "dawn enthroned in gold"
+            },
+            {
+              "paragraphId": "p648",
+              "quote": "there was no moon."
+            },
+            {
+              "paragraphId": "p757",
+              "quote": "this frosty morning"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Ulysses, Polyphemus, and Neptune",
+          "meaning": "Blinding and self-identification activate a father’s divine revenge on behalf of his son.",
+          "evidence": [
+            {
+              "paragraphId": "p426",
+              "quote": "Neptune and I are father and son."
+            },
+            {
+              "paragraphId": "p428",
+              "quote": "grant that Ulysses may never reach his home alive;"
+            },
+            {
+              "paragraphId": "p492",
+              "quote": "his bitter grudge against you for having blinded his son."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and his crew",
+          "meaning": "Mutual dependence coexists with envy, disobedience, mourning, and contested command.",
+          "evidence": [
+            {
+              "paragraphId": "p436",
+              "quote": "come back with hands as empty as we set out with"
+            },
+            {
+              "paragraphId": "p464",
+              "quote": "you must free my men and bring them to me"
+            },
+            {
+              "paragraphId": "p560",
+              "quote": "my six best men."
+            },
+            {
+              "paragraphId": "p576",
+              "quote": "deprived them of all chance of getting home again."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Eurylochus",
+          "meaning": "A near relation becomes a wary scout, critic, participant in protective binding, and advocate of the forbidden slaughter.",
+          "evidence": [
+            {
+              "paragraphId": "p450",
+              "quote": "Eurylochus, who suspected mischief and staid outside."
+            },
+            {
+              "paragraphId": "p469",
+              "quote": "his being a near relation of my own;"
+            },
+            {
+              "paragraphId": "p556",
+              "quote": "Eurylochus and Perimedes bound me"
+            },
+            {
+              "paragraphId": "p568",
+              "quote": "Eurylochus had been giving evil counsel to the men,"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Circe",
+          "meaning": "An enchantress becomes an oath-bound lover, restorer of companions, host, and guide to subsequent dangers.",
+          "evidence": [
+            {
+              "paragraphId": "p460",
+              "quote": "your solemn oath to plot no further harm against me."
+            },
+            {
+              "paragraphId": "p461",
+              "quote": "then I went to bed with her."
+            },
+            {
+              "paragraphId": "p465",
+              "quote": "they became men again,"
+            },
+            {
+              "paragraphId": "p543",
+              "quote": "I will tell Ulysses about your course,"
+            }
+          ]
+        },
+        {
+          "name": "Mercury and Ulysses",
+          "meaning": "Divine assistance supplies both a protective plant and instructions for confronting Circe.",
+          "evidence": [
+            {
+              "paragraphId": "p455",
+              "quote": "took my hand within his own,"
+            },
+            {
+              "paragraphId": "p455",
+              "quote": "I will protect you and get you out of your difficulty."
+            },
+            {
+              "paragraphId": "p456",
+              "quote": "draw your sword and spring upon her"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Elpenor",
+          "meaning": "The lost companion appeals to memory, family ties, and burial duty; Ulysses fulfils the promise after returning from the dead.",
+          "evidence": [
+            {
+              "paragraphId": "p488",
+              "quote": "Do not go thence leaving me unwaked and unburied behind you,"
+            },
+            {
+              "paragraphId": "p488",
+              "quote": "I will do all that you have asked of me."
+            },
+            {
+              "paragraphId": "p542",
+              "quote": "we performed his funeral rites."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Anticlea",
+          "meaning": "A mother recognises her son through blood, explains that longing killed her, and remains beyond his embrace.",
+          "evidence": [
+            {
+              "paragraphId": "p496",
+              "quote": "Then she knew me at once and spoke fondly to me,"
+            },
+            {
+              "paragraphId": "p498",
+              "quote": "the force of my affection for you—this it was that was the death of me."
+            },
+            {
+              "paragraphId": "p499",
+              "quote": "she flitted from my embrace as it were a dream or phantom,"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Teiresias",
+          "meaning": "A living traveller seeks conditional guidance from a dead seer whose speech depends on access to blood.",
+          "evidence": [
+            {
+              "paragraphId": "p490",
+              "quote": "that I may drink of the blood and answer your questions truly."
+            },
+            {
+              "paragraphId": "p492",
+              "quote": "if you can restrain yourself and your companions"
+            },
+            {
+              "paragraphId": "p493",
+              "quote": "All that I have said will come true"
+            }
+          ]
+        },
+        {
+          "name": "Dead heroes and their surviving families",
+          "meaning": "Agamemnon and Achilles remain concerned with children and fathers; paternal continuity matters more than underworld rank.",
+          "evidence": [
+            {
+              "paragraphId": "p522",
+              "quote": "can you give me any news of my son Orestes?"
+            },
+            {
+              "paragraphId": "p526",
+              "quote": "give me news about my son;"
+            },
+            {
+              "paragraphId": "p526",
+              "quote": "my father Peleus"
+            },
+            {
+              "paragraphId": "p528",
+              "quote": "exulting over what I had said concerning the prowess of his son."
+            }
+          ]
+        },
+        {
+          "name": "Agamemnon, Clytemnestra, Aegisthus, and Cassandra",
+          "meaning": "A fatal homecoming turns feasting into slaughter and becomes a warning for Ulysses’s return. Agamemnon’s wider claims about women belong to his speech.",
+          "evidence": [
+            {
+              "paragraphId": "p520",
+              "quote": "Aegisthus and my wicked wife were the death of me between them."
+            },
+            {
+              "paragraphId": "p520",
+              "quote": "Clytemnestra killed her close beside me."
+            },
+            {
+              "paragraphId": "p522",
+              "quote": "Penelope is a very admirable woman, and has an excellent nature."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Ajax",
+          "meaning": "A dispute over Achilles’s armour survives death as silence and refused reconciliation.",
+          "evidence": [
+            {
+              "paragraphId": "p529",
+              "quote": "still angry with me"
+            },
+            {
+              "paragraphId": "p529",
+              "quote": "our dispute about the armour of Achilles."
+            },
+            {
+              "paragraphId": "p531",
+              "quote": "He would not answer,"
+            }
+          ]
+        },
+        {
+          "name": "Women’s ghosts, gods, and heroic lineages",
+          "meaning": "The catalogue links women to dynasties, divine encounters, marriages, betrayal, and tragic kinship, offering multiple family histories rather than one uniform role.",
+          "evidence": [
+            {
+              "paragraphId": "p501",
+              "quote": "each one as I questioned her told me her race and lineage."
+            },
+            {
+              "paragraphId": "p502",
+              "quote": "Neptune, disguised as her lover,"
+            },
+            {
+              "paragraphId": "p504",
+              "quote": "two sons Amphion and Zethus."
+            },
+            {
+              "paragraphId": "p506",
+              "quote": "marry her own son without suspecting it."
+            },
+            {
+              "paragraphId": "p508",
+              "quote": "they die and come to life again,"
+            },
+            {
+              "paragraphId": "p511",
+              "quote": "Eriphyle, who sold her own husband for gold."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and the Phaeacian hosts",
+          "meaning": "Arete and Alcinous turn attentive listening into gifts and safe passage, but their community suffers for the escort.",
+          "evidence": [
+            {
+              "paragraphId": "p513",
+              "quote": "he is my own guest,"
+            },
+            {
+              "paragraphId": "p515",
+              "quote": "As regards his escort"
+            },
+            {
+              "paragraphId": "p592",
+              "quote": "lay him down upon the sand still fast asleep."
+            },
+            {
+              "paragraphId": "p599",
+              "quote": "we must leave off giving people escorts"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Minerva",
+          "meaning": "Shared cunning underpins protection, concealment, recognition, and revenge planning, although Ulysses questions her absence during his wandering.",
+          "evidence": [
+            {
+              "paragraphId": "p607",
+              "quote": "we can both of us deceive upon occasion"
+            },
+            {
+              "paragraphId": "p608",
+              "quote": "I saw no more of you,"
+            },
+            {
+              "paragraphId": "p609",
+              "quote": "I did not wish to quarrel with my uncle Neptune,"
+            },
+            {
+              "paragraphId": "p612",
+              "quote": "consulted how to compass the destruction of the wicked suitors."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Eumaeus",
+          "meaning": "The disguised master receives loyal service without recognition. Eumaeus offers care despite disbelief and recounts his own enslavement.",
+          "evidence": [
+            {
+              "paragraphId": "p629",
+              "quote": "I shall always honour his memory."
+            },
+            {
+              "paragraphId": "p641",
+              "quote": "only out of respect for Jove the god of hospitality, as fearing him and pitying you."
+            },
+            {
+              "paragraphId": "p697",
+              "quote": "I was left all sorrowful and alone."
+            },
+            {
+              "paragraphId": "p773",
+              "quote": "the swineherd led the way and his master followed after,"
+            }
+          ]
+        },
+        {
+          "name": "Eumaeus and Telemachus",
+          "meaning": "Affection crosses the formal master-servant relationship and is expressed through an explicitly paternal reunion.",
+          "evidence": [
+            {
+              "paragraphId": "p711",
+              "quote": "A father could not be more delighted at the return of an only son,"
+            },
+            {
+              "paragraphId": "p712",
+              "quote": "Telemachus, light of my eyes that you are."
+            },
+            {
+              "paragraphId": "p713",
+              "quote": "old friend"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Telemachus",
+          "meaning": "Disbelief gives way to emotional recognition and a secret alliance. The son also contributes practical criticism to the father’s plan.",
+          "evidence": [
+            {
+              "paragraphId": "p727",
+              "quote": "I am your father,"
+            },
+            {
+              "paragraphId": "p731",
+              "quote": "They were both so much moved"
+            },
+            {
+              "paragraphId": "p736",
+              "quote": "leave a sword and a spear apiece for yourself and me,"
+            },
+            {
+              "paragraphId": "p737",
+              "quote": "you will find that I can keep your counsel."
+            },
+            {
+              "paragraphId": "p805",
+              "quote": "Telemachus was furious about the blow that had been given to his father,"
+            }
+          ]
+        },
+        {
+          "name": "Penelope, Ulysses, and the threatened household",
+          "meaning": "Longing and uncertainty preserve the absent husband’s place while exposing the estate and son to predatory courtship. At the ending, Penelope unknowingly seeks information from Ulysses himself.",
+          "evidence": [
+            {
+              "paragraphId": "p613",
+              "quote": "meaning the very opposite of all she says."
+            },
+            {
+              "paragraphId": "p747",
+              "quote": "wooing his wife and trying to kill his son."
+            },
+            {
+              "paragraphId": "p765",
+              "quote": "that sad couch, which I have not ceased to water with my tears,"
+            },
+            {
+              "paragraphId": "p807",
+              "quote": "he may have seen or heard something of my unhappy husband."
+            }
+          ]
+        },
+        {
+          "name": "Telemachus, Menelaus, Helen, and Pisistratus",
+          "meaning": "Hospitality, gifts, friendship, and a bird omen support Telemachus’s return; urgent homeward travel also requires escaping excessive hospitality.",
+          "evidence": [
+            {
+              "paragraphId": "p662",
+              "quote": "a guest should never forget a host who has shown him kindness."
+            },
+            {
+              "paragraphId": "p668",
+              "quote": "a keepsake from the hand of Helen;"
+            },
+            {
+              "paragraphId": "p675",
+              "quote": "this journey has brought us together still more closely;"
+            },
+            {
+              "paragraphId": "p672",
+              "quote": "will return to take his revenge"
+            }
+          ]
+        },
+        {
+          "name": "Telemachus, Theoclymenus, and Piraeus",
+          "meaning": "Telemachus extends protection to a fugitive seer and delegates continued hospitality; the seer interprets signs of the family’s survival and restoration.",
+          "evidence": [
+            {
+              "paragraphId": "p681",
+              "quote": "I am your suppliant;"
+            },
+            {
+              "paragraphId": "p682",
+              "quote": "in Ithaca we will treat you hospitably"
+            },
+            {
+              "paragraphId": "p705",
+              "quote": "he shall find no lack of hospitality."
+            },
+            {
+              "paragraphId": "p768",
+              "quote": "Ulysses himself is even now in Ithaca,"
+            }
+          ]
+        },
+        {
+          "name": "Suitors, Telemachus, and Penelope",
+          "meaning": "Courtship conceals an attempt to seize inheritance and kill the heir. Amphinomus makes a qualified objection, while Eurymachus offers knowingly false reassurance.",
+          "evidence": [
+            {
+              "paragraphId": "p743",
+              "quote": "Then we can divide up his property amongst us,"
+            },
+            {
+              "paragraphId": "p744",
+              "quote": "I am not in favour of killing Telemachus."
+            },
+            {
+              "paragraphId": "p744",
+              "quote": "if the oracles of Jove advise it, I will both help to kill him myself,"
+            },
+            {
+              "paragraphId": "p748",
+              "quote": "He said this to quiet her, but in reality he was plotting against Telemachus."
+            }
+          ]
+        },
+        {
+          "name": "Melanthius, Eumaeus, and disguised Ulysses",
+          "meaning": "Opposing servants reveal loyalty through their treatment of the apparent beggar: one guides and defends, the other insults, kicks, and threatens enslavement.",
+          "evidence": [
+            {
+              "paragraphId": "p775",
+              "quote": "a kick on the hip out of pure wantonness,"
+            },
+            {
+              "paragraphId": "p775",
+              "quote": "the swineherd looked straight at Melanthius and rebuked him,"
+            },
+            {
+              "paragraphId": "p777",
+              "quote": "take you to a foreign country,"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Argos",
+          "meaning": "Recognition requires neither speech nor restored appearance. Their final encounter combines loyalty, neglect, a concealed tear, and death.",
+          "evidence": [
+            {
+              "paragraphId": "p782",
+              "quote": "Argos, whom Ulysses had bred before setting out for Troy,"
+            },
+            {
+              "paragraphId": "p782",
+              "quote": "he could not get close up to his master."
+            },
+            {
+              "paragraphId": "p785",
+              "quote": "Argos died as soon as he had recognised his master."
+            }
+          ]
+        },
+        {
+          "name": "Antinous, the beggar, and Penelope’s response",
+          "meaning": "Refused charity becomes physical violence. Others question the assault, Telemachus conceals his anger, and Penelope condemns it before summoning the stranger.",
+          "evidence": [
+            {
+              "paragraphId": "p801",
+              "quote": "Ulysses stood firm as a rock"
+            },
+            {
+              "paragraphId": "p804",
+              "quote": "you did ill in striking that poor wretch of a tramp:"
+            },
+            {
+              "paragraphId": "p806",
+              "quote": "I hate Antinous like the darkness of death itself."
+            },
+            {
+              "paragraphId": "p807",
+              "quote": "Eumaeus, go and tell the stranger to come here,"
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "Use only the supplied prose for visual facts. Footnote numbers and square-bracketed passages are present, but their editorial explanations are not supplied.",
+        "Paragraphs p632–p639 and p797–p798 belong to Ulysses’s assumed Cretan identity and should not be illustrated as verified events in his actual biography. Paragraph p606 is explicitly introduced as a lying story.",
+        "Circe’s warnings and Teiresias’s prophecies describe future or conditional events. The inland oar ritual, later death, and completed revenge do not occur within this section.",
+        "The Sirens are two singers in this version, but the supplied text gives no anatomical description. Bird-bodied or fish-tailed forms would be imported imagery.",
+        "The feared Gorgon head in p538 is not actually seen or sent. Theseus and Pirithous are desired encounters, not witnessed figures.",
+        "Circe’s wolves and lions are described as bewitched creatures; their original identities are not established. Eurylochus’s claim that the crew will become guard animals is his warning, not a confirmed event.",
+        "Neptune turns the Phaeacian ship into stone, but burial of the city under a mountain remains threatened; its fulfilment is not narrated here.",
+        "The text’s bracketed reference to the '[Wandering] rocks' in p561 creates uncertainty about how precisely to identify these with the separately described Wanderers and the Scylla–Charybdis passage.",
+        "Statements about women, enslaved people, and foreign traders are voiced by particular narrators or characters and should not be treated as independently established general truths.",
+        "Minerva claims continuing protection, while Ulysses reports not seeing her during his voyage; preserve this difference in their accounts.",
+        "The section ends with Penelope requesting the stranger’s attendance. Their interview, her recognition of Ulysses, and the revenge itself are not yet narrated."
+      ]
+    },
+    {
+      "summary": "The section follows Ulysses from his concealment as a beggar in his own house through tests of hospitality, private recognitions, the bow contest, the killing of the suitors and punishment of servants, and reunion with Penelope and Laertes. It then follows the suitors into Hades and their grieving relatives into renewed conflict. The ending arrests the cycle of revenge: Laertes kills Eupeithes, Minerva stops the fighting, Jove sends a thunderbolt, and Ulysses obeys before Minerva establishes peace. Strong visual material comes from household thresholds, firelight, concealed weapons, woven work, bodily scars, the inherited bow, the rooted marriage bed, cultivated trees, animal comparisons, and the final dropping of weapons.",
+      "themes": [
+        {
+          "name": "Hospitality tested and violated",
+          "meaning": "Treatment of the apparent beggar exposes the household’s moral divisions; hospitality also connects the bow’s history with the murder of its donor.",
+          "evidence": [
+            {
+              "paragraphId": "p842",
+              "quote": "while a suppliant in our house"
+            },
+            {
+              "paragraphId": "p883",
+              "quote": "he that is righteous and deals righteously"
+            },
+            {
+              "paragraphId": "p943",
+              "quote": "Hercules to his shame killed him, though he was his guest"
+            },
+            {
+              "paragraphId": "p945",
+              "quote": "abusing the hospitality of this house"
+            }
+          ]
+        },
+        {
+          "name": "Consumption of another household",
+          "meaning": "Feasting drains property and servant labour. The banquet’s abundance becomes inseparable from the approaching slaughter.",
+          "evidence": [
+            {
+              "paragraphId": "p809",
+              "quote": "No estate can stand such recklessness,"
+            },
+            {
+              "paragraphId": "p912",
+              "quote": "They have worn me out with labour of grinding meal for them,"
+            },
+            {
+              "paragraphId": "p988",
+              "quote": "the bread and roasted meats were all soiled"
+            }
+          ]
+        },
+        {
+          "name": "Disguise, restraint, and delayed disclosure",
+          "meaning": "Ulysses controls strength, tears, anger, and information until his allies and weapons are ready.",
+          "evidence": [
+            {
+              "paragraphId": "p831",
+              "quote": "for fear the Achaeans should begin to suspect who he was."
+            },
+            {
+              "paragraphId": "p879",
+              "quote": "so cunningly did he restrain his tears."
+            },
+            {
+              "paragraphId": "p905",
+              "quote": "Heart, be still,"
+            },
+            {
+              "paragraphId": "p987",
+              "quote": "Ulysses tore off his rags,"
+            }
+          ]
+        },
+        {
+          "name": "Recognition through tangible evidence",
+          "meaning": "Identity is established through touch, remembered possessions, craftsmanship, and shared childhood knowledge rather than appearance alone.",
+          "evidence": [
+            {
+              "paragraphId": "p892",
+              "quote": "till I had actually touched and handled you."
+            },
+            {
+              "paragraphId": "p1051",
+              "quote": "there are tokens with which we two are alone acquainted,"
+            },
+            {
+              "paragraphId": "p1059",
+              "quote": "you know all about our bed"
+            },
+            {
+              "paragraphId": "p1092",
+              "quote": "the trees in the vineyard which you gave me,"
+            }
+          ]
+        },
+        {
+          "name": "Grief, endurance, and restorative sleep",
+          "meaning": "Long separation produces tears and sleeplessness; divine sleep repeatedly grants respite, culminating in the couple’s shared rest.",
+          "evidence": [
+            {
+              "paragraphId": "p897",
+              "quote": "I lie awake thinking,"
+            },
+            {
+              "paragraphId": "p909",
+              "quote": "she shed sleep over his eyes,"
+            },
+            {
+              "paragraphId": "p1059",
+              "quote": "We have suffered, both of us."
+            },
+            {
+              "paragraphId": "p1067",
+              "quote": "a deep sleep took hold upon him and eased the burden of his sorrows."
+            }
+          ]
+        },
+        {
+          "name": "Penelope’s strategic resistance and cautious belief",
+          "meaning": "Penelope uses weaving, gifts, questions, and the bed test to resist coercion and guard against deception.",
+          "evidence": [
+            {
+              "paragraphId": "p846",
+              "quote": "flattering them with fair words which he knew she did not mean."
+            },
+            {
+              "paragraphId": "p877",
+              "quote": "I have to invent stratagems in order to deceive them."
+            },
+            {
+              "paragraphId": "p1058",
+              "quote": "She said this to try him,"
+            },
+            {
+              "paragraphId": "p1059",
+              "quote": "fear that someone might come here and deceive me with a lying story;"
+            }
+          ]
+        },
+        {
+          "name": "Telemachus’s growing authority",
+          "meaning": "The son increasingly protects guests, commands the household, handles weapons, and fights beside his father; his authority includes coercion and punitive violence.",
+          "evidence": [
+            {
+              "paragraphId": "p927",
+              "quote": "I will put a stop to the gibes and blows of the suitors,"
+            },
+            {
+              "paragraphId": "p932",
+              "quote": "I am grown up now to the knowledge of good and evil"
+            },
+            {
+              "paragraphId": "p973",
+              "quote": "it is I who am master here."
+            },
+            {
+              "paragraphId": "p1032",
+              "quote": "I shall not let these women die a clean death,"
+            }
+          ]
+        },
+        {
+          "name": "Divine direction and human prowess",
+          "meaning": "Minerva shapes appearances, concealment, hostility, battle, and peace, while deliberately requiring father and son to demonstrate courage.",
+          "evidence": [
+            {
+              "paragraphId": "p855",
+              "quote": "she wanted Ulysses to become even more bitter against them;"
+            },
+            {
+              "paragraphId": "p1011",
+              "quote": "she wished still further to prove his own prowess and that of his brave son,"
+            },
+            {
+              "paragraphId": "p1069",
+              "quote": "Minerva nevertheless concealed them in darkness"
+            },
+            {
+              "paragraphId": "p1116",
+              "quote": "made a covenant of peace"
+            }
+          ]
+        },
+        {
+          "name": "Omens, dreams, and disputed interpretation",
+          "meaning": "Sneezing, birds, thunder, dreams, and prophetic vision anticipate revenge, but characters differ in their confidence and willingness to listen.",
+          "evidence": [
+            {
+              "paragraphId": "p810",
+              "quote": "did you not hear how my son sneezed just as I was speaking?"
+            },
+            {
+              "paragraphId": "p899",
+              "quote": "they do not by any means invariably come true."
+            },
+            {
+              "paragraphId": "p925",
+              "quote": "an eagle with a dove in its talons."
+            },
+            {
+              "paragraphId": "p935",
+              "quote": "the walls and roof-beams drip blood;"
+            }
+          ]
+        },
+        {
+          "name": "Revenge, mercy, and unequal judgment",
+          "meaning": "Ulysses refuses compensation and kills the suitors, yet spares Phemius and Medon through Telemachus’s intervention. Leiodes’s plea fails, and the servants receive severe punishment.",
+          "evidence": [
+            {
+              "paragraphId": "p993",
+              "quote": "I will not stay my hand"
+            },
+            {
+              "paragraphId": "p1017",
+              "quote": "I tried to stop the others."
+            },
+            {
+              "paragraphId": "p1021",
+              "quote": "the man is guiltless, do him no hurt;"
+            },
+            {
+              "paragraphId": "p1033",
+              "quote": "die most miserably."
+            }
+          ]
+        },
+        {
+          "name": "Death, burial, and enduring reputation",
+          "meaning": "The underworld episode contrasts Achilles’s honoured funeral with Agamemnon’s unhappy return and the suitors’ initially unattended bodies; Penelope’s fidelity becomes the subject of lasting song.",
+          "evidence": [
+            {
+              "paragraphId": "p1078",
+              "quote": "your name lives evermore among all mankind."
+            },
+            {
+              "paragraphId": "p1082",
+              "quote": "our bodies are lying still uncared for"
+            },
+            {
+              "paragraphId": "p1083",
+              "quote": "The fame, therefore, of her virtue shall never die,"
+            },
+            {
+              "paragraphId": "p1100",
+              "quote": "buried every man his own,"
+            }
+          ]
+        },
+        {
+          "name": "Homecoming remains unfinished",
+          "meaning": "Reunion does not eliminate obligations or danger: Ulysses anticipates another journey and the avengers of the slain.",
+          "evidence": [
+            {
+              "paragraphId": "p907",
+              "quote": "where I am to escape to from their avengers"
+            },
+            {
+              "paragraphId": "p1061",
+              "quote": "we have not yet reached the end of our troubles."
+            },
+            {
+              "paragraphId": "p1063",
+              "quote": "travel far and wide, carrying an oar,"
+            },
+            {
+              "paragraphId": "p1100",
+              "quote": "avenge the murder of our sons and brothers."
+            }
+          ]
+        },
+        {
+          "name": "Restored kinship and cultivated inheritance",
+          "meaning": "The orchard recognition and three generations’ shared courage bind recovered identity to land, memory, and family continuity.",
+          "evidence": [
+            {
+              "paragraphId": "p1092",
+              "quote": "You gave me thirteen pear trees, ten apple trees, and forty fig trees;"
+            },
+            {
+              "paragraphId": "p1093",
+              "quote": "He threw his arms about him,"
+            },
+            {
+              "paragraphId": "p1112",
+              "quote": "My son and grandson are vying with one another in the matter of valour."
+            }
+          ]
+        },
+        {
+          "name": "The stopping of retaliatory violence",
+          "meaning": "The ending moves beyond the suitors’ deaths to communal revenge, then requires Ulysses himself to stop. Peace comes through divine command and covenant.",
+          "evidence": [
+            {
+              "paragraphId": "p1106",
+              "quote": "forgive and forget the massacre of their sons and brothers."
+            },
+            {
+              "paragraphId": "p1114",
+              "quote": "settle the matter at once without further bloodshed."
+            },
+            {
+              "paragraphId": "p1115",
+              "quote": "their arms dropped from their hands"
+            },
+            {
+              "paragraphId": "p1116",
+              "quote": "Ulysses obeyed her gladly."
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Household cloister, court, and thresholds",
+          "meaning": "The principal setting changes from contested hospitality to enclosed battle, purification, and reunion. Doorways repeatedly mark control of access.",
+          "evidence": [
+            {
+              "paragraphId": "p823",
+              "quote": "There is room enough in this doorway for the pair of us,"
+            },
+            {
+              "paragraphId": "p1001",
+              "quote": "an exit leading to a narrow passage,"
+            },
+            {
+              "paragraphId": "p1049",
+              "quote": "the stone floor of the cloister"
+            }
+          ]
+        },
+        {
+          "name": "Upper room and women’s apartments",
+          "meaning": "Spaces of grief, weaving, sleep, and enforced separation from the battle.",
+          "evidence": [
+            {
+              "paragraphId": "p877",
+              "quote": "a great tambour-frame in my room,"
+            },
+            {
+              "paragraphId": "p978",
+              "quote": "closed the doors of the women’s apartments."
+            },
+            {
+              "paragraphId": "p1045",
+              "quote": "crouching and huddled up in a corner of the women’s room"
+            }
+          ]
+        },
+        {
+          "name": "Store-room and bronze key",
+          "meaning": "Stored wealth, weapons, and remembered friendship converge in a room whose access proves tactically decisive.",
+          "evidence": [
+            {
+              "paragraphId": "p943",
+              "quote": "made of bronze and had a handle of ivory;"
+            },
+            {
+              "paragraphId": "p944",
+              "quote": "the oak threshold of the store-room;"
+            },
+            {
+              "paragraphId": "p1004",
+              "quote": "I left the store room door open,"
+            }
+          ]
+        },
+        {
+          "name": "Rags, wallet, and restored clothing",
+          "meaning": "Clothing conceals status, invites contempt, and later accompanies restoration; appearance alone remains insufficient proof for Penelope.",
+          "evidence": [
+            {
+              "paragraphId": "p832",
+              "quote": "his dirty old wallet, all tattered and torn"
+            },
+            {
+              "paragraphId": "p1049",
+              "quote": "misled by his shabby clothes"
+            },
+            {
+              "paragraphId": "p1056",
+              "quote": "gave him a shirt and cloak,"
+            }
+          ]
+        },
+        {
+          "name": "Braziers, torches, and hearth",
+          "meaning": "Recurring household light enables watching, storytelling, recognition, work, and reunion; fire also becomes a threat and an instrument of purification.",
+          "evidence": [
+            {
+              "paragraphId": "p849",
+              "quote": "three braziers151 to give light,"
+            },
+            {
+              "paragraphId": "p854",
+              "quote": "holding up torches and looking at the people"
+            },
+            {
+              "paragraphId": "p871",
+              "quote": "driven out with a firebrand."
+            },
+            {
+              "paragraphId": "p1038",
+              "quote": "the fire and sulphur,"
+            }
+          ]
+        },
+        {
+          "name": "Minerva’s gold lamp",
+          "meaning": "A specific divine light illuminates the secret removal of weapons and makes the house’s structure seem aflame.",
+          "evidence": [
+            {
+              "paragraphId": "p868",
+              "quote": "a gold lamp in her hand"
+            },
+            {
+              "paragraphId": "p868",
+              "quote": "all aglow as with a flaming fire."
+            }
+          ]
+        },
+        {
+          "name": "Fleece-covered seats",
+          "meaning": "Seats arrange encounters and mark differences of dignity: Penelope’s crafted chair, the stranger’s hospitality seat, and his later shabby banquet seat.",
+          "evidence": [
+            {
+              "paragraphId": "p871",
+              "quote": "a seat inlaid with scrolls of silver and ivory"
+            },
+            {
+              "paragraphId": "p874",
+              "quote": "Bring a seat with a fleece upon it,"
+            },
+            {
+              "paragraphId": "p927",
+              "quote": "a shabby looking seat at a little table to himself,"
+            }
+          ]
+        },
+        {
+          "name": "Veil and roof-bearing post",
+          "meaning": "A repeated, explicitly staged image of Penelope appearing publicly with attendants.",
+          "evidence": [
+            {
+              "paragraphId": "p841",
+              "quote": "holding a veil before her face,"
+            },
+            {
+              "paragraphId": "p944",
+              "quote": "with a maid on either side of her."
+            }
+          ]
+        },
+        {
+          "name": "Woven pall and undone stitches",
+          "meaning": "Domestic craft serves as a means of controlling time and postponing marriage; its repetition in Amphimedon’s account exposes conflicting perspectives.",
+          "evidence": [
+            {
+              "paragraphId": "p877",
+              "quote": "a pall for the hero Laertes,"
+            },
+            {
+              "paragraphId": "p877",
+              "quote": "at night I would unpick the stitches again by torch light."
+            },
+            {
+              "paragraphId": "p1081",
+              "quote": "its splendour was as that of the sun or moon."
+            }
+          ]
+        },
+        {
+          "name": "Suitors’ jewellery and embroidered dress",
+          "meaning": "Material gifts reveal Penelope’s tactical recovery of wealth and the suitors’ competitive display.",
+          "evidence": [
+            {
+              "paragraphId": "p848",
+              "quote": "twelve beautifully made brooch pins of pure gold"
+            },
+            {
+              "paragraphId": "p848",
+              "quote": "a magnificent chain of gold and amber beads that gleamed like sunlight."
+            },
+            {
+              "paragraphId": "p848",
+              "quote": "three brilliant pendants"
+            }
+          ]
+        },
+        {
+          "name": "Purple mantle and gold dog-and-fawn brooch",
+          "meaning": "Remembered garments substantiate knowledge of Ulysses. The brooch contains an unusually precise miniature image of predation.",
+          "evidence": [
+            {
+              "paragraphId": "p880",
+              "quote": "a mantle of purple wool, double lined,"
+            },
+            {
+              "paragraphId": "p880",
+              "quote": "a dog holding a spotted fawn between his fore paws,"
+            },
+            {
+              "paragraphId": "p881",
+              "quote": "I gave him also the gold brooch"
+            }
+          ]
+        },
+        {
+          "name": "Scar, cauldron, and spilled bathwater",
+          "meaning": "A lasting wound connects youthful hunting to present recognition by nurse, servants, and father; the overturned bath makes recognition physically visible.",
+          "evidence": [
+            {
+              "paragraphId": "p888",
+              "quote": "a certain scar"
+            },
+            {
+              "paragraphId": "p892",
+              "quote": "all the water was spilt on the ground;"
+            },
+            {
+              "paragraphId": "p961",
+              "quote": "the scar from the boar’s tooth"
+            },
+            {
+              "paragraphId": "p1092",
+              "quote": "First observe this scar,"
+            }
+          ]
+        },
+        {
+          "name": "Parnassus hunting ground and wild boar",
+          "meaning": "A narrated mountain setting supplies the scar’s origin: wooded slopes, dense brush, hounds, spear, and the boar’s sudden charge.",
+          "evidence": [
+            {
+              "paragraphId": "p891",
+              "quote": "the wooded slopes of Parnassus"
+            },
+            {
+              "paragraphId": "p891",
+              "quote": "the lair of a huge boar among some thick brushwood,"
+            },
+            {
+              "paragraphId": "p891",
+              "quote": "ripping him above the knee"
+            }
+          ]
+        },
+        {
+          "name": "Geese, eagle, and dream gates",
+          "meaning": "Penelope’s dream explicitly identifies geese with suitors and the eagle with her husband; horn and ivory express her uncertainty about its truth.",
+          "evidence": [
+            {
+              "paragraphId": "p897",
+              "quote": "The geese are the suitors,"
+            },
+            {
+              "paragraphId": "p897",
+              "quote": "your own husband,"
+            },
+            {
+              "paragraphId": "p899",
+              "quote": "the one is of horn, and the other ivory."
+            }
+          ]
+        },
+        {
+          "name": "Bow, quiver, and twelve axes",
+          "meaning": "A keepsake of friendship becomes the marriage test, proof of recovered strength, and weapon of revenge.",
+          "evidence": [
+            {
+              "paragraphId": "p943",
+              "quote": "a keepsake from a valued friend."
+            },
+            {
+              "paragraphId": "p945",
+              "quote": "send his arrow through each one of twelve axes,"
+            },
+            {
+              "paragraphId": "p982",
+              "quote": "the handle-holes of the axes"
+            },
+            {
+              "paragraphId": "p987",
+              "quote": "his quiver full of arrows."
+            }
+          ]
+        },
+        {
+          "name": "Bowstring, lyre, and swallow",
+          "meaning": "The bow’s mastery is rendered through musical and bird comparisons; Minerva separately takes swallow form during battle.",
+          "evidence": [
+            {
+              "paragraphId": "p981",
+              "quote": "as easily as a skilled bard strings a new peg of his lyre"
+            },
+            {
+              "paragraphId": "p981",
+              "quote": "like the twittering of a swallow."
+            },
+            {
+              "paragraphId": "p1011",
+              "quote": "in the form of a swallow."
+            }
+          ]
+        },
+        {
+          "name": "Armour, shields, helmets, and spears",
+          "meaning": "Weapons move from concealed household inheritance to an endangered store-room and then to the armed family and servants.",
+          "evidence": [
+            {
+              "paragraphId": "p868",
+              "quote": "the helmets, shields, and spears"
+            },
+            {
+              "paragraphId": "p1000",
+              "quote": "four brass helmets with horse-hair plumes."
+            },
+            {
+              "paragraphId": "p1007",
+              "quote": "an old dry-rotted shield"
+            }
+          ]
+        },
+        {
+          "name": "Gold cups, mixing-bowls, and disrupted banquets",
+          "meaning": "Wine vessels recur in fellowship, ritual, excess, and death; Antinous’s cup becomes a precise marker of interrupted pleasure.",
+          "evidence": [
+            {
+              "paragraphId": "p833",
+              "quote": "a golden goblet of wine."
+            },
+            {
+              "paragraphId": "p861",
+              "quote": "a bowl of wine and water"
+            },
+            {
+              "paragraphId": "p988",
+              "quote": "a two-handled gold cup"
+            },
+            {
+              "paragraphId": "p988",
+              "quote": "the cup dropped from his hand,"
+            }
+          ]
+        },
+        {
+          "name": "Food as insult and retaliation",
+          "meaning": "Banquet objects become weapons or threats, then reappear in the stockman’s retaliatory speech.",
+          "evidence": [
+            {
+              "paragraphId": "p858",
+              "quote": "caught hold of a footstool,"
+            },
+            {
+              "paragraphId": "p932",
+              "quote": "a heifer’s foot"
+            },
+            {
+              "paragraphId": "p1015",
+              "quote": "to repay you for the foot which you gave Ulysses"
+            }
+          ]
+        },
+        {
+          "name": "Livestock, hides, and the roasting paunch",
+          "meaning": "Animals sustain the household, expose its depletion, supply rough bedding, and furnish a comparison for Ulysses’s sleepless turning.",
+          "evidence": [
+            {
+              "paragraphId": "p905",
+              "quote": "an undressed bullock’s hide,"
+            },
+            {
+              "paragraphId": "p906",
+              "quote": "a paunch full of blood and fat"
+            },
+            {
+              "paragraphId": "p921",
+              "quote": "bringing them in for others to eat,"
+            }
+          ]
+        },
+        {
+          "name": "Ship’s cables and binding",
+          "meaning": "Maritime material serves household confinement and execution. The cable fastening the gates and the cable hanging the women are distinct uses.",
+          "evidence": [
+            {
+              "paragraphId": "p979",
+              "quote": "a ship’s cable of byblus fibre"
+            },
+            {
+              "paragraphId": "p1033",
+              "quote": "he made a ship’s cable fast"
+            },
+            {
+              "paragraphId": "p1033",
+              "quote": "put their heads in nooses"
+            }
+          ]
+        },
+        {
+          "name": "Predatory animals and trapped creatures",
+          "meaning": "Animal comparisons intensify the violence while changing viewpoint: attackers resemble raptors or a lion, victims resemble fish or netted birds.",
+          "evidence": [
+            {
+              "paragraphId": "p1016",
+              "quote": "eagle-beaked, crook-taloned vultures"
+            },
+            {
+              "paragraphId": "p1025",
+              "quote": "like fishes which fishermen have netted out of the sea,"
+            },
+            {
+              "paragraphId": "p1028",
+              "quote": "like a lion that has just been devouring an ox,"
+            },
+            {
+              "paragraphId": "p1033",
+              "quote": "as thrushes or doves beat against a net"
+            }
+          ]
+        },
+        {
+          "name": "Sulphur, fire, sponges, and water",
+          "meaning": "Practical cleaning and ritual purification follow the bloodshed; these processes accompany, rather than erase, the servants’ punishment.",
+          "evidence": [
+            {
+              "paragraphId": "p1032",
+              "quote": "sponges and water,"
+            },
+            {
+              "paragraphId": "p1035",
+              "quote": "sulphur, which cleanses all pollution,"
+            },
+            {
+              "paragraphId": "p1038",
+              "quote": "purified the cloisters and both the inner and outer courts."
+            }
+          ]
+        },
+        {
+          "name": "Rooted olive-tree marriage bed",
+          "meaning": "The bed’s construction supplies the decisive marital proof and binds the couple’s shared life to a fixed place in the house.",
+          "evidence": [
+            {
+              "paragraphId": "p1058",
+              "quote": "a young olive growing within the precincts of the house,"
+            },
+            {
+              "paragraphId": "p1058",
+              "quote": "the centre-post of my bed,"
+            },
+            {
+              "paragraphId": "p1058",
+              "quote": "a hide of crimson leather"
+            }
+          ]
+        },
+        {
+          "name": "Oar mistaken for a winnowing shovel",
+          "meaning": "A future journey will carry a maritime object into a land unfamiliar with the sea; this task is prophesied, not performed here.",
+          "evidence": [
+            {
+              "paragraphId": "p1063",
+              "quote": "carrying an oar,"
+            },
+            {
+              "paragraphId": "p1063",
+              "quote": "a winnowing shovel"
+            },
+            {
+              "paragraphId": "p1063",
+              "quote": "fix my oar in the ground"
+            }
+          ]
+        },
+        {
+          "name": "Underworld passage and asphodel meadow",
+          "meaning": "The setting shifts beyond the household to the suitors’ disembodied journey and encounters with the dead heroes.",
+          "evidence": [
+            {
+              "paragraphId": "p1072",
+              "quote": "the gates of the sun and the land of dreams,"
+            },
+            {
+              "paragraphId": "p1072",
+              "quote": "the meadow of asphodel"
+            },
+            {
+              "paragraphId": "p1084",
+              "quote": "the house of Hades deep down within the bowels of the earth."
+            }
+          ]
+        },
+        {
+          "name": "Mercury’s golden wand and bat-like ghosts",
+          "meaning": "A divine guide gathers the suitors’ shades; the bat comparison supplies their clustered movement and sound.",
+          "evidence": [
+            {
+              "paragraphId": "p1072",
+              "quote": "the fair golden wand"
+            },
+            {
+              "paragraphId": "p1072",
+              "quote": "As bats fly squealing"
+            },
+            {
+              "paragraphId": "p1072",
+              "quote": "whining and gibbering behind him."
+            }
+          ]
+        },
+        {
+          "name": "Achilles’s funeral vase and coastal tomb",
+          "meaning": "Objects in Agamemnon’s recollection embody honoured death, companionship, and remembrance visible to future generations.",
+          "evidence": [
+            {
+              "paragraphId": "p1077",
+              "quote": "a golden vase"
+            },
+            {
+              "paragraphId": "p1077",
+              "quote": "with those of Patroclus"
+            },
+            {
+              "paragraphId": "p1078",
+              "quote": "a noble tomb, on a point jutting out over the open Hellespont,"
+            }
+          ]
+        },
+        {
+          "name": "Laertes’s farm, orchard, and working clothes",
+          "meaning": "A cultivated rural setting contrasts with the depleted town house; the father’s shabby clothing expresses grief despite his careful husbandry.",
+          "evidence": [
+            {
+              "paragraphId": "p1084",
+              "quote": "the fair and well-tilled farm of Laertes,"
+            },
+            {
+              "paragraphId": "p1086",
+              "quote": "alone, hoeing a vine."
+            },
+            {
+              "paragraphId": "p1086",
+              "quote": "a goat skin cap"
+            },
+            {
+              "paragraphId": "p1092",
+              "quote": "fifty rows of vines;"
+            }
+          ]
+        },
+        {
+          "name": "Assembly, final battlefield, and fallen weapons",
+          "meaning": "The ending broadens private vengeance into civic conflict before divine intervention produces disarmament and agreement.",
+          "evidence": [
+            {
+              "paragraphId": "p1100",
+              "quote": "the place of assembly,"
+            },
+            {
+              "paragraphId": "p1114",
+              "quote": "He hit Eupeithes’ helmet,"
+            },
+            {
+              "paragraphId": "p1115",
+              "quote": "a thunderbolt of fire"
+            },
+            {
+              "paragraphId": "p1115",
+              "quote": "their arms dropped from their hands and fell upon the ground"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Ulysses and Penelope",
+          "meaning": "A concealed husband listens to his grieving wife, answers her tests, and finally shares recognition, intimacy, and an account of their separate suffering.",
+          "evidence": [
+            {
+              "paragraphId": "p879",
+              "quote": "the husband who was all the time sitting by her side."
+            },
+            {
+              "paragraphId": "p1059",
+              "quote": "I can mistrust no longer."
+            },
+            {
+              "paragraphId": "p1066",
+              "quote": "they fell talking with one another."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Telemachus",
+          "meaning": "Father and son coordinate secrecy, weapons, and combat; Telemachus also intervenes to preserve innocent lives.",
+          "evidence": [
+            {
+              "paragraphId": "p864",
+              "quote": "we must get the armour together"
+            },
+            {
+              "paragraphId": "p984",
+              "quote": "stood armed beside his father’s seat."
+            },
+            {
+              "paragraphId": "p1024",
+              "quote": "Telemachus has saved your life,"
+            }
+          ]
+        },
+        {
+          "name": "Penelope and Telemachus",
+          "meaning": "Their affection coexists with disputes about hospitality, marriage, authority, and recognition.",
+          "evidence": [
+            {
+              "paragraphId": "p842",
+              "quote": "your conduct is by no means what it should be."
+            },
+            {
+              "paragraphId": "p934",
+              "quote": "against her own wishes."
+            },
+            {
+              "paragraphId": "p973",
+              "quote": "This bow is a man’s matter,"
+            },
+            {
+              "paragraphId": "p1050",
+              "quote": "your heart always was as hard as a stone."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses, Eumaeus, and Philoetius",
+          "meaning": "The servants’ loyalty becomes an acknowledged alliance, rewarded with promises of property and a place resembling family membership.",
+          "evidence": [
+            {
+              "paragraphId": "p960",
+              "quote": "with what might and main I would fight for him."
+            },
+            {
+              "paragraphId": "p961",
+              "quote": "brothers and friends of Telemachus."
+            },
+            {
+              "paragraphId": "p962",
+              "quote": "Ulysses kissed their hands and faces in return."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Euryclea",
+          "meaning": "Lifelong nursing enables bodily recognition and fierce loyalty, but Ulysses enforces secrecy with physical restraint and a death threat.",
+          "evidence": [
+            {
+              "paragraphId": "p885",
+              "quote": "nursed him in infancy."
+            },
+            {
+              "paragraphId": "p893",
+              "quote": "caught Euryclea by the throat"
+            },
+            {
+              "paragraphId": "p893",
+              "quote": "I will not spare you, though you are my own nurse,"
+            },
+            {
+              "paragraphId": "p894",
+              "quote": "I will hold my tongue like a stone or a piece of iron;"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Minerva",
+          "meaning": "Divine patronage combines protection, tactical direction, tests of courage, and a final limit on Ulysses’s violence.",
+          "evidence": [
+            {
+              "paragraphId": "p908",
+              "quote": "have I not protected you throughout in all your troubles?"
+            },
+            {
+              "paragraphId": "p1013",
+              "quote": "Minerva made them all of no effect."
+            },
+            {
+              "paragraphId": "p1115",
+              "quote": "stop this warful strife,"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Amphinomus",
+          "meaning": "Courtesy earns Amphinomus a warning and briefly makes him a source of protection, but he remains among the suitors and dies attacking Ulysses.",
+          "evidence": [
+            {
+              "paragraphId": "p834",
+              "quote": "may heaven send you home quietly first"
+            },
+            {
+              "paragraphId": "p858",
+              "quote": "sought protection at the knees of Amphinomus"
+            },
+            {
+              "paragraphId": "p997",
+              "quote": "made straight at Ulysses"
+            }
+          ]
+        },
+        {
+          "name": "Suitors and dependent outsiders",
+          "meaning": "The suitors turn poverty, entertainment, and service into occasions for coercion, ridicule, and threatened expulsion.",
+          "evidence": [
+            {
+              "paragraphId": "p825",
+              "quote": "let us set them on to do so at once."
+            },
+            {
+              "paragraphId": "p938",
+              "quote": "send them off to the Sicels to sell"
+            },
+            {
+              "paragraphId": "p1020",
+              "quote": "they were too many and too strong for me,"
+            }
+          ]
+        },
+        {
+          "name": "Penelope, Melantho, and Eurymachus",
+          "meaning": "Melantho’s upbringing by Penelope contrasts with her contempt for the stranger and attachment to Eurymachus.",
+          "evidence": [
+            {
+              "paragraphId": "p851",
+              "quote": "had been brought up by Penelope,"
+            },
+            {
+              "paragraphId": "p851",
+              "quote": "showed no consideration for the sorrows of her mistress,"
+            },
+            {
+              "paragraphId": "p851",
+              "quote": "Eurymachus, with whom she was in love."
+            }
+          ]
+        },
+        {
+          "name": "Melanthius and the opposing household factions",
+          "meaning": "The goatherd insults Ulysses and arms the suitors; the loyal herdsmen capture him, and his punishment culminates in mutilation.",
+          "evidence": [
+            {
+              "paragraphId": "p1003",
+              "quote": "give them to the suitors."
+            },
+            {
+              "paragraphId": "p1007",
+              "quote": "the two seized him,"
+            },
+            {
+              "paragraphId": "p1034",
+              "quote": "cut off his hands and his feet."
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Laertes",
+          "meaning": "The son’s initial deception intensifies the father’s sorrow before scar and orchard memories restore their bond.",
+          "evidence": [
+            {
+              "paragraphId": "p1086",
+              "quote": "he deemed it best to be crafty with him,"
+            },
+            {
+              "paragraphId": "p1090",
+              "quote": "flung his arms about him and kissed him,"
+            },
+            {
+              "paragraphId": "p1091",
+              "quote": "manifest proof of your identity"
+            }
+          ]
+        },
+        {
+          "name": "Ulysses and Iphitus",
+          "meaning": "Reciprocal gifts begin a friendship that survives materially in the bow despite Iphitus’s death.",
+          "evidence": [
+            {
+              "paragraphId": "p943",
+              "quote": "Ulysses gave him in return a sword and a spear,"
+            },
+            {
+              "paragraphId": "p943",
+              "quote": "the beginning of a fast friendship,"
+            }
+          ]
+        },
+        {
+          "name": "Agamemnon, Achilles, and the remembered wives",
+          "meaning": "The dead heroes compare forms of death and remembrance; Agamemnon then praises Penelope through an explicitly hostile contrast with his own wife.",
+          "evidence": [
+            {
+              "paragraphId": "p1078",
+              "quote": "by the hands of Aegisthus and those of my wicked wife."
+            },
+            {
+              "paragraphId": "p1083",
+              "quote": "the constancy of Penelope."
+            },
+            {
+              "paragraphId": "p1083",
+              "quote": "she has brought disgrace on all womankind"
+            }
+          ]
+        },
+        {
+          "name": "The slain suitors and their relatives",
+          "meaning": "Burial and parental grief create a second claim to vengeance, complicating the household’s victory.",
+          "evidence": [
+            {
+              "paragraphId": "p1100",
+              "quote": "grief for the death of his son Antinous,"
+            },
+            {
+              "paragraphId": "p1100",
+              "quote": "avenge the murder of our sons and brothers."
+            },
+            {
+              "paragraphId": "p1114",
+              "quote": "He hit Eupeithes’ helmet,"
+            }
+          ]
+        },
+        {
+          "name": "Jove, Minerva, Ulysses, and the Ithacans",
+          "meaning": "The final settlement joins restored rule to divinely imposed reconciliation. Minerva ends the battle, Jove restrains pursuit, and the parties enter peace.",
+          "evidence": [
+            {
+              "paragraphId": "p1106",
+              "quote": "he shall continue to rule,"
+            },
+            {
+              "paragraphId": "p1106",
+              "quote": "let peace and plenty reign."
+            },
+            {
+              "paragraphId": "p1115",
+              "quote": "Jove will be angry with you."
+            },
+            {
+              "paragraphId": "p1116",
+              "quote": "between the two contending parties."
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "Ulysses’s accounts as Aethon and Eperitus are concealment narratives. Their claimed ancestry, hospitality, presents, and travel details should not be treated as independently established events.",
+        "Amphimedon’s underworld account attributes a destructive intention and coordination to Penelope that differ from the earlier narration. His account is a participant’s perspective.",
+        "Theoclymenus’s darkness, ghosts, and blood-dripping architecture belong to prophetic vision; Penelope’s eagle and geese belong to a dream. Animal comparisons elsewhere are similes, not literal transformations, except where divine transformation is expressly narrated.",
+        "The description of thunder in p912 includes both clouds in the narration and a clear sky in the miller-woman’s speech. A precise sky depiction would require choosing between those descriptions.",
+        "The twelve axes are explicitly pierced through their handle-holes in p982, but their exact construction and arrangement are not fully specified.",
+        "Claims about the women’s sexual conduct vary: p990 says the suitors forced them, while other passages describe love, misconduct, or secret relations. Individual consent and culpability cannot be established uniformly.",
+        "Euryclea says the twelve women showed no disrespect to Telemachus in p1029; Telemachus accuses them of insolence to him in p1032. Preserve this discrepancy.",
+        "Leiodes is described as opposing the suitors’ evil deeds in p953 and repeats that claim in p1017. Ulysses’s accusation about his prayers in p1018 is an inference, not separately verified.",
+        "Eurynome covers Ulysses with a cloak in p905, whereas Euryclea claims that action in p915. Euryclea’s description of restraining her disclosure in p1047 also differs from the action narrated in p893.",
+        "The oar journey, sacrifices to Neptune, and peaceful old age are reported prophecy. They do not occur within this section.",
+        "The final covenant is established, but its precise ritual and the long-term effects of the gods’ proposed forgetting are not narrated.",
+        "Chapter headings and embedded footnote numbers belong to the supplied text, but absent footnotes provide no additional evidence. No external adaptation or cover imagery has been used."
+      ]
+    }
+  ]
+}

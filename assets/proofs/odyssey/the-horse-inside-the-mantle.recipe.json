@@ -1,0 +1,38 @@
+{
+  "version": "book-drafts-v1",
+  "bookId": "gutenberg-1727",
+  "bodyHash": "c663f465390ecd9219fb5136c4bf97bc78ac730dfa76e2c3d6800e3d0f8029cc",
+  "researchHash": "7752c2be99e88d910704d6752eb597ea0729116945f4c544a096c8d38690b7a1",
+  "concept": {
+    "id": "the-horse-inside-the-mantle",
+    "name": "The Horse Inside the Mantle",
+    "dominantMass": "A seated, bowed figure wrapped in one immense mantle, forming a tall, continuous shoulder-to-knee mass occupying about 80% of canvas height and 70% of its width.",
+    "subject": "Primary thumbnail read: a person covering their face in grief, with one enlarged hand holding the mantle over the brow.",
+    "negativeSpace": "A single large horse-shaped transparent aperture occupies the mantle’s torso. Its back, muzzle and widely separated legs remain readable within the surrounding cloth mass.",
+    "secondaryMotif": "Discovery: the wooden horse recalled in song sits inside the mourner’s silhouette. This aperture is explicitly interpretive—memory made visible, rather than a literal opening, garment ornament or horse present beside Ulysses.",
+    "rationale": "Connects public heroic fame with private suffering. The recognizable Trojan horse emerges only after the viewer reads the covered face, making the celebrated exploit inseparable from the grief it reawakens. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills.",
+    "evidence": [
+      {
+        "paragraphId": "p342",
+        "quote": "Ulysses drew his purple mantle over his head and covered his face,"
+      },
+      {
+        "paragraphId": "p380",
+        "quote": "the wooden horse which Epeus made with the assistance of Minerva,"
+      },
+      {
+        "paragraphId": "p379",
+        "quote": "for all the pain his lays may cause me"
+      },
+      {
+        "paragraphId": "p388",
+        "quote": "rekindle my own sad memories"
+      }
+    ],
+    "dominant": "#512C59",
+    "accent": null,
+    "background": "#F5EEDD",
+    "conversionRationale": "Purple carries 100% of visible artwork. The mantle supplies a large continuous character field. Enlarge the horse aperture to roughly half the mantle’s width; simplify its legs and omit planks, wheels and mane details. Every essential stroke and opening must exceed 1.5% of canvas width, with at least 3% around the horse’s narrowest negative-space features."
+  },
+  "prompt": "Generate one original literary illustration inspired by The Odyssey: Rendered into English prose for the use of those who cannot read the original by Homer. Use the built-in image generation tool exactly once, with transparent_background=true. No paid APIs, API keys, scripts, vector placeholders, or alternate providers.\nConcept: A seated, bowed figure wrapped in one immense mantle, forming a tall, continuous shoulder-to-knee mass occupying about 80% of canvas height and 70% of its width.. Primary subject: Primary thumbnail read: a person covering their face in grief, with one enlarged hand holding the mantle over the brow.. Negative space: A single large horse-shaped transparent aperture occupies the mantle’s torso. Its back, muzzle and widely separated legs remain readable within the surrounding cloth mass.. Integrate: Discovery: the wooden horse recalled in song sits inside the mourner’s silhouette. This aperture is explicitly interpretive—memory made visible, rather than a literal opening, garment ornament or horse present beside Ulysses.. Literary meaning: Connects public heroic fame with private suffering. The recognizable Trojan horse emerges only after the viewer reads the covered face, making the celebrated exploit inseparable from the grief it reawakens. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills..\nPalette: solid #512C59 with no accent. Intended finished-poster background #F5EEDD; DO NOT paint that background.\nPurely pictorial 2:3 portrait with a truly transparent RGBA background and deliberate transparent perimeter. One dominant text-bearing mass or compact tableau, occupying 65–85% of the canvas extent. A recognizable primary subject plus an integrated secondary literary discovery. Strong negative-space storytelling, large continuous shapes, crisp clean contours. Every essential stroke and negative-space gap at least 1% of canvas width. Flat fully opaque fills: one dominant artwork color carries at least 80% of visible artwork; at most one accent. Strong contrast with separate warm off-white or near-black poster background. No titles, authors, words, letters, numbers, logos, signatures, watermarks, borders, frames, mockups, paper, checkerboard, gradients, shading, lighting, glow, blur, haze, semitransparency, grain, texture, halftones, hairlines, tiny decorative details, photorealism, or 3D. The subject must survive replacement by monospaced book characters.\nDeliver a native 2:3 portrait transparent PNG. Inspect the result without calling generation again. Return success and the original generated PNG absolute path under generated_images. Do not copy or edit the PNG; the application retains/prepares it. If the tool cannot generate, return success false and an empty path. Aesthetic review/promotion happen later, so do not ask for concept approval."
+}

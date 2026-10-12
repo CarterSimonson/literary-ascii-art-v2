@@ -1,0 +1,99 @@
+{
+  "concepts": [
+    {
+      "id": "the-descending-host",
+      "name": "The Descending Host",
+      "dominantMass": "A massive castle tower and sheer cliff form one continuous silhouette spanning approximately 80% of the 2:3 portrait canvas, with a deliberate transparent perimeter.",
+      "subject": "Thumbnail read: an isolated Gothic castle perched above an inaccessible precipice.",
+      "negativeSpace": "A broad transparent channel down the tower reveals Dracula crawling headfirst, his spread cloak and angular limbs defined by the surrounding masonry. This is an interpretive graphic cutout representing his movement, rather than a literal opening in the wall.",
+      "secondaryMotif": "One large locked doorway at the tower’s foot contains a small but robust captive silhouette: Harker’s imprisonment discovered beneath the apparent grandeur. The captive’s placement is interpretive, grounded in his account of confinement.",
+      "rationale": "The castle’s imposing welcome conceals both a prisoner and a host whose bodily movement violates human expectations. Architecture supplies the immediate read; Dracula’s descent supplies the unsettling discovery.",
+      "evidence": [
+        {
+          "paragraphId": "p119",
+          "quote": "The castle is on the very edge of a terrible precipice."
+        },
+        {
+          "paragraphId": "p149",
+          "quote": "his cloak spreading out around him like great wings."
+        },
+        {
+          "paragraphId": "p121",
+          "quote": "The castle is a veritable prison, and I am a prisoner!"
+        },
+        {
+          "paragraphId": "p67",
+          "quote": "Enter freely and of your own will!"
+        }
+      ],
+      "dominant": "#751D32",
+      "accent": null,
+      "background": "#F4EBDD",
+      "conversionRationale": "The single opaque oxblood mass carries 100% of visible artwork. Broad battlements, exaggerated limbs, and transparent channels at least 2% of canvas width preserve the castle and descending figure when replaced by characters. Omit masonry patterns, window grids, and facial details."
+    },
+    {
+      "id": "the-faithful-helm",
+      "name": "The Faithful Helm",
+      "dominantMass": "A compact sailing-ship tableau: two substantial filled sails, thick masts, and a deep hull span approximately 75% of the portrait canvas, surrounded by transparency.",
+      "subject": "Thumbnail read: a tall merchant ship bearing an unnaturally heavy cargo.",
+      "negativeSpace": "A large transparent opening between the sails reveals an upright captain bound to a simplified wheel. Keep the wheel to a thick hub and four substantial spokes; the body and bindings remain broad opaque shapes.",
+      "secondaryMotif": "An interpretive cutaway in the hull exposes one oversized earth-filled wooden box. Its rectangular cavity echoes a grave, connecting ordinary freight with the voyage’s hidden danger without identifying the log’s unnamed passenger as a directly witnessed Dracula.",
+      "rationale": "Duty remains at the helm while predatory displacement travels below. The contrast between the captain’s exposed body and the concealed cargo makes the novel’s maritime invasion legible through the ship itself.",
+      "evidence": [
+        {
+          "paragraphId": "p385",
+          "quote": "is called the _Demeter_."
+        },
+        {
+          "paragraphId": "p379",
+          "quote": "lashed to the helm was a corpse"
+        },
+        {
+          "paragraphId": "p426",
+          "quote": "I am captain, and I must not leave my ship."
+        },
+        {
+          "paragraphId": "p219",
+          "quote": "the earth placed in great wooden boxes"
+        }
+      ],
+      "dominant": "#163C49",
+      "accent": null,
+      "background": "#F4EBDD",
+      "conversionRationale": "Deep petroleum blue carries 100% of visible artwork. Filled sails and a substantial hull provide continuous character-bearing areas. All rigging is omitted; essential masts, bindings, spokes, and gaps are at least 1.5% of canvas width. The cargo discovery uses one large box rather than many small containers."
+    },
+    {
+      "id": "the-held-and-enclosed",
+      "name": "The Held and Enclosed",
+      "dominantMass": "Two oversized hands clasp around a central human profile, creating one compact, vertically rising tableau spanning approximately 70% of the portrait canvas with a transparent perimeter.",
+      "subject": "Thumbnail read: a protective clasp of hands sheltering a woman.",
+      "negativeSpace": "The space between the palms forms Mina’s clear profile, with a broad forehead, nose, lips, and neck. The enclosing hands simultaneously suggest comfort and restricted freedom.",
+      "secondaryMotif": "A single opaque vermilion mark rests against the forehead contour. Mina’s scar identifies the sheltered person and reveals the peril beneath the gesture of care. The hands-as-enclosure construction is explicitly an interpretation of protection and exclusion, not a literal scene or a claim that Mina bears moral guilt.",
+      "rationale": "This intimate direction places Mina and collective devotion at the center. The same geometry that protects her also confines her, expressing the group’s reliance on her intelligence alongside its attempts to withhold knowledge.",
+      "evidence": [
+        {
+          "paragraphId": "p1711",
+          "quote": "all holding hands, swore to be true to each other."
+        },
+        {
+          "paragraphId": "p1465",
+          "quote": "Henceforth our work is to be a sealed book to her,"
+        },
+        {
+          "paragraphId": "p2111",
+          "quote": "the ring, which she could not leave no more than they could enter."
+        },
+        {
+          "paragraphId": "p1710",
+          "quote": "leave your forehead as pure as the heart we know."
+        }
+      ],
+      "dominant": "#E8D8B7",
+      "accent": "#EF6351",
+      "background": "#111820",
+      "conversionRationale": "Opaque warm ivory carries at least 95% of visible artwork; vermilion is confined to the forehead mark. Merge fingers into broad readable groups, omit nails and creases, and keep the profile opening and every essential stroke at least 2% of canvas width. The scar should be a substantial shape, never a tiny dot."
+    }
+  ],
+  "recommendedId": "the-descending-host",
+  "recommendation": "Recommend The Descending Host. The precipice castle provides immediate recognition, while the descending, winglike cloak and imprisoned guest make the discovery specific to Stoker’s text. Its continuous architectural mass offers the strongest character-grid resilience, and the broad figure-shaped channel makes negative space carry the central revelation. The ship is equally distinctive in theme but requires more structural strokes; the hands offer emotional depth but weaker immediate Dracula recognition. All three directions require truly transparent RGBA masters with fully opaque flat fills, separate poster backgrounds, crisp contours, and no lettering, frames, texture, shading, or decorative detail."
+}

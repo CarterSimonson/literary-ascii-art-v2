@@ -1,0 +1,50 @@
+{
+  "version": "1",
+  "title": "The Odyssey: Rendered into English prose for the use of those who cannot read the original",
+  "author": "Homer",
+  "source": "https://www.gutenberg.org/ebooks/1727.txt.utf-8",
+  "textHash": "c663f465390ecd9219fb5136c4bf97bc78ac730dfa76e2c3d6800e3d0f8029cc",
+  "fontHash": "8bc66a0154bbf69cd24e5bde41a12ec9495c8a242c5def2255e4a164900f1ed7",
+  "candidates": [
+    {
+      "id": "the-hidden-passenger",
+      "name": "The Hidden Passenger",
+      "raw": "the-hidden-passenger.png",
+      "rawHash": "0a61f3d1a52e11c11b22748da518bc81fea872353b89ff712fc506cc1e0c1add",
+      "prepared": "the-hidden-passenger.prepared.png",
+      "preparedHash": "4e201f1a7eee1cfc3eb7f0840a38b6ec5a53690300a7328acd760fd0a19a20d6",
+      "palette": [
+        "#183D43"
+      ],
+      "background": "#F5EEDD",
+      "expectedPixelHash": "99b5fc4fa5f857cf7e5bf395cc421d5305348588d23505da622deac5a6f93785"
+    },
+    {
+      "id": "the-bed-that-cannot-leave",
+      "name": "The Bed That Cannot Leave",
+      "raw": "the-bed-that-cannot-leave.png",
+      "rawHash": "3a1a5135a94d8afeafad5cdd49fe771cf5feb4ce01e4d4167fe18e984bd85783",
+      "prepared": "the-bed-that-cannot-leave.prepared.png",
+      "preparedHash": "867ede0e1c62b53b1b5b984f2de4cf1cd143faec871b127a05043127f3135486",
+      "palette": [
+        "#344938",
+        "#8C302D"
+      ],
+      "background": "#F5EEDD",
+      "expectedPixelHash": "95530c97571adbce9a04ca96487d947306de6ebb5747466bda87eaa8d9a8a3e4"
+    },
+    {
+      "id": "the-horse-inside-the-mantle",
+      "name": "The Horse Inside the Mantle",
+      "raw": "the-horse-inside-the-mantle.png",
+      "rawHash": "9e820ddf09b8499ee986638f4673231a61c10a128831d84580b420983e7dfeeb",
+      "prepared": "the-horse-inside-the-mantle.prepared.png",
+      "preparedHash": "18f50de3a4ab55c846b8b3324d914a6b95cee7e629050f5911a6b2e4fb3ceb6e",
+      "palette": [
+        "#512C59"
+      ],
+      "background": "#F5EEDD",
+      "expectedPixelHash": "400269912c2571e502b9d60c8c466673543360a25875e2a5c1c1ec4b9ed02645"
+    }
+  ]
+}

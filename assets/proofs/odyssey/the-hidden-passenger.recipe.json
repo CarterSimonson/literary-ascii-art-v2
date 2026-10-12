@@ -1,0 +1,38 @@
+{
+  "version": "book-drafts-v1",
+  "bookId": "gutenberg-1727",
+  "bodyHash": "c663f465390ecd9219fb5136c4bf97bc78ac730dfa76e2c3d6800e3d0f8029cc",
+  "researchHash": "7752c2be99e88d910704d6752eb597ea0729116945f4c544a096c8d38690b7a1",
+  "concept": {
+    "id": "the-hidden-passenger",
+    "name": "The Hidden Passenger",
+    "dominantMass": "One monumental ram in side profile, its heavy fleece forming a continuous mass. Its body spans about 78% of canvas width; the horn, back, legs and concealed passenger together span about 75% of canvas height.",
+    "subject": "Primary thumbnail read: a powerful ram with an oversized curled horn and blunt, unmistakable muzzle.",
+    "negativeSpace": "A broad transparent channel beneath the belly reveals a crouched human profile, bent knees and gripping arms. The human silhouette remains attached to the fleece through the hands; generous openings separate the limbs and distinguish the passenger from the animal.",
+    "secondaryMotif": "Discovery: Ulysses concealed beneath the ram. The animal’s apparent independence resolves into a coordinated escape. The compact pose and enlarged horn are pictorial interpretation; concealment beneath the fleece is literal.",
+    "rationale": "Transforms livestock into the architecture of survival: brute animal mass shelters human cunning. The reversed hierarchy makes the hero a hidden passenger rather than a commanding warrior. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills.",
+    "evidence": [
+      {
+        "paragraphId": "p418",
+        "quote": "carried a heavy black fleece,"
+      },
+      {
+        "paragraphId": "p418",
+        "quote": "the thick wool under his belly,"
+      },
+      {
+        "paragraphId": "p418",
+        "quote": "There was to be a man under the middle sheep,"
+      },
+      {
+        "paragraphId": "p415",
+        "quote": "Noman is killing me by fraud;"
+      }
+    ],
+    "dominant": "#183D43",
+    "accent": null,
+    "background": "#F5EEDD",
+    "conversionRationale": "One color carries 100% of visible artwork. Broad fleece provides ample text-bearing area; omit wool texture. Make the horn opening, human-profile channel and leg separations at least 2% of canvas width, and every essential connecting stroke at least 1.5%. Recognition rests on silhouette and large openings, without facial details or thin bindings."
+  },
+  "prompt": "Generate one original literary illustration inspired by The Odyssey: Rendered into English prose for the use of those who cannot read the original by Homer. Use the built-in image generation tool exactly once, with transparent_background=true. No paid APIs, API keys, scripts, vector placeholders, or alternate providers.\nConcept: One monumental ram in side profile, its heavy fleece forming a continuous mass. Its body spans about 78% of canvas width; the horn, back, legs and concealed passenger together span about 75% of canvas height.. Primary subject: Primary thumbnail read: a powerful ram with an oversized curled horn and blunt, unmistakable muzzle.. Negative space: A broad transparent channel beneath the belly reveals a crouched human profile, bent knees and gripping arms. The human silhouette remains attached to the fleece through the hands; generous openings separate the limbs and distinguish the passenger from the animal.. Integrate: Discovery: Ulysses concealed beneath the ram. The animal’s apparent independence resolves into a coordinated escape. The compact pose and enlarged horn are pictorial interpretation; concealment beneath the fleece is literal.. Literary meaning: Transforms livestock into the architecture of survival: brute animal mass shelters human cunning. The reversed hierarchy makes the hero a hidden passenger rather than a commanding warrior. Use a purely pictorial 2:3 transparent RGBA master with a deliberate transparent perimeter and crisp, fully opaque flat fills..\nPalette: solid #183D43 with no accent. Intended finished-poster background #F5EEDD; DO NOT paint that background.\nPurely pictorial 2:3 portrait with a truly transparent RGBA background and deliberate transparent perimeter. One dominant text-bearing mass or compact tableau, occupying 65–85% of the canvas extent. A recognizable primary subject plus an integrated secondary literary discovery. Strong negative-space storytelling, large continuous shapes, crisp clean contours. Every essential stroke and negative-space gap at least 1% of canvas width. Flat fully opaque fills: one dominant artwork color carries at least 80% of visible artwork; at most one accent. Strong contrast with separate warm off-white or near-black poster background. No titles, authors, words, letters, numbers, logos, signatures, watermarks, borders, frames, mockups, paper, checkerboard, gradients, shading, lighting, glow, blur, haze, semitransparency, grain, texture, halftones, hairlines, tiny decorative details, photorealism, or 3D. The subject must survive replacement by monospaced book characters.\nDeliver a native 2:3 portrait transparent PNG. Inspect the result without calling generation again. Return success and the original generated PNG absolute path under generated_images. Do not copy or edit the PNG; the application retains/prepares it. If the tool cannot generate, return success false and an empty path. Aesthetic review/promotion happen later, so do not ask for concept approval."
+}

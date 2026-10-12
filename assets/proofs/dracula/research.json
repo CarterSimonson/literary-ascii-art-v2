@@ -1,0 +1,3699 @@
+{
+  "bodyHash": "c91ec4b827d91214e7bfead73fb99c18e7ce43c7a247d0afbabc7dc83b49f613",
+  "coverage": [
+    {
+      "first": "p21",
+      "last": "p481",
+      "paragraphs": 461
+    },
+    {
+      "first": "p482",
+      "last": "p1163",
+      "paragraphs": 682
+    },
+    {
+      "first": "p1164",
+      "last": "p1726",
+      "paragraphs": 563
+    },
+    {
+      "first": "p1727",
+      "last": "p2163",
+      "paragraphs": 437
+    }
+  ],
+  "notes": [
+    {
+      "summary": "The section follows Jonathan Harker from railway travel through the Carpathians into Dracula’s castle, where hospitality becomes imprisonment, correspondence is controlled, and escape remains unresolved. It then expands into letters, medical diaries, coastal observation, and the Demeter’s log: courtship and friendship coexist with Renfield’s consumption of animals, Lucy’s sleepwalking and decline, a ship’s disappearing crew, and the transport of earth-filled boxes to Carfax. The ending offers apparent recovery while Lucy recalls an uncanny encounter involving red eyes, drowning sensations, and separation from her body.",
+      "themes": [
+        {
+          "name": "Crossing geographical and cultural boundaries",
+          "meaning": "Travel becomes a passage into unfamiliar customs and uncertain knowledge. The West–East distinction belongs to Harker’s perspective.",
+          "evidence": [
+            {
+              "paragraphId": "p21",
+              "quote": "leaving the West and entering the East"
+            },
+            {
+              "paragraphId": "p99",
+              "quote": "Our ways are not your ways"
+            }
+          ]
+        },
+        {
+          "name": "Beauty entangled with danger",
+          "meaning": "Mountain and coastal beauty repeatedly provide comfort while concealing or framing threats.",
+          "evidence": [
+            {
+              "paragraphId": "p42",
+              "quote": "lost sight and recollection of ghostly fears in the beauty of the scene"
+            },
+            {
+              "paragraphId": "p119",
+              "quote": "The castle is on the very edge of a terrible precipice."
+            },
+            {
+              "paragraphId": "p440",
+              "quote": "something dark stood behind the seat where the white figure shone, and bent over it."
+            }
+          ]
+        },
+        {
+          "name": "Hospitality becoming coercion",
+          "meaning": "Welcoming language, food, warmth, and courtesy become instruments of possession and constrained choice.",
+          "evidence": [
+            {
+              "paragraphId": "p67",
+              "quote": "Enter freely and of your own will!"
+            },
+            {
+              "paragraphId": "p140",
+              "quote": "I will take no refusal."
+            },
+            {
+              "paragraphId": "p235",
+              "quote": "only the Count’s body stood in the gap."
+            }
+          ]
+        },
+        {
+          "name": "Captivity and desperate agency",
+          "meaning": "Locked interiors and inaccessible landscapes force Harker toward concealment, investigation, climbing, and a final unresolved escape attempt.",
+          "evidence": [
+            {
+              "paragraphId": "p121",
+              "quote": "The castle is a veritable prison, and I am a prisoner!"
+            },
+            {
+              "paragraphId": "p124",
+              "quote": "keep my knowledge and my fears to myself, and my eyes open."
+            },
+            {
+              "paragraphId": "p252",
+              "quote": "I shall try to scale the castle wall farther than I have yet attempted."
+            }
+          ]
+        },
+        {
+          "name": "Faith, superstition, and tangible sympathy",
+          "meaning": "Protective gestures and sacred objects challenge Harker’s initial disbelief; their power is experienced through both events and remembered human kindness.",
+          "evidence": [
+            {
+              "paragraphId": "p37",
+              "quote": "all the evil things in the world will have full sway?"
+            },
+            {
+              "paragraphId": "p125",
+              "quote": "a tangible help, in conveying memories of sympathy and comfort?"
+            },
+            {
+              "paragraphId": "p426",
+              "quote": "I shall save my soul, and my honour as a captain."
+            }
+          ]
+        },
+        {
+          "name": "Documentation as evidence and emotional survival",
+          "meaning": "Journals, shorthand, letters, recordings, and logs preserve observations and steady distressed minds, although interpretation remains fallible.",
+          "evidence": [
+            {
+              "paragraphId": "p156",
+              "quote": "The habit of entering accurately must help to soothe me."
+            },
+            {
+              "paragraphId": "p290",
+              "quote": "(Kept in phonograph)"
+            },
+            {
+              "paragraphId": "p390",
+              "quote": "I shall keep accurate note henceforth till we land."
+            },
+            {
+              "paragraphId": "p358",
+              "quote": "it is like whispering to one’s self and listening at the same time."
+            }
+          ]
+        },
+        {
+          "name": "Secrecy, falsified messages, and stolen identity",
+          "meaning": "Communication can conceal danger, manufacture an apparent departure, or misrepresent the person seen by witnesses.",
+          "evidence": [
+            {
+              "paragraphId": "p187",
+              "quote": "held letter and envelope in the flame of the lamp till they were consumed."
+            },
+            {
+              "paragraphId": "p200",
+              "quote": "he had on the suit of clothes which I had worn whilst travelling here"
+            },
+            {
+              "paragraphId": "p362",
+              "quote": "It does not read like him, and yet it is his writing."
+            }
+          ]
+        },
+        {
+          "name": "Blood, appetite, and accumulated life",
+          "meaning": "Dracula’s blood-filled body and Renfield’s food chain offer parallel images of life appropriated through consumption; their direct connection is not established here.",
+          "evidence": [
+            {
+              "paragraphId": "p246",
+              "quote": "He lay like a filthy leech, exhausted with his repletion."
+            },
+            {
+              "paragraphId": "p339",
+              "quote": "it was life, strong life, and gave life to him."
+            },
+            {
+              "paragraphId": "p353",
+              "quote": "what he desires is to absorb as many lives as he can"
+            }
+          ]
+        },
+        {
+          "name": "Desire, kisses, and predation",
+          "meaning": "Harker’s simultaneous attraction and terror contrast with Lucy’s affectionate courtship, making kisses and intimate proximity carry divergent meanings.",
+          "evidence": [
+            {
+              "paragraphId": "p159",
+              "quote": "some longing and at the same time some deadly fear."
+            },
+            {
+              "paragraphId": "p162",
+              "quote": "the hard dents of two sharp teeth, just touching and pausing there."
+            },
+            {
+              "paragraphId": "p287",
+              "quote": "both his arms were round me, and he was kissing me."
+            }
+          ]
+        },
+        {
+          "name": "Sleep, unstable perception, and vulnerable bodies",
+          "meaning": "Dreams and waking observations overlap. Sleep exposes Harker and Lucy to experiences they cannot confidently explain.",
+          "evidence": [
+            {
+              "paragraphId": "p171",
+              "quote": "I must watch for proof."
+            },
+            {
+              "paragraphId": "p431",
+              "quote": "Lucy did not wake; but she got up twice and dressed herself."
+            },
+            {
+              "paragraphId": "p479",
+              "quote": "I didn’t quite dream; but it all seemed to be real."
+            }
+          ]
+        },
+        {
+          "name": "Night’s threat and morning’s provisional relief",
+          "meaning": "Dawn and cockcrow repeatedly interrupt danger, but daylight does not guarantee freedom or lasting recovery.",
+          "evidence": [
+            {
+              "paragraphId": "p129",
+              "quote": "everything has to break off at cockcrow"
+            },
+            {
+              "paragraphId": "p243",
+              "quote": "Then came the welcome cock-crow, and I felt that I was safe."
+            },
+            {
+              "paragraphId": "p244",
+              "quote": "But the door would not move."
+            }
+          ]
+        },
+        {
+          "name": "Ancient power moving through modern systems",
+          "meaning": "Old buildings, inherited violence, and buried earth coexist with professional law, railways, shipping, and precise commercial instructions.",
+          "evidence": [
+            {
+              "paragraphId": "p152",
+              "quote": "the old centuries had, and have, powers of their own which mere “modernity” cannot kill."
+            },
+            {
+              "paragraphId": "p128",
+              "quote": "Blood is too precious a thing in these days of dishonourable peace"
+            },
+            {
+              "paragraphId": "p463",
+              "quote": "invoice of goods sent by Great Northern Railway."
+            }
+          ]
+        },
+        {
+          "name": "Scientific curiosity and compromised care",
+          "meaning": "Seward recognises cruelty in his questioning but remains tempted by experimental knowledge and professional ambition.",
+          "evidence": [
+            {
+              "paragraphId": "p292",
+              "quote": "there was, I now see, something of cruelty."
+            },
+            {
+              "paragraphId": "p353",
+              "quote": "It would almost be worth while to complete the experiment."
+            }
+          ]
+        },
+        {
+          "name": "Death, memorials, and disputed truth",
+          "meaning": "Whitby’s inscriptions and legends provoke scepticism, while Swales’s later fear and the captain’s funeral restore mortality’s emotional force.",
+          "evidence": [
+            {
+              "paragraphId": "p316",
+              "quote": "Lies all of them, nothin’ but lies of one kind or another!"
+            },
+            {
+              "paragraphId": "p366",
+              "quote": "death be all that we can rightly depend on."
+            },
+            {
+              "paragraphId": "p434",
+              "quote": "his neck being broken."
+            }
+          ]
+        },
+        {
+          "name": "Apparent recovery and unresolved inward disturbance",
+          "meaning": "The section ends with Lucy’s improved appearance beside a disturbing recollection; ordinary happiness resumes without explaining the encounter.",
+          "evidence": [
+            {
+              "paragraphId": "p477",
+              "quote": "Lucy is ever so much better."
+            },
+            {
+              "paragraphId": "p479",
+              "quote": "my soul seemed to go out from my body and float about the air."
+            },
+            {
+              "paragraphId": "p480",
+              "quote": "we all spent a very happy evening together."
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Railways, stations, and timetables",
+          "meaning": "Settings and objects of ordinary travel become measures of delay, hoped-for escape, and the efficient transport of Dracula’s consignment.",
+          "evidence": [
+            {
+              "paragraphId": "p25",
+              "quote": "the further east you go the more unpunctual are the trains."
+            },
+            {
+              "paragraphId": "p253",
+              "quote": "away to the quickest and nearest train!"
+            },
+            {
+              "paragraphId": "p464",
+              "quote": "The goods leave by the train at 9:30 to-night"
+            }
+          ]
+        },
+        {
+          "name": "Regional meals and wine",
+          "meaning": "Food grounds the journey in sensory detail and domestic memories; abundant meals later sustain the appearance of hospitality.",
+          "evidence": [
+            {
+              "paragraphId": "p22",
+              "quote": "(_Mem._, get recipe for Mina.)"
+            },
+            {
+              "paragraphId": "p39",
+              "quote": "bits of bacon, onion, and beef, seasoned with red pepper"
+            },
+            {
+              "paragraphId": "p79",
+              "quote": "an excellent roast chicken."
+            }
+          ]
+        },
+        {
+          "name": "Golden Krone inn-yard",
+          "meaning": "A communal threshold of sympathy and warning, visually framed by an archway, potted foliage, and protective gestures.",
+          "evidence": [
+            {
+              "paragraphId": "p28",
+              "quote": "Golden Krone Hotel"
+            },
+            {
+              "paragraphId": "p41",
+              "quote": "oleander and orange trees in green tubs"
+            }
+          ]
+        },
+        {
+          "name": "Carpathian mountains and Borgo Pass",
+          "meaning": "The journey’s mountain setting changes from expansive colour to narrowing darkness, weather, and enclosure.",
+          "evidence": [
+            {
+              "paragraphId": "p43",
+              "quote": "deep blue and purple in the shadows of the peaks"
+            },
+            {
+              "paragraphId": "p46",
+              "quote": "we were entering on the Borgo Pass."
+            },
+            {
+              "paragraphId": "p55",
+              "quote": "trees, which in places arched right over the roadway"
+            }
+          ]
+        },
+        {
+          "name": "Local clothing and working wagons",
+          "meaning": "Specific garments and transport furnish grounded human silhouettes. Harker’s ethnic judgements should be distinguished from the visible details.",
+          "evidence": [
+            {
+              "paragraphId": "p26",
+              "quote": "enormous heavy leather belts, nearly a foot wide, all studded over with brass nails."
+            },
+            {
+              "paragraphId": "p45",
+              "quote": "a leiter-wagon--the ordinary peasant’s cart"
+            },
+            {
+              "paragraphId": "p196",
+              "quote": "two great leiter-wagons, each drawn by eight sturdy horses"
+            }
+          ]
+        },
+        {
+          "name": "Coach, calèche, horses, and whip",
+          "meaning": "Travel vehicles carry Harker from communal company into dependence on a frightening driver; frightened horses register approaching danger.",
+          "evidence": [
+            {
+              "paragraphId": "p47",
+              "quote": "a calèche, with four horses"
+            },
+            {
+              "paragraphId": "p47",
+              "quote": "coal-black and splendid animals."
+            },
+            {
+              "paragraphId": "p54",
+              "quote": "they reared again and plunged madly"
+            }
+          ]
+        },
+        {
+          "name": "Crucifix, rosary, and protective plants",
+          "meaning": "Portable protection links local compassion, Harker’s survival, his bedside refuge, and the captain’s final stand.",
+          "evidence": [
+            {
+              "paragraphId": "p125",
+              "quote": "the crucifix, of the garlic, of the wild rose, of the mountain ash?"
+            },
+            {
+              "paragraphId": "p147",
+              "quote": "I have placed the crucifix over the head of my bed"
+            },
+            {
+              "paragraphId": "p382",
+              "quote": "Between the inner hand and the wood was a crucifix"
+            }
+          ]
+        },
+        {
+          "name": "Dogs and wolves",
+          "meaning": "Howling recurs as warning, predatory enclosure, and distress. Canine responses also trouble the Whitby funeral scene.",
+          "evidence": [
+            {
+              "paragraphId": "p25",
+              "quote": "a dog howling all night under my window"
+            },
+            {
+              "paragraphId": "p57",
+              "quote": "a ring of wolves, with white teeth and lolling red tongues"
+            },
+            {
+              "paragraphId": "p434",
+              "quote": "quivering and cowering"
+            }
+          ]
+        },
+        {
+          "name": "Blue flames and arranged stones",
+          "meaning": "Small uncanny lights punctuate the mountain darkness; Dracula later explains them as signs of buried treasure within local belief.",
+          "evidence": [
+            {
+              "paragraphId": "p56",
+              "quote": "a faint flickering blue flame."
+            },
+            {
+              "paragraphId": "p56",
+              "quote": "gathering a few stones, formed them into some device."
+            },
+            {
+              "paragraphId": "p100",
+              "quote": "a blue flame is seen over any place where treasure has been concealed."
+            }
+          ]
+        },
+        {
+          "name": "Castle, courtyard, and precipice",
+          "meaning": "The castle combines ruined grandeur, dark openings, inhabited warmth, and sheer isolation.",
+          "evidence": [
+            {
+              "paragraphId": "p59",
+              "quote": "broken battlements showed a jagged line against the moonlit sky."
+            },
+            {
+              "paragraphId": "p62",
+              "quote": "great round arches"
+            },
+            {
+              "paragraphId": "p119",
+              "quote": "a sea of green tree tops"
+            }
+          ]
+        },
+        {
+          "name": "Doors, locks, chains, bolts, and keys",
+          "meaning": "Repeated physical barriers make control visible. The same objects later enable routine commercial access to Carfax.",
+          "evidence": [
+            {
+              "paragraphId": "p120",
+              "quote": "doors, doors, doors everywhere, and all locked and bolted."
+            },
+            {
+              "paragraphId": "p152",
+              "quote": "the door was locked, and the key was gone!"
+            },
+            {
+              "paragraphId": "p464",
+              "quote": "his duplicate key."
+            }
+          ]
+        },
+        {
+          "name": "Silver lamp and hearth fires",
+          "meaning": "Artificial light and warmth offer comfort while also casting unstable shadows; the lamp’s flame becomes an instrument for destroying communication.",
+          "evidence": [
+            {
+              "paragraphId": "p66",
+              "quote": "an antique silver lamp"
+            },
+            {
+              "paragraphId": "p71",
+              "quote": "a great fire of logs"
+            },
+            {
+              "paragraphId": "p187",
+              "quote": "the flame of the lamp"
+            }
+          ]
+        },
+        {
+          "name": "Shaving glass, razor, and blood",
+          "meaning": "Ordinary grooming exposes Dracula’s absent reflection and violent response to blood. The glass’s destruction removes a means of observation.",
+          "evidence": [
+            {
+              "paragraphId": "p117",
+              "quote": "there was no reflection of him in the mirror!"
+            },
+            {
+              "paragraphId": "p117",
+              "quote": "the blood was trickling over my chin."
+            },
+            {
+              "paragraphId": "p118",
+              "quote": "shattered into a thousand pieces"
+            }
+          ]
+        },
+        {
+          "name": "English library, atlas, and legal papers",
+          "meaning": "Books and documents embody Dracula’s careful preparation for England and his use of Harker’s professional knowledge.",
+          "evidence": [
+            {
+              "paragraphId": "p90",
+              "quote": "all relating to England and English life and customs and manners."
+            },
+            {
+              "paragraphId": "p111",
+              "quote": "little rings marked"
+            },
+            {
+              "paragraphId": "p104",
+              "quote": "plans and deeds and figures of all sorts."
+            }
+          ]
+        },
+        {
+          "name": "Carfax estate and ancient chapel",
+          "meaning": "The proposed English home repeats the castle’s enclosure, age, gloom, and association with burial.",
+          "evidence": [
+            {
+              "paragraphId": "p107",
+              "quote": "heavy old oak and iron, all eaten with rust."
+            },
+            {
+              "paragraphId": "p108",
+              "quote": "a deep, dark-looking pond or small lake"
+            },
+            {
+              "paragraphId": "p464",
+              "quote": "the ancient chapel of the mansion."
+            }
+          ]
+        },
+        {
+          "name": "Moonlit south rooms, couch, and dust",
+          "meaning": "An apparently freer, gentler domestic interior becomes the setting of Harker’s encounter with the three women.",
+          "evidence": [
+            {
+              "paragraphId": "p152",
+              "quote": "yellow moonlight, flooding in through the diamond panes"
+            },
+            {
+              "paragraphId": "p158",
+              "quote": "I drew a great couch out of its place"
+            },
+            {
+              "paragraphId": "p159",
+              "quote": "my own footsteps marked where I had disturbed the long accumulation of dust."
+            }
+          ]
+        },
+        {
+          "name": "Dracula’s body, hands, teeth, and cloak",
+          "meaning": "The supplied portrait emphasises age, pallor, a white moustache, unusual hands, sharp teeth, and inhuman movement.",
+          "evidence": [
+            {
+              "paragraphId": "p66",
+              "quote": "a long white moustache"
+            },
+            {
+              "paragraphId": "p82",
+              "quote": "hairs in the centre of the palm."
+            },
+            {
+              "paragraphId": "p101",
+              "quote": "long, sharp, canine teeth"
+            },
+            {
+              "paragraphId": "p149",
+              "quote": "his cloak spreading out around him like great wings."
+            }
+          ]
+        },
+        {
+          "name": "Moving bag",
+          "meaning": "A portable, partly concealed horror connects the women’s feeding scene with Dracula’s later excursion in Harker’s clothes.",
+          "evidence": [
+            {
+              "paragraphId": "p167",
+              "quote": "moved as though there were some living thing within it."
+            },
+            {
+              "paragraphId": "p167",
+              "quote": "as of a half-smothered child."
+            },
+            {
+              "paragraphId": "p200",
+              "quote": "slung over his shoulder the terrible bag"
+            }
+          ]
+        },
+        {
+          "name": "Earth-filled boxes, ruined chapel, and shovel",
+          "meaning": "Burial architecture becomes a loading site. Boxes link Dracula’s resting body to the ship’s cargo and its eventual delivery to England.",
+          "evidence": [
+            {
+              "paragraphId": "p219",
+              "quote": "the earth placed in great wooden boxes"
+            },
+            {
+              "paragraphId": "p220",
+              "quote": "on a pile of newly dug earth, lay the Count!"
+            },
+            {
+              "paragraphId": "p246",
+              "quote": "I seized a shovel"
+            },
+            {
+              "paragraphId": "p464",
+              "quote": "the boxes, fifty in number"
+            }
+          ]
+        },
+        {
+          "name": "Ancient gold",
+          "meaning": "Accumulated, dust-covered wealth suggests long duration and becomes a practical resource for Harker’s proposed escape.",
+          "evidence": [
+            {
+              "paragraphId": "p218",
+              "quote": "a great heap of gold"
+            },
+            {
+              "paragraphId": "p252",
+              "quote": "I shall take some of the gold with me"
+            }
+          ]
+        },
+        {
+          "name": "Letters, shorthand, typewriter, and phonograph",
+          "meaning": "Distinct recording technologies connect intimate relationships, professional work, clinical observation, and attempts to evade surveillance.",
+          "evidence": [
+            {
+              "paragraphId": "p142",
+              "quote": "I could write in shorthand, which would puzzle the Count"
+            },
+            {
+              "paragraphId": "p259",
+              "quote": "write it out for him on the typewriter"
+            },
+            {
+              "paragraphId": "p290",
+              "quote": "(Kept in phonograph)"
+            }
+          ]
+        },
+        {
+          "name": "Lancet and silk hat",
+          "meaning": "Seward’s courtship props expose anxiety beneath professional composure.",
+          "evidence": [
+            {
+              "paragraphId": "p275",
+              "quote": "he almost managed to sit down on his silk hat"
+            },
+            {
+              "paragraphId": "p275",
+              "quote": "playing with a lancet"
+            }
+          ]
+        },
+        {
+          "name": "Flies, spiders, sparrows, sugar, and notebook",
+          "meaning": "Renfield’s small creatures form an escalating chain of consumption, accompanied by calculated numerical records and renewed baiting.",
+          "evidence": [
+            {
+              "paragraphId": "p337",
+              "quote": "He keeps feeding them with his flies"
+            },
+            {
+              "paragraphId": "p339",
+              "quote": "a little note-book"
+            },
+            {
+              "paragraphId": "p349",
+              "quote": "spreading out his sugar"
+            },
+            {
+              "paragraphId": "p353",
+              "quote": "many flies to one spider and many spiders to one bird"
+            }
+          ]
+        },
+        {
+          "name": "Whitby harbour, abbey, churchyard, and steps",
+          "meaning": "A carefully described coastal setting joins leisure, historical ruins, maritime danger, graves, and the route of Mina’s rescue.",
+          "evidence": [
+            {
+              "paragraphId": "p307",
+              "quote": "the ruin of Whitby Abbey"
+            },
+            {
+              "paragraphId": "p308",
+              "quote": "a narrow opening into the harbour"
+            },
+            {
+              "paragraphId": "p313",
+              "quote": "they wind up in a delicate curve"
+            }
+          ]
+        },
+        {
+          "name": "Churchyard seat and inscribed slab",
+          "meaning": "A favoured social and contemplative place accumulates disputed biography, death, animal terror, and Lucy’s nocturnal encounter.",
+          "evidence": [
+            {
+              "paragraphId": "p325",
+              "quote": "a slab, on which the seat was rested, close to the edge of the cliff."
+            },
+            {
+              "paragraphId": "p434",
+              "quote": "Mr. Swales was found dead this morning on our seat"
+            },
+            {
+              "paragraphId": "p477",
+              "quote": "on this very seat, I found her asleep."
+            }
+          ]
+        },
+        {
+          "name": "Storm, sea-fog, lighthouse, and searchlight",
+          "meaning": "Weather alternately conceals and reveals the coast; modern illumination assists rescue and exposes the dead helmsman.",
+          "evidence": [
+            {
+              "paragraphId": "p377",
+              "quote": "white, wet clouds, which swept by in ghostly fashion"
+            },
+            {
+              "paragraphId": "p378",
+              "quote": "the new searchlight was ready for experiment"
+            },
+            {
+              "paragraphId": "p379",
+              "quote": "lashed to the helm was a corpse"
+            }
+          ]
+        },
+        {
+          "name": "Demeter, wheel, cords, bottle, and log",
+          "meaning": "The ship becomes an isolated workplace of attrition. Its captain binds duty, faith, and testimony to the helm.",
+          "evidence": [
+            {
+              "paragraphId": "p385",
+              "quote": "is called the _Demeter_."
+            },
+            {
+              "paragraphId": "p382",
+              "quote": "the cords with which he was tied had cut the flesh to the bone."
+            },
+            {
+              "paragraphId": "p382",
+              "quote": "a bottle, carefully corked"
+            },
+            {
+              "paragraphId": "p426",
+              "quote": "I must not leave my ship."
+            }
+          ]
+        },
+        {
+          "name": "Escaping dog, circling bat, and uncertain window creature",
+          "meaning": "Animal appearances mark successive coastal disturbances. Their identities and possible transformations remain unconfirmed within this section.",
+          "evidence": [
+            {
+              "paragraphId": "p380",
+              "quote": "an immense dog sprang up on deck from below"
+            },
+            {
+              "paragraphId": "p450",
+              "quote": "a great bat, coming and going in great whirling circles."
+            },
+            {
+              "paragraphId": "p453",
+              "quote": "something that looked like a good-sized bird."
+            }
+          ]
+        },
+        {
+          "name": "White nightdress, shawl, safety-pin, and throat wounds",
+          "meaning": "Mina’s protective wrapping becomes entangled with her mistaken or uncertain explanation of Lucy’s injuries.",
+          "evidence": [
+            {
+              "paragraphId": "p440",
+              "quote": "a half-reclining figure, snowy white."
+            },
+            {
+              "paragraphId": "p441",
+              "quote": "fastened the shawl at her throat with a big safety-pin"
+            },
+            {
+              "paragraphId": "p444",
+              "quote": "two little red points like pin-pricks"
+            },
+            {
+              "paragraphId": "p459",
+              "quote": "little white dots with red centres."
+            }
+          ]
+        },
+        {
+          "name": "Wrist-bound key and secured window",
+          "meaning": "Domestic safeguards express Mina’s vigilance, while Lucy’s continued disturbance reveals their practical limits.",
+          "evidence": [
+            {
+              "paragraphId": "p442",
+              "quote": "the key is tied to my wrist"
+            },
+            {
+              "paragraphId": "p454",
+              "quote": "the window securely fastened."
+            },
+            {
+              "paragraphId": "p459",
+              "quote": "she gets up and walks about the room"
+            }
+          ]
+        },
+        {
+          "name": "Deep green water and aerial perspective",
+          "meaning": "The closing recollection turns Lucy’s altered consciousness into a drowning-and-flight image, explicitly presented as subjective memory.",
+          "evidence": [
+            {
+              "paragraphId": "p479",
+              "quote": "sinking into deep green water"
+            },
+            {
+              "paragraphId": "p479",
+              "quote": "the West Lighthouse was right under me"
+            },
+            {
+              "paragraphId": "p479",
+              "quote": "I saw you do it before I felt you."
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Harker and Dracula",
+          "meaning": "A solicitor–client and guest–host relationship becomes captivity, surveillance, exploitation, and threatened disposal.",
+          "evidence": [
+            {
+              "paragraphId": "p96",
+              "quote": "agent of my friend Peter Hawkins"
+            },
+            {
+              "paragraphId": "p164",
+              "quote": "This man belongs to me!"
+            },
+            {
+              "paragraphId": "p141",
+              "quote": "if I wished it I could have no choice."
+            }
+          ]
+        },
+        {
+          "name": "Harker and the local protectors",
+          "meaning": "The landlady and passengers respond to his journey with fear, gifts, blessings, and sympathy that later sustain him.",
+          "evidence": [
+            {
+              "paragraphId": "p37",
+              "quote": "For your mother’s sake,"
+            },
+            {
+              "paragraphId": "p46",
+              "quote": "each was given in simple good faith, with a kindly word, and a blessing"
+            },
+            {
+              "paragraphId": "p125",
+              "quote": "Bless that good, good woman"
+            }
+          ]
+        },
+        {
+          "name": "Dracula, the driver, and wolves",
+          "meaning": "Harker increasingly identifies the driver with Dracula; both figures appear to exercise extraordinary command over wolves.",
+          "evidence": [
+            {
+              "paragraphId": "p68",
+              "quote": "I doubted if it were not the same person"
+            },
+            {
+              "paragraphId": "p58",
+              "quote": "the wolves fell back and back further still."
+            },
+            {
+              "paragraphId": "p233",
+              "quote": "almost as if the sound sprang up at the rising of his hand"
+            }
+          ]
+        },
+        {
+          "name": "Dracula and the three women",
+          "meaning": "He controls their access to Harker, asserts possession, and bargains over future feeding; their shared past remains unspecified.",
+          "evidence": [
+            {
+              "paragraphId": "p165",
+              "quote": "You yourself never loved; you never love!"
+            },
+            {
+              "paragraphId": "p166",
+              "quote": "when I am done with him you shall kiss him at your will."
+            },
+            {
+              "paragraphId": "p239",
+              "quote": "To-night is mine. To-morrow night is yours!"
+            }
+          ]
+        },
+        {
+          "name": "Harker and Mina",
+          "meaning": "Engagement, shared shorthand, practical cooperation, longing, and farewell bind them across obstructed communication.",
+          "evidence": [
+            {
+              "paragraphId": "p259",
+              "quote": "When we are married I shall be able to be useful to Jonathan"
+            },
+            {
+              "paragraphId": "p254",
+              "quote": "Good-bye, all! Mina!"
+            },
+            {
+              "paragraphId": "p333",
+              "quote": "I wonder where Jonathan is and if he is thinking of me!"
+            }
+          ]
+        },
+        {
+          "name": "Harker and Hawkins",
+          "meaning": "Professional loyalty and paternal affection intensify Harker’s obligation and make Hawkins a hoped-for channel home.",
+          "evidence": [
+            {
+              "paragraphId": "p78",
+              "quote": "has grown into manhood in my service."
+            },
+            {
+              "paragraphId": "p216",
+              "quote": "my faithful friend and second father"
+            },
+            {
+              "paragraphId": "p182",
+              "quote": "I simply ask Mr. Hawkins to communicate with her."
+            }
+          ]
+        },
+        {
+          "name": "Dracula and commercial intermediaries",
+          "meaning": "Solicitors, bankers, carriers, and castle workers facilitate his plans through fragmented instructions and ordinary business procedures.",
+          "evidence": [
+            {
+              "paragraphId": "p135",
+              "quote": "do not like the whole of their affairs to be known by any one person."
+            },
+            {
+              "paragraphId": "p187",
+              "quote": "The Szgany has given me these"
+            },
+            {
+              "paragraphId": "p472",
+              "quote": "Goods are delivered in exact accordance with instructions"
+            }
+          ]
+        },
+        {
+          "name": "Mother, missing child, and Dracula’s wolves",
+          "meaning": "A mother’s demand meets overwhelming predatory force; Harker witnesses sounds and aftermath rather than a fully visible account of either death.",
+          "evidence": [
+            {
+              "paragraphId": "p206",
+              "quote": "Monster, give me my child!"
+            },
+            {
+              "paragraphId": "p208",
+              "quote": "a pack of them poured"
+            },
+            {
+              "paragraphId": "p209",
+              "quote": "they streamed away singly, licking their lips."
+            }
+          ]
+        },
+        {
+          "name": "Mina and Lucy",
+          "meaning": "Longstanding intimate friendship becomes vigilant caregiving, physical rescue, mutual comfort, and protective secrecy.",
+          "evidence": [
+            {
+              "paragraphId": "p267",
+              "quote": "we have told all our secrets to each other since we were _children_"
+            },
+            {
+              "paragraphId": "p441",
+              "quote": "I put my shoes on her feet"
+            },
+            {
+              "paragraphId": "p448",
+              "quote": "sympathy can’t alter facts, it can help to make them more bearable."
+            }
+          ]
+        },
+        {
+          "name": "Lucy and Arthur",
+          "meaning": "Mutual romantic attachment and anticipated marriage offer happiness amid illness, absence, and mounting uncertainty.",
+          "evidence": [
+            {
+              "paragraphId": "p267",
+              "quote": "Arthur says that every day."
+            },
+            {
+              "paragraphId": "p287",
+              "quote": "such a lover, such a husband, and such a friend."
+            },
+            {
+              "paragraphId": "p331",
+              "quote": "Arthur and their coming marriage."
+            }
+          ]
+        },
+        {
+          "name": "Lucy, Seward, and Quincey",
+          "meaning": "Rejected proposals become offers of enduring friendship, with Lucy expressing sympathy rather than simple triumph.",
+          "evidence": [
+            {
+              "paragraphId": "p275",
+              "quote": "if I ever wanted a friend I must count him one of my best."
+            },
+            {
+              "paragraphId": "p280",
+              "quote": "a very faithful friend."
+            },
+            {
+              "paragraphId": "p284",
+              "quote": "only I don’t want to be free."
+            }
+          ]
+        },
+        {
+          "name": "Arthur, Quincey, and Seward",
+          "meaning": "Shared adventures and generosity preserve male friendship across romantic rivalry.",
+          "evidence": [
+            {
+              "paragraphId": "p298",
+              "quote": "dressed one another’s wounds"
+            },
+            {
+              "paragraphId": "p298",
+              "quote": "mingle our weeps over the wine-cup"
+            },
+            {
+              "paragraphId": "p303",
+              "quote": "Count me in every time."
+            }
+          ]
+        },
+        {
+          "name": "Seward and Renfield",
+          "meaning": "Clinical authority, dependence, fascination, and experimental temptation structure an unequal relationship.",
+          "evidence": [
+            {
+              "paragraphId": "p347",
+              "quote": "his salvation depended upon it."
+            },
+            {
+              "paragraphId": "p353",
+              "quote": "took away his pocket-book to look at it."
+            },
+            {
+              "paragraphId": "p356",
+              "quote": "my poor mad friend"
+            }
+          ]
+        },
+        {
+          "name": "Mina, Lucy, and Mrs. Westenra",
+          "meaning": "Care is complicated by the mother’s hidden fatal illness and the belief that withholding distressing information protects her.",
+          "evidence": [
+            {
+              "paragraphId": "p358",
+              "quote": "we have decided that I am to lock the door of our room every night."
+            },
+            {
+              "paragraphId": "p457",
+              "quote": "She has not told Lucy, and made me promise secrecy"
+            },
+            {
+              "paragraphId": "p457",
+              "quote": "a sudden shock would be almost sure to kill her."
+            }
+          ]
+        },
+        {
+          "name": "Mina and Swales",
+          "meaning": "Curious conversation moves through disagreement into tenderness when the sceptical old sailor admits his fear and anticipation of death.",
+          "evidence": [
+            {
+              "paragraphId": "p318",
+              "quote": "Surely these tombstones are not all wrong?"
+            },
+            {
+              "paragraphId": "p365",
+              "quote": "I took his poor old wrinkled hand in mine"
+            },
+            {
+              "paragraphId": "p366",
+              "quote": "blessed me, and said good-bye"
+            }
+          ]
+        },
+        {
+          "name": "Demeter captain, crew, and mate",
+          "meaning": "Trust and discipline deteriorate under disappearances, exhaustion, and conflicting explanations; the captain ultimately remains at his post alone.",
+          "evidence": [
+            {
+              "paragraphId": "p400",
+              "quote": "Men all steady fellows, who sailed with me before."
+            },
+            {
+              "paragraphId": "p410",
+              "quote": "they fear to be alone."
+            },
+            {
+              "paragraphId": "p424",
+              "quote": "deliberately threw himself into the sea."
+            },
+            {
+              "paragraphId": "p426",
+              "quote": "I am captain, and I must not leave my ship."
+            }
+          ]
+        },
+        {
+          "name": "Lucy and the unidentified nocturnal presence",
+          "meaning": "Observed proximity, recurring red eyes, throat injuries, and Lucy’s final recollection suggest a predatory encounter without a fully explicit identification.",
+          "evidence": [
+            {
+              "paragraphId": "p440",
+              "quote": "a white face and red, gleaming eyes."
+            },
+            {
+              "paragraphId": "p453",
+              "quote": "His red eyes again! They are just the same."
+            },
+            {
+              "paragraphId": "p479",
+              "quote": "something very sweet and very bitter all around me at once"
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "Harker’s escape is proposed but not shown succeeding; the supplied section leaves his whereabouts unknown to Mina.",
+        "Harker suspects and later infers that Dracula was the carriage driver; this section does not provide an explicit confession.",
+        "Dracula’s genealogy and historical narrative are his own claims, not independently verified history.",
+        "Ethnic descriptions, gender generalisations, and psychiatric classifications belong to the narrators and speakers; they should not be treated as objective facts.",
+        "The blue flames’ connection to treasure is presented as a common belief explained by Dracula. The stone arrangement’s design is unspecified.",
+        "The three women are not named or explicitly identified as Dracula’s wives or brides. Their past relationship with him is unspecified.",
+        "Harker initially doubts whether the women’s encounter was a dream. The bag’s contents and the mother’s fate are strongly suggested through sounds and aftermath rather than fully witnessed.",
+        "The Demeter’s strange passenger is not explicitly named as Dracula in its log. The boxes, route, and consignee connect the voyage to his arrangements.",
+        "The escaping dog, circling bat, and bird-like shape are not explicitly established as Dracula’s transformations. The mastiff’s killer is unidentified.",
+        "The ship’s deaths and disappearances remain officially unresolved; the captain revises his own explanations during the voyage.",
+        "Swales’s broken neck is reported, but its cause is inferred rather than witnessed.",
+        "Mina attributes Lucy’s throat marks to the safety-pin; that attribution remains uncertain, especially as the wounds persist and enlarge.",
+        "Lucy’s drowning sensation and apparent separation from her body at the section’s end are subjective recollections, not independently verified events.",
+        "Lucy’s apparent improvement at the ending does not establish lasting recovery or resolve the nocturnal threat."
+      ]
+    },
+    {
+      "summary": "The section follows Jonathan’s recovery and marriage to Mina, Renfield’s shifting allegiance and violence, and Lucy’s unexplained blood loss, repeated transfusions, death, and disturbing return. Letters, diaries, telegrams, and newspaper reports gradually connect private suffering with public danger. The closing investigation finds Lucy’s coffin empty at night and occupied the following day; Van Helsing identifies her as Un-Dead, Seward begins to accept his explanation, and a proposed destructive intervention remains unperformed when the supplied text ends.",
+      "themes": [
+        {
+          "name": "Trust, marriage, and the duty to uncover secrets",
+          "meaning": "Mina’s marriage initially protects Jonathan from traumatic knowledge; later, care requires opening and sharing the record he entrusted to her.",
+          "evidence": [
+            {
+              "paragraphId": "p516",
+              "quote": "Are you willing, Wilhelmina, to share my ignorance?"
+            },
+            {
+              "paragraphId": "p520",
+              "quote": "an outward and visible sign for us all our lives that we trusted each other"
+            },
+            {
+              "paragraphId": "p964",
+              "quote": "The time is come, I fear, when I must open that parcel, and know what is written."
+            }
+          ]
+        },
+        {
+          "name": "Trauma, uncertainty, and restored agency",
+          "meaning": "Jonathan’s uncertainty about his own experience undermines his confidence; corroboration restores his ability to act against the Count.",
+          "evidence": [
+            {
+              "paragraphId": "p516",
+              "quote": "I do not know if it was all real or the dreaming of a madman."
+            },
+            {
+              "paragraphId": "p850",
+              "quote": "He begins to doubt himself."
+            },
+            {
+              "paragraphId": "p1063",
+              "quote": "But, now that I _know_, I am not afraid, even of the Count."
+            }
+          ]
+        },
+        {
+          "name": "Sleep as recovery and exposure to danger",
+          "meaning": "Sleep alternates between healing rest and feared vulnerability. Lucy’s sleeping and waking states eventually display different expressions and responses to protection.",
+          "evidence": [
+            {
+              "paragraphId": "p646",
+              "quote": "All this weakness comes to me in sleep; until I dread the very thought."
+            },
+            {
+              "paragraphId": "p650",
+              "quote": "a deep, tranquil, life-giving, health-giving sleep."
+            },
+            {
+              "paragraphId": "p856",
+              "quote": "when she waked she clutched them close."
+            },
+            {
+              "paragraphId": "p1159",
+              "quote": "In trance she died, and in trance she is Un-Dead, too."
+            }
+          ]
+        },
+        {
+          "name": "Blood as life, gift, and appetite",
+          "meaning": "Blood connects sacrificial care with violent consumption. Repeated donations sustain Lucy temporarily, while Renfield turns spilled blood into food.",
+          "evidence": [
+            {
+              "paragraphId": "p614",
+              "quote": "My life is hers, and I would give the last drop of blood in my body for her."
+            },
+            {
+              "paragraphId": "p758",
+              "quote": "The blood is the life! The blood is the life!"
+            },
+            {
+              "paragraphId": "p819",
+              "quote": "What took it out?"
+            }
+          ]
+        },
+        {
+          "name": "Evidence assembled against forgetting",
+          "meaning": "Written and recorded testimony preserves details that illness, exhaustion, secrecy, and disbelief might otherwise erase. Mina’s transcription makes private records available for investigation.",
+          "evidence": [
+            {
+              "paragraphId": "p606",
+              "quote": "knowledge is stronger than memory"
+            },
+            {
+              "paragraphId": "p998",
+              "quote": "I shall get my typewriter this very hour and begin transcribing."
+            },
+            {
+              "paragraphId": "p1031",
+              "quote": "This paper is as sunshine. It opens the gate to me."
+            }
+          ]
+        },
+        {
+          "name": "Scientific certainty challenged by unfamiliar evidence",
+          "meaning": "Seward repeatedly seeks ordinary explanations. Van Helsing asks him to preserve observation while loosening assumptions; the final pages show reluctant movement toward belief.",
+          "evidence": [
+            {
+              "paragraphId": "p1093",
+              "quote": "if it explain not, then it says there is nothing to explain."
+            },
+            {
+              "paragraphId": "p1100",
+              "quote": "we must not let him think himself all the truth in the universe."
+            },
+            {
+              "paragraphId": "p1135",
+              "quote": "Perhaps a body-snatcher,"
+            },
+            {
+              "paragraphId": "p1161",
+              "quote": "I am willing to accept."
+            }
+          ]
+        },
+        {
+          "name": "Secrecy, interrupted communication, and unintended harm",
+          "meaning": "Protective concealment and failed delivery prevent carers from sharing crucial knowledge. Well-intentioned actions can dismantle safeguards.",
+          "evidence": [
+            {
+              "paragraphId": "p603",
+              "quote": "You and I shall keep as yet what we know here, and here."
+            },
+            {
+              "paragraphId": "p706",
+              "quote": "I took them all away and opened a bit of the window"
+            },
+            {
+              "paragraphId": "p761",
+              "quote": "delivered late by twenty-two hours."
+            },
+            {
+              "paragraphId": "p948",
+              "quote": "even you may not see them yet"
+            }
+          ]
+        },
+        {
+          "name": "Cycles of light and changing behaviour",
+          "meaning": "Moonrise, dawn, noon, and sunset repeatedly frame Renfield’s alterations and Lucy’s illness. These are observed patterns; their mechanism is initially uncertain.",
+          "evidence": [
+            {
+              "paragraphId": "p537",
+              "quote": "violent all day then quiet from moonrise to sunrise."
+            },
+            {
+              "paragraphId": "p577",
+              "quote": "at the stroke of noon he became so violent"
+            },
+            {
+              "paragraphId": "p584",
+              "quote": "As it sank he became less and less frenzied"
+            },
+            {
+              "paragraphId": "p825",
+              "quote": "the red light streamed in through the window and gave more colour to the pale cheeks."
+            }
+          ]
+        },
+        {
+          "name": "Grief, loneliness, and companionship",
+          "meaning": "Bereavements accumulate across both households. Shared touch and presence offer comfort, while Van Helsing’s laughter expresses strain alongside sorrow.",
+          "evidence": [
+            {
+              "paragraphId": "p850",
+              "quote": "it really seems as though we had lost a father."
+            },
+            {
+              "paragraphId": "p926",
+              "quote": "A grip of the hand, the tightening of an arm over the shoulder, a sob in unison"
+            },
+            {
+              "paragraphId": "p971",
+              "quote": "we men and women are like ropes drawn tight with strain that pull us different ways."
+            },
+            {
+              "paragraphId": "p982",
+              "quote": "loneliness will sit over our roofs with brooding wings."
+            }
+          ]
+        },
+        {
+          "name": "Beauty concealing a changed and dangerous condition",
+          "meaning": "Lucy’s returning beauty unsettles observers because it contradicts expected decay. Tender intimacy becomes dangerous during her altered state.",
+          "evidence": [
+            {
+              "paragraphId": "p865",
+              "quote": "her eyes, which were now dull and hard at once"
+            },
+            {
+              "paragraphId": "p899",
+              "quote": "All Lucy’s loveliness had come back to her in death"
+            },
+            {
+              "paragraphId": "p1151",
+              "quote": "The lips were red, nay redder than before"
+            },
+            {
+              "paragraphId": "p1154",
+              "quote": "the little children can be bitten."
+            }
+          ]
+        },
+        {
+          "name": "False endings and an unfinished intervention",
+          "meaning": "Death, burial, and Seward’s attempted closure fail to end the danger. The supplied ending stops before Van Helsing performs his announced intervention.",
+          "evidence": [
+            {
+              "paragraphId": "p882",
+              "quote": "It is only the beginning!"
+            },
+            {
+              "paragraphId": "p1081",
+              "quote": "Truly there is no such thing as finality."
+            },
+            {
+              "paragraphId": "p1163",
+              "quote": "he stood as if wrapped in thought."
+            },
+            {
+              "paragraphId": "p1163",
+              "quote": "he closed the catch of his bag with a snap"
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Buda-Pesth hospital and the convalescent bedside",
+          "meaning": "A setting of religious nursing, physical frailty, and marriage; pillows and the bedside place commitment within recovery.",
+          "evidence": [
+            {
+              "paragraphId": "p483",
+              "quote": "Hospital of St. Joseph and Ste. Mary, Buda-Pesth"
+            },
+            {
+              "paragraphId": "p520",
+              "quote": "he sat up in bed, propped up with pillows."
+            }
+          ]
+        },
+        {
+          "name": "Letters held against the breast",
+          "meaning": "Paper becomes a bodily token of affection and testimony: Mina keeps news of Jonathan close to her heart, while Lucy hides her account for discovery.",
+          "evidence": [
+            {
+              "paragraphId": "p482",
+              "quote": "I can feel it wet against my bosom"
+            },
+            {
+              "paragraphId": "p773",
+              "quote": "I shall hide this paper in my breast"
+            }
+          ]
+        },
+        {
+          "name": "The sealed notebook, pale blue ribbon, and wedding-ring seal",
+          "meaning": "A precise visual ensemble joining traumatic memory to marital trust; the protected record later becomes necessary evidence.",
+          "evidence": [
+            {
+              "paragraphId": "p520",
+              "quote": "wrapped it up in white paper"
+            },
+            {
+              "paragraphId": "p520",
+              "quote": "a little bit of pale blue ribbon"
+            },
+            {
+              "paragraphId": "p520",
+              "quote": "for my seal I used my wedding ring."
+            }
+          ]
+        },
+        {
+          "name": "The asylum and its padded room",
+          "meaning": "A setting of surveillance, confinement, and suffering, with restraints marking the carers’ limited control over Renfield.",
+          "evidence": [
+            {
+              "paragraphId": "p506",
+              "quote": "he’s chained to the wall in the padded room."
+            },
+            {
+              "paragraphId": "p584",
+              "quote": "my own cold stone building, with its wealth of breathing misery"
+            }
+          ]
+        },
+        {
+          "name": "Carfax wall and ironbound chapel door",
+          "meaning": "A repeated destination for Renfield’s escapes, separating medical custody from his claimed service to a Master.",
+          "evidence": [
+            {
+              "paragraphId": "p503",
+              "quote": "the high wall which separates our grounds from those of the deserted house."
+            },
+            {
+              "paragraphId": "p504",
+              "quote": "the old ironbound oak door of the chapel."
+            },
+            {
+              "paragraphId": "p541",
+              "quote": "pressed against the old chapel door."
+            }
+          ]
+        },
+        {
+          "name": "Flies, spiders, sugar, and the fly-box",
+          "meaning": "Renfield’s small-scale collecting and eating recur as an alternative to waiting for his Master. Their abandonment and resumption register changes in allegiance and expectation.",
+          "evidence": [
+            {
+              "paragraphId": "p498",
+              "quote": "Spiders at present are his hobby"
+            },
+            {
+              "paragraphId": "p579",
+              "quote": "the sugar of his tea spread out on the window-sill"
+            },
+            {
+              "paragraphId": "p584",
+              "quote": "he took his fly-box, and emptied it outside, and threw away the box"
+            },
+            {
+              "paragraphId": "p1081",
+              "quote": "he had just started in the spider line also"
+            }
+          ]
+        },
+        {
+          "name": "Hillingham bedroom and its windows",
+          "meaning": "The principal setting of Lucy’s illness and attempted protection. Windowpanes, sashes, blinds, doors, and draughts turn domestic boundaries into vulnerable thresholds.",
+          "evidence": [
+            {
+              "paragraphId": "p687",
+              "quote": "he fastened up the windows and latched them securely"
+            },
+            {
+              "paragraphId": "p770",
+              "quote": "The window blind blew back with the wind that rushed in"
+            },
+            {
+              "paragraphId": "p777",
+              "quote": "Every window and door was fastened and locked"
+            }
+          ]
+        },
+        {
+          "name": "Bats and the sound of flapping",
+          "meaning": "A recurring disturbance outside windows and in the sky, connecting Lucy’s fear with Renfield’s abrupt changes without initially explaining them.",
+          "evidence": [
+            {
+              "paragraphId": "p541",
+              "quote": "a big bat, which was flapping its silent and ghostly way to the west."
+            },
+            {
+              "paragraphId": "p768",
+              "quote": "a big bat, which had evidently been buffeting its wings against the window."
+            },
+            {
+              "paragraphId": "p855",
+              "quote": "struck the window with its wings."
+            }
+          ]
+        },
+        {
+          "name": "Bersicker, the zoo cage, and broken glass",
+          "meaning": "The wolf moves from captivity through alarming escape to a tenderly comic return. A grey wolf later breaks Lucy’s window; the correspondence is suggestive rather than explicitly identified in her account.",
+          "evidence": [
+            {
+              "paragraphId": "p737",
+              "quote": "the rails broken and twisted about and the cage empty."
+            },
+            {
+              "paragraphId": "p754",
+              "quote": "his head all cut and full of broken glass."
+            },
+            {
+              "paragraphId": "p770",
+              "quote": "the head of a great, gaunt grey wolf."
+            }
+          ]
+        },
+        {
+          "name": "Garlic flowers and the neck wreath",
+          "meaning": "Common white flowers become a prescribed safeguard, a source of comfort, and later an adornment of the corpse and coffin. Their removal repeatedly accompanies danger.",
+          "evidence": [
+            {
+              "paragraphId": "p679",
+              "quote": "a great bundle of white flowers."
+            },
+            {
+              "paragraphId": "p684",
+              "quote": "these flowers are only common garlic."
+            },
+            {
+              "paragraphId": "p698",
+              "quote": "There is peace in its smell"
+            },
+            {
+              "paragraphId": "p953",
+              "quote": "her coffin, strewn with the wild garlic flowers"
+            }
+          ]
+        },
+        {
+          "name": "Black velvet band, diamond buckle, and throat wounds",
+          "meaning": "A lover’s gift conceals the physical clue to Lucy’s mysterious depletion. The wounds recur in children and disappear from Lucy before death.",
+          "evidence": [
+            {
+              "paragraphId": "p627",
+              "quote": "the narrow black velvet band"
+            },
+            {
+              "paragraphId": "p627",
+              "quote": "an old diamond buckle which her lover had given her"
+            },
+            {
+              "paragraphId": "p631",
+              "quote": "two punctures, not large, but not wholesome-looking."
+            },
+            {
+              "paragraphId": "p858",
+              "quote": "The wounds on the throat had absolutely disappeared."
+            },
+            {
+              "paragraphId": "p1119",
+              "quote": "They were smaller, and the edges looked fresher"
+            }
+          ]
+        },
+        {
+          "name": "Medical bag, transfusion instruments, and watch",
+          "meaning": "Portable medical equipment gives care a concrete, methodical form. The same bag carries tools into the tomb, and its closing marks the supplied ending.",
+          "evidence": [
+            {
+              "paragraphId": "p607",
+              "quote": "a bag in which were many instruments and drugs"
+            },
+            {
+              "paragraphId": "p626",
+              "quote": "he stood watch in hand"
+            },
+            {
+              "paragraphId": "p1127",
+              "quote": "a tiny fret-saw."
+            },
+            {
+              "paragraphId": "p1163",
+              "quote": "he closed the catch of his bag with a snap"
+            }
+          ]
+        },
+        {
+          "name": "Wine, brandy, and laudanum",
+          "meaning": "Domestic and medical liquids alternate between restoration and incapacitation: wine supports depleted donors, brandy revives Lucy, and drugged sherry disables the servants.",
+          "evidence": [
+            {
+              "paragraphId": "p627",
+              "quote": "give him of the port wine"
+            },
+            {
+              "paragraphId": "p772",
+              "quote": "It smelt of laudanum"
+            },
+            {
+              "paragraphId": "p784",
+              "quote": "He rubbed the brandy"
+            }
+          ]
+        },
+        {
+          "name": "Floating specks and blue, dim lights",
+          "meaning": "Lucy’s last-night memorandum records an uncertain atmospheric intrusion after the wolf withdraws; it supports imagery of disturbed air without supplying an explained mechanism.",
+          "evidence": [
+            {
+              "paragraphId": "p770",
+              "quote": "a whole myriad of little specks seemed to come blowing in through the broken window"
+            },
+            {
+              "paragraphId": "p773",
+              "quote": "the lights burn blue and dim."
+            }
+          ]
+        },
+        {
+          "name": "Typewriter, shorthand diary, and phonograph",
+          "meaning": "Different recording technologies turn personal experience into retrievable and shareable evidence. Mina’s workbasket holds the readable copy that overcomes the shorthand barrier.",
+          "evidence": [
+            {
+              "paragraphId": "p1027",
+              "quote": "the typewritten copy from my workbasket"
+            },
+            {
+              "paragraphId": "p1027",
+              "quote": "I know not the shorthand."
+            },
+            {
+              "paragraphId": "p826",
+              "quote": "I am entering this on Lucy’s phonograph."
+            }
+          ]
+        },
+        {
+          "name": "Telegram and newspaper",
+          "meaning": "Public and private communications deliver warnings, fail to arrive in time, and reopen an apparently finished story through reports of injured children.",
+          "evidence": [
+            {
+              "paragraphId": "p762",
+              "quote": "Do not fail to be at Hillingham to-night."
+            },
+            {
+              "paragraphId": "p994",
+              "quote": "It has the same tiny wound in the throat"
+            },
+            {
+              "paragraphId": "p1081",
+              "quote": "thrust last night’s “Westminster Gazette” into my hand."
+            }
+          ]
+        },
+        {
+          "name": "Exeter house, cathedral stone, elms, and empty chairs",
+          "meaning": "A setting of newly gained security and work becomes shadowed by Hawkins’s death. Its black tree stems and yellow stone supply explicit visual contrasts.",
+          "evidence": [
+            {
+              "paragraphId": "p833",
+              "quote": "great black stems standing out against the old yellow stone of the cathedral"
+            },
+            {
+              "paragraphId": "p958",
+              "quote": "the empty chair at home"
+            }
+          ]
+        },
+        {
+          "name": "Piccadilly stranger, red lips, and pointed teeth",
+          "meaning": "Jonathan’s frightening recognition places the suspected Count within an ordinary London street, watching a woman in a carriage. Appearance should follow this passage rather than familiar cover conventions.",
+          "evidence": [
+            {
+              "paragraphId": "p959",
+              "quote": "a tall, thin man, with a beaky nose and black moustache and pointed beard"
+            },
+            {
+              "paragraphId": "p959",
+              "quote": "his lips were so red"
+            },
+            {
+              "paragraphId": "p959",
+              "quote": "pointed like an animal’s."
+            },
+            {
+              "paragraphId": "p963",
+              "quote": "I believe it is the Count, but he has grown young."
+            }
+          ]
+        },
+        {
+          "name": "Death-chamber, white flowers, candles, and crucifix",
+          "meaning": "Funerary beauty surrounds a body whose appearance troubles the doctors. Garlic and a small crucifix introduce safeguards into the decorative arrangement.",
+          "evidence": [
+            {
+              "paragraphId": "p899",
+              "quote": "a wilderness of beautiful white flowers"
+            },
+            {
+              "paragraphId": "p899",
+              "quote": "the tall wax candles"
+            },
+            {
+              "paragraphId": "p900",
+              "quote": "a little gold crucifix, and placed it over the mouth."
+            },
+            {
+              "paragraphId": "p914",
+              "quote": "This was stolen in the night."
+            }
+          ]
+        },
+        {
+          "name": "Hampstead Heath and the churchyard",
+          "meaning": "Children’s play, nocturnal disappearance, and the tomb investigation occupy neighbouring landscapes. Yew trees, headstones, and scattered lamps make observation difficult.",
+          "evidence": [
+            {
+              "paragraphId": "p994",
+              "quote": "under a furze bush at the Shooter’s Hill side of Hampstead Heath"
+            },
+            {
+              "paragraphId": "p1136",
+              "quote": "behind a yew-tree"
+            },
+            {
+              "paragraphId": "p1138",
+              "quote": "a white, dim figure flitted in the direction of the tomb."
+            }
+          ]
+        },
+        {
+          "name": "Tomb key, candle, coffin plates, and lead lining",
+          "meaning": "Specific practical tools and materials ground the supernatural investigation in physical acts of entry and inspection. The empty coffin and Lucy’s subsequent presence form the central evidentiary contrast.",
+          "evidence": [
+            {
+              "paragraphId": "p1118",
+              "quote": "This is the key that lock the tomb."
+            },
+            {
+              "paragraphId": "p1124",
+              "quote": "a matchbox and a piece of candle"
+            },
+            {
+              "paragraphId": "p1125",
+              "quote": "read the coffin plates"
+            },
+            {
+              "paragraphId": "p1127",
+              "quote": "the casing of lead beneath."
+            },
+            {
+              "paragraphId": "p1128",
+              "quote": "The coffin was empty."
+            },
+            {
+              "paragraphId": "p1151",
+              "quote": "There lay Lucy"
+            }
+          ]
+        },
+        {
+          "name": "Stake, garlic, and the proposed operation",
+          "meaning": "These are announced means of destroying Lucy’s Un-Dead condition, not actions completed within the supplied section.",
+          "evidence": [
+            {
+              "paragraphId": "p1162",
+              "quote": "I shall cut off her head and fill her mouth with garlic, and I shall drive a stake through her body."
+            },
+            {
+              "paragraphId": "p1163",
+              "quote": "I waited a considerable time for Van Helsing to begin"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Mina and Jonathan: reciprocal trust and protective care",
+          "meaning": "Their marriage combines intimate nursing with custody of frightening knowledge. Mina’s preparation and Jonathan’s renewed confidence ultimately enable cooperation.",
+          "evidence": [
+            {
+              "paragraphId": "p521",
+              "quote": "myself, my life, and my trust"
+            },
+            {
+              "paragraphId": "p998",
+              "quote": "I can speak for him"
+            },
+            {
+              "paragraphId": "p1078",
+              "quote": "We shall both come when you will"
+            }
+          ]
+        },
+        {
+          "name": "Mina and Lucy: friendship carried by letters and imitation",
+          "meaning": "Their affectionate correspondence and shared diary practice connect the two narrative strands. Unopened letters underscore how separated lives conceal each other’s suffering.",
+          "evidence": [
+            {
+              "paragraphId": "p522",
+              "quote": "you have been, and are, very dear to me."
+            },
+            {
+              "paragraphId": "p544",
+              "quote": "I must imitate Mina, and keep writing things down."
+            },
+            {
+              "paragraphId": "p847",
+              "quote": "(Unopened by her.)"
+            }
+          ]
+        },
+        {
+          "name": "Sister Agatha and Jonathan: compassionate care and confidentiality",
+          "meaning": "The nurse mediates news and supports recovery while protecting the delirious patient’s disclosures.",
+          "evidence": [
+            {
+              "paragraphId": "p491",
+              "quote": "He has won all hearts by his sweetness and gentleness."
+            },
+            {
+              "paragraphId": "p514",
+              "quote": "the ravings of the sick were the secrets of God"
+            }
+          ]
+        },
+        {
+          "name": "Renfield and the Master: service, expectation, and abandonment",
+          "meaning": "Renfield claims enslavement in exchange for reward, later declares himself deserted, and eventually fights carriers in the name of his Lord. The Master’s identity is not explicitly established in these exchanges.",
+          "evidence": [
+            {
+              "paragraphId": "p505",
+              "quote": "I am Your slave, and You will reward me"
+            },
+            {
+              "paragraphId": "p580",
+              "quote": "He has deserted me."
+            },
+            {
+              "paragraphId": "p840",
+              "quote": "I’ll fight for my Lord and Master!"
+            }
+          ]
+        },
+        {
+          "name": "Seward and Renfield: observation, coercion, and uncertain affinity",
+          "meaning": "Seward alternates surveillance, restraint, small indulgences, and experimental release. Renfield’s apparent attachment does not prevent a later attack on him.",
+          "evidence": [
+            {
+              "paragraphId": "p534",
+              "quote": "Am I to take it that I have anything in common with him"
+            },
+            {
+              "paragraphId": "p537",
+              "quote": "to-night he shall escape with it."
+            },
+            {
+              "paragraphId": "p758",
+              "quote": "cut my left wrist rather severely."
+            }
+          ]
+        },
+        {
+          "name": "Lucy and Arthur: love expressed through bodily sacrifice",
+          "meaning": "Arthur’s donation turns professed devotion into physical action. He later imagines the transfusion as a marriage, while their final parting is carefully restricted.",
+          "evidence": [
+            {
+              "paragraphId": "p626",
+              "quote": "through Arthur’s growing pallor the joy of his face seemed absolutely to shine."
+            },
+            {
+              "paragraphId": "p872",
+              "quote": "Their eyes met instead of their lips; and so they parted."
+            },
+            {
+              "paragraphId": "p970",
+              "quote": "as if they two had been really married"
+            }
+          ]
+        },
+        {
+          "name": "Lucy and her mother: tenderness undermined by incomplete knowledge",
+          "meaning": "Maternal concern removes safeguards, and the mother dies beside Lucy during the window attack. Lucy subsequently uses her remaining flowers to honour her mother.",
+          "evidence": [
+            {
+              "paragraphId": "p706",
+              "quote": "I feared that the heavy odour would be too much for the dear child"
+            },
+            {
+              "paragraphId": "p770",
+              "quote": "As she lay there in my arms, and I in hers"
+            },
+            {
+              "paragraphId": "p771",
+              "quote": "I laid what flowers I had on my dear mother’s breast."
+            }
+          ]
+        },
+        {
+          "name": "Lucy’s carers and former suitors: a coalition of donors and watchers",
+          "meaning": "Arthur, Seward, Van Helsing, and Quincey give blood; personal love and friendship become coordinated protection rather than open rivalry.",
+          "evidence": [
+            {
+              "paragraphId": "p808",
+              "quote": "One, two, three, all open their veins for her, besides one old man."
+            },
+            {
+              "paragraphId": "p820",
+              "quote": "Count me in"
+            },
+            {
+              "paragraphId": "p823",
+              "quote": "all night long he patrolled round and round the house."
+            }
+          ]
+        },
+        {
+          "name": "Van Helsing and Seward: friendship, instruction, and difficult trust",
+          "meaning": "An old life-saving debt supports their partnership. Van Helsing’s withheld explanations strain Seward’s trust until physical investigation begins to change his mind.",
+          "evidence": [
+            {
+              "paragraphId": "p567",
+              "quote": "you suck from my wound so swiftly the poison of the gangrene"
+            },
+            {
+              "paragraphId": "p908",
+              "quote": "Let us not be two, but one"
+            },
+            {
+              "paragraphId": "p1097",
+              "quote": "let me be your pet student again."
+            },
+            {
+              "paragraphId": "p1161",
+              "quote": "Do not press me too hard all at once."
+            }
+          ]
+        },
+        {
+          "name": "Van Helsing and Mina: recognition through documentary work",
+          "meaning": "Their alliance forms through Lucy’s records and Mina’s transcription. His response to Jonathan’s diary relieves the couple’s uncertainty and draws them into the investigation.",
+          "evidence": [
+            {
+              "paragraphId": "p1031",
+              "quote": "all I have ever learned, all I can ever do, shall be for you and those you love."
+            },
+            {
+              "paragraphId": "p1044",
+              "quote": "It is the copy of his journal when abroad"
+            },
+            {
+              "paragraphId": "p1052",
+              "quote": "Strange and terrible as it is, it is _true_!"
+            }
+          ]
+        },
+        {
+          "name": "Hawkins and the Harkers: chosen family and inherited responsibility",
+          "meaning": "Hawkins offers home, partnership, and inheritance. His sudden death leaves emotional loss alongside Jonathan’s increased professional burden.",
+          "evidence": [
+            {
+              "paragraphId": "p832",
+              "quote": "make your home here with me."
+            },
+            {
+              "paragraphId": "p850",
+              "quote": "treated him like his own son"
+            },
+            {
+              "paragraphId": "p850",
+              "quote": "the amount of responsibility which it puts upon him makes him nervous."
+            }
+          ]
+        },
+        {
+          "name": "Bilder and Bersicker: familiarity against sensational fear",
+          "meaning": "The keeper treats the escaped wolf as an injured dependent, contrasting with the interviewer’s fear and public alarm.",
+          "evidence": [
+            {
+              "paragraphId": "p753",
+              "quote": "received and petted like a sort of vulpine prodigal son."
+            },
+            {
+              "paragraphId": "p753",
+              "quote": "most tender solicitude"
+            }
+          ]
+        },
+        {
+          "name": "Lucy and the children: attraction transformed into predation",
+          "meaning": "Newspaper reports describe children being lured by a lady. Van Helsing attributes their wounds to Lucy; the closing investigation supports his claim through matching wounds, her changing coffin occupancy, and sharpened teeth.",
+          "evidence": [
+            {
+              "paragraphId": "p994",
+              "quote": "being lured away by the “bloofer lady.”"
+            },
+            {
+              "paragraphId": "p1107",
+              "quote": "They were made by Miss Lucy!"
+            },
+            {
+              "paragraphId": "p1154",
+              "quote": "the little children can be bitten."
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The supplied section does not narrate Jonathan’s original Transylvanian experiences directly; details appear through his illness, references to his journal, and others’ readings of it.",
+        "Jonathan initially identifies the Piccadilly stranger tentatively. He later accepts that he saw the Count; the stranger does not identify himself in the scene.",
+        "The zoo visitor and Renfield’s Master are not explicitly named as the Count in their respective passages.",
+        "Lucy’s memorandum does not name the wolf as Bersicker. The zoo report’s glass injuries suggest a connection, while Bilder’s broken-wall explanation remains his inference.",
+        "The floating specks, blue lights, and apparent spell are Lucy’s reported perceptions; their mechanism is not explained here.",
+        "Responsibility for drugging the servants is unspecified. Lucy concludes that someone drugged them, and the doctors subsequently identify laudanum.",
+        "Van Helsing’s claims about extraordinary animal longevity, materialisation, and related phenomena are character assertions, not independently established facts.",
+        "The white figure seen during the churchyard vigil is not explicitly identified by Seward at that moment. The rescued child has no throat injury.",
+        "Van Helsing identifies Lucy as Un-Dead, and Seward begins to accept this explanation. The section ends before the announced intervention, after Van Helsing closes his bag and prepares to speak; his next words and reason for pausing are absent.",
+        "The nursery-tale references and Lucy’s Ophelia comparison are explicit textual allusions; they need not dictate the illustration’s imagery."
+      ]
+    },
+    {
+      "summary": "The section moves from Lucy’s tomb and Arthur’s painful acceptance of her Un-Dead condition through her destruction and restored peace, then into a collective investigation assembled from diaries, recordings, letters, newspapers, and shipping records. The hunters trace Dracula’s earth boxes across London while excluding Mina from their confidence. Renfield’s rejected warnings, Mina’s mist-filled nights, and his fatal resistance culminate in the discovery of Dracula assaulting her. The group restores shared knowledge, confronts Mina’s bodily and spiritual peril, sanctifies the Carfax earth boxes, and gains entry to the Piccadilly house through a locksmith. The supplied section ends at that entry; its interior search and the quest’s outcome remain unresolved.",
+      "themes": [
+        {
+          "name": "Belief earned through painful witnessing",
+          "meaning": "Evidence must overcome professional scepticism and the emotional impossibility of accepting Lucy’s transformation.",
+          "evidence": [
+            {
+              "paragraphId": "p1175",
+              "quote": "Surely there must be _some_ rational explanation of all these mysterious things."
+            },
+            {
+              "paragraphId": "p1220",
+              "quote": "The coffin was empty!"
+            },
+            {
+              "paragraphId": "p1344",
+              "quote": "I have had one lesson already in accepting facts that should make a man humble to the last hour of his life."
+            }
+          ]
+        },
+        {
+          "name": "Mercy enacted through violence",
+          "meaning": "Lucy’s staking is framed by the characters as liberation rather than simple punishment; the terrible physical act leads to restored memory and peace.",
+          "evidence": [
+            {
+              "paragraphId": "p1261",
+              "quote": "driving deeper and deeper the mercy-bearing stake,"
+            },
+            {
+              "paragraphId": "p1264",
+              "quote": "the holy calm that lay like sunshine over the wasted face and form"
+            },
+            {
+              "paragraphId": "p1268",
+              "quote": "you have given my dear one her soul again, and me peace."
+            }
+          ]
+        },
+        {
+          "name": "Blood as gift, theft, and imposed kinship",
+          "meaning": "Voluntary medical donation is reversed into predatory consumption and Dracula’s coercive claim over Mina.",
+          "evidence": [
+            {
+              "paragraphId": "p1212",
+              "quote": "the blood of my veins;"
+            },
+            {
+              "paragraphId": "p1373",
+              "quote": "‘For the blood is the life.’"
+            },
+            {
+              "paragraphId": "p1660",
+              "quote": "flesh of my flesh; blood of my blood; kin of my kin;"
+            }
+          ]
+        },
+        {
+          "name": "Intimacy made dangerous",
+          "meaning": "Arms, kisses, marriage language, and bodily closeness become instruments of predation, while loving touch also sustains resistance.",
+          "evidence": [
+            {
+              "paragraphId": "p1236",
+              "quote": "My arms are hungry for you."
+            },
+            {
+              "paragraphId": "p1645",
+              "quote": "I must touch him or kiss him no more."
+            },
+            {
+              "paragraphId": "p1646",
+              "quote": "He put out his arms and folded her to his breast;"
+            }
+          ]
+        },
+        {
+          "name": "Knowledge assembled from fragments",
+          "meaning": "Chronological arrangement turns private experiences and mundane records into a collective means of locating and opposing Dracula.",
+          "evidence": [
+            {
+              "paragraphId": "p1320",
+              "quote": "In this matter dates are everything,"
+            },
+            {
+              "paragraphId": "p1324",
+              "quote": "knitting together in chronological order every scrap of evidence they have."
+            },
+            {
+              "paragraphId": "p1666",
+              "quote": "perhaps at the end the little things may teach us most."
+            }
+          ]
+        },
+        {
+          "name": "Trust, concealment, and exclusion",
+          "meaning": "Mina argues for complete exchange of knowledge, but paternal protection isolates her. After the assault, the group explicitly reverses its policy.",
+          "evidence": [
+            {
+              "paragraphId": "p1316",
+              "quote": "We need have no secrets amongst us;"
+            },
+            {
+              "paragraphId": "p1465",
+              "quote": "Henceforth our work is to be a sealed book to her,"
+            },
+            {
+              "paragraphId": "p1669",
+              "quote": "There must be no concealment,"
+            }
+          ]
+        },
+        {
+          "name": "Gendered protection and intellectual dependence",
+          "meaning": "The men rely on Mina’s organizational abilities while claiming that her sex makes further participation intolerably dangerous. Her distress challenges their confidence in this arrangement.",
+          "evidence": [
+            {
+              "paragraphId": "p1379",
+              "quote": "She has man’s brain"
+            },
+            {
+              "paragraphId": "p1379",
+              "quote": "but it is no part for a woman."
+            },
+            {
+              "paragraphId": "p1479",
+              "quote": "But to think that he keeps anything from me!"
+            }
+          ]
+        },
+        {
+          "name": "Sanity, credibility, and ignored warning",
+          "meaning": "Renfield’s apparent reason and desperate emotion are both interpreted through his patient status. His later testimony reveals a serious purpose behind the rejected appeal.",
+          "evidence": [
+            {
+              "paragraphId": "p1434",
+              "quote": "a sane man fighting for his soul?"
+            },
+            {
+              "paragraphId": "p1439",
+              "quote": "I did what I could to convince you to-night."
+            },
+            {
+              "paragraphId": "p1620",
+              "quote": "I couldn’t speak then, for I felt my tongue was tied;"
+            }
+          ]
+        },
+        {
+          "name": "Life separated from soul",
+          "meaning": "Renfield seeks bodily vitality while fearing spiritual consequences; Mina is told that survival is necessary to prevent a more terrible afterlife.",
+          "evidence": [
+            {
+              "paragraphId": "p1539",
+              "quote": "I want no souls. Life is all I want."
+            },
+            {
+              "paragraphId": "p1572",
+              "quote": "He dreads the consequence--the burden of a soul."
+            },
+            {
+              "paragraphId": "p1677",
+              "quote": "You must struggle and strive to live, though death would seem a boon unspeakable."
+            }
+          ]
+        },
+        {
+          "name": "Sacred protection and bodily stigma",
+          "meaning": "Sacred objects repel the vampires and sanctify their refuges, but the same protective wafer burns Mina. Her interpretation of shame is answered by the group’s insistence on her inward purity.",
+          "evidence": [
+            {
+              "paragraphId": "p1708",
+              "quote": "it had seared it--had burned into the flesh"
+            },
+            {
+              "paragraphId": "p1709",
+              "quote": "I must bear this mark of shame upon my forehead until the Judgment Day."
+            },
+            {
+              "paragraphId": "p1710",
+              "quote": "leave your forehead as pure as the heart we know."
+            }
+          ]
+        },
+        {
+          "name": "Solidarity through grief and shared duty",
+          "meaning": "The hunters’ alliance develops through mourning, friendship, practical cooperation, and repeated hand-linked pledges.",
+          "evidence": [
+            {
+              "paragraphId": "p1397",
+              "quote": "So as we all took hands our solemn compact was made."
+            },
+            {
+              "paragraphId": "p1398",
+              "quote": "power of combination--a power denied to the vampire kind;"
+            },
+            {
+              "paragraphId": "p1711",
+              "quote": "all holding hands, swore to be true to each other."
+            }
+          ]
+        },
+        {
+          "name": "Love as resistance and possible recruitment",
+          "meaning": "Jonathan’s devotion protects Mina emotionally, but his private willingness to share her fate reveals how love could extend the vampire’s reach.",
+          "evidence": [
+            {
+              "paragraphId": "p1646",
+              "quote": "if by any act or will of mine anything ever come between us!"
+            },
+            {
+              "paragraphId": "p1713",
+              "quote": "she shall not go into that unknown and terrible land alone."
+            },
+            {
+              "paragraphId": "p1713",
+              "quote": "the holiest love was the recruiting sergeant for their ghastly ranks."
+            }
+          ]
+        },
+        {
+          "name": "Ordinary commerce concealing supernatural danger",
+          "meaning": "Dracula’s refuges depend on shipping, cartage, property purchases, and urban anonymity. The hunters counter him through the same practical systems.",
+          "evidence": [
+            {
+              "paragraphId": "p1328",
+              "quote": "Everything had been carefully thought out, and done systematically and with precision."
+            },
+            {
+              "paragraphId": "p1581",
+              "quote": "paying the purchase money in notes ‘over the counter,’"
+            },
+            {
+              "paragraphId": "p1725",
+              "quote": "not a soul took the slightest notice of the whole transaction."
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Kingstead churchyard and Lucy’s tomb",
+          "meaning": "The central early setting moves from violated mourning space to a site of witnessing, confrontation, and release.",
+          "evidence": [
+            {
+              "paragraphId": "p1189",
+              "quote": "the churchyard at Kingstead."
+            },
+            {
+              "paragraphId": "p1216",
+              "quote": "a place laden with so sorrowful a memory"
+            }
+          ]
+        },
+        {
+          "name": "Coffin, lead lining, and changing occupancy",
+          "meaning": "The repeatedly opened coffin provides material evidence of Lucy’s nocturnal absence and eventual repose.",
+          "evidence": [
+            {
+              "paragraphId": "p1219",
+              "quote": "Van Helsing forced back the leaden flange,"
+            },
+            {
+              "paragraphId": "p1220",
+              "quote": "The coffin was empty!"
+            },
+            {
+              "paragraphId": "p1270",
+              "quote": "We soldered up the leaden coffin, screwed on the coffin-lid,"
+            }
+          ]
+        },
+        {
+          "name": "Moonlight, clouds, and dawn",
+          "meaning": "Changing illumination reveals figures and faces while marking shifts between danger, provisional safety, and grief. Dawn does not invariably bring emotional relief.",
+          "evidence": [
+            {
+              "paragraphId": "p1216",
+              "quote": "occasional gleams of moonlight between the rents of the heavy clouds"
+            },
+            {
+              "paragraphId": "p1271",
+              "quote": "the sun shone, and the birds sang,"
+            },
+            {
+              "paragraphId": "p1663",
+              "quote": "the sun rises to-day on no more miserable house"
+            }
+          ]
+        },
+        {
+          "name": "Funereal trees",
+          "meaning": "Yews provide an approach avenue and hiding places; cypress, yew, and juniper embody the narrator’s apprehension.",
+          "evidence": [
+            {
+              "paragraphId": "p1231",
+              "quote": "cypress, or yew, or juniper"
+            },
+            {
+              "paragraphId": "p1232",
+              "quote": "far down the avenue of yews"
+            },
+            {
+              "paragraphId": "p1640",
+              "quote": "the shadow of a great yew-tree."
+            }
+          ]
+        },
+        {
+          "name": "White clothing stained with blood",
+          "meaning": "Lucy’s burial garment and Mina’s nightdress form a textual visual correspondence between predation, vulnerability, and the characters’ language of purity.",
+          "evidence": [
+            {
+              "paragraphId": "p1232",
+              "quote": "stained the purity of her lawn death-robe."
+            },
+            {
+              "paragraphId": "p1639",
+              "quote": "Her white nightdress was smeared with blood,"
+            }
+          ]
+        },
+        {
+          "name": "Golden and silver crucifixes",
+          "meaning": "Small sacred objects interrupt bodily attack and anchor the group’s pledges and protection.",
+          "evidence": [
+            {
+              "paragraphId": "p1237",
+              "quote": "held between them his little golden crucifix."
+            },
+            {
+              "paragraphId": "p1397",
+              "quote": "laying his golden crucifix on the table,"
+            },
+            {
+              "paragraphId": "p1448",
+              "quote": "a little silver crucifix"
+            }
+          ]
+        },
+        {
+          "name": "Host, sealing paste, and sacred earth",
+          "meaning": "The Host controls passage at the tomb, repels Dracula, burns Mina, and finally renders earth boxes unusable as refuges.",
+          "evidence": [
+            {
+              "paragraphId": "p1226",
+              "quote": "lay them into the crevices between the door and its setting in the tomb."
+            },
+            {
+              "paragraphId": "p1231",
+              "quote": "The Host. I brought it from Amsterdam."
+            },
+            {
+              "paragraphId": "p1716",
+              "quote": "in each was a portion of the Host."
+            }
+          ]
+        },
+        {
+          "name": "Garlic and withered blossoms",
+          "meaning": "Garlic recurs as a barrier, a personal protective wreath, and part of the final treatment of Lucy’s body.",
+          "evidence": [
+            {
+              "paragraphId": "p1170",
+              "quote": "garlic and a crucifix"
+            },
+            {
+              "paragraphId": "p1270",
+              "quote": "filled the mouth with garlic."
+            },
+            {
+              "paragraphId": "p1448",
+              "quote": "a wreath of withered garlic blossoms"
+            }
+          ]
+        },
+        {
+          "name": "Stake, hammer, missal, and surgical tools",
+          "meaning": "Religious ceremony, domestic implements, and medical preparation meet in the violent release of Lucy; surgery later recovers Renfield’s testimony.",
+          "evidence": [
+            {
+              "paragraphId": "p1252",
+              "quote": "his operating knives,"
+            },
+            {
+              "paragraphId": "p1260",
+              "quote": "Arthur took the stake and the hammer,"
+            },
+            {
+              "paragraphId": "p1260",
+              "quote": "Van Helsing opened his missal"
+            },
+            {
+              "paragraphId": "p1603",
+              "quote": "bearing with him a surgical case."
+            }
+          ]
+        },
+        {
+          "name": "Lanterns and electric lamps",
+          "meaning": "Controlled beams expose evidence and monstrous features; crossed light and bodily shadows also generate uncertainty.",
+          "evidence": [
+            {
+              "paragraphId": "p1216",
+              "quote": "He then lit a dark lantern"
+            },
+            {
+              "paragraphId": "p1448",
+              "quote": "these so small electric lamps, which you can fasten to your breast;"
+            },
+            {
+              "paragraphId": "p1451",
+              "quote": "the opacity of our bodies threw great shadows."
+            }
+          ]
+        },
+        {
+          "name": "Phonograph and wax cylinders",
+          "meaning": "Recorded voice preserves grief with painful immediacy, but lacks easy retrieval. Its physical vulnerability later makes transcription and duplication essential.",
+          "evidence": [
+            {
+              "paragraphId": "p1307",
+              "quote": "hollow cylinders of metal covered with dark wax,"
+            },
+            {
+              "paragraphId": "p1312",
+              "quote": "That is a wonderful machine, but it is cruelly true."
+            },
+            {
+              "paragraphId": "p1650",
+              "quote": "the cylinders of your phonograph too were thrown on the fire,"
+            }
+          ]
+        },
+        {
+          "name": "Typewriter, ordered papers, and safe",
+          "meaning": "Mina’s transcription converts private records into searchable, shared evidence; multiple copies preserve the investigation after Dracula burns the originals.",
+          "evidence": [
+            {
+              "paragraphId": "p1320",
+              "quote": "I used manifold, and so took three copies of the diary,"
+            },
+            {
+              "paragraphId": "p1337",
+              "quote": "we have put all the papers into order."
+            },
+            {
+              "paragraphId": "p1650",
+              "quote": "Thank God there is the other copy in the safe!"
+            }
+          ]
+        },
+        {
+          "name": "Telegrams, newspapers, invoices, and notebooks",
+          "meaning": "Distinct everyday information carriers connect witnesses, events, purchases, and delivery routes.",
+          "evidence": [
+            {
+              "paragraphId": "p1279",
+              "quote": "Important news.--MINA HARKER."
+            },
+            {
+              "paragraphId": "p1320",
+              "quote": "I borrowed the files of “The Westminster Gazette” and “The Pall Mall Gazette,”"
+            },
+            {
+              "paragraphId": "p1488",
+              "quote": "a wonderful dog’s-eared notebook,"
+            }
+          ]
+        },
+        {
+          "name": "Earth boxes and distributed London refuges",
+          "meaning": "Heavy, ordinary-looking cargo becomes the material network supporting Dracula’s mobility. The investigation counts and traces it before sanctifying it.",
+          "evidence": [
+            {
+              "paragraphId": "p1328",
+              "quote": "Fifty cases of common earth, to be used for experimental purposes."
+            },
+            {
+              "paragraphId": "p1457",
+              "quote": "There were only twenty-nine left out of the fifty!"
+            },
+            {
+              "paragraphId": "p1488",
+              "quote": "197, Chicksand Street, Mile End New Town,"
+            },
+            {
+              "paragraphId": "p1488",
+              "quote": "Jamaica Lane, Bermondsey."
+            },
+            {
+              "paragraphId": "p1497",
+              "quote": "nine great boxes"
+            }
+          ]
+        },
+        {
+          "name": "Carfax house and old chapel",
+          "meaning": "A neglected property beside the asylum hides Dracula’s imported earth. Dust, footprints, oppressive air, and vermin make its danger materially legible.",
+          "evidence": [
+            {
+              "paragraphId": "p1325",
+              "quote": "the very next house might be the Count’s hiding-place!"
+            },
+            {
+              "paragraphId": "p1334",
+              "quote": "the old chapel at Carfax."
+            },
+            {
+              "paragraphId": "p1452",
+              "quote": "marks of hobnails where the dust was cracked."
+            },
+            {
+              "paragraphId": "p1453",
+              "quote": "corruption had become itself corrupt."
+            }
+          ]
+        },
+        {
+          "name": "Asylum, study, and Harkers’ bedroom",
+          "meaning": "The asylum contains both investigative headquarters and overlooked danger. Its domestic spaces become a home, then sites of assault and destroyed records.",
+          "evidence": [
+            {
+              "paragraphId": "p1358",
+              "quote": "this old house seemed like _home_."
+            },
+            {
+              "paragraphId": "p1388",
+              "quote": "When we met in Dr. Seward’s study"
+            },
+            {
+              "paragraphId": "p1639",
+              "quote": "On the bed beside the window lay Jonathan Harker,"
+            }
+          ]
+        },
+        {
+          "name": "Mist, red eyes, and the pale face",
+          "meaning": "Recurring visual signs connect Mina’s uncertain dream experience with Renfield’s testimony and the witnessed assault.",
+          "evidence": [
+            {
+              "paragraphId": "p1483",
+              "quote": "like two red eyes,"
+            },
+            {
+              "paragraphId": "p1483",
+              "quote": "a livid white face bending over me out of the mist."
+            },
+            {
+              "paragraphId": "p1627",
+              "quote": "his white face looked out of the mist with his red eyes gleaming,"
+            },
+            {
+              "paragraphId": "p1657",
+              "quote": "as if the mist had turned into his figure,"
+            }
+          ]
+        },
+        {
+          "name": "Doors, windows, cracks, and keys",
+          "meaning": "Thresholds join physical security to supernatural access: Lucy passes a tiny gap, Dracula enters through a restricted sash, and the hunters depend on practical locks and keys.",
+          "evidence": [
+            {
+              "paragraphId": "p1242",
+              "quote": "pass in through the interstice where scarce a knife-blade could have gone."
+            },
+            {
+              "paragraphId": "p1625",
+              "quote": "Come in, Lord and Master!"
+            },
+            {
+              "paragraphId": "p1625",
+              "quote": "though it was only open an inch wide"
+            },
+            {
+              "paragraphId": "p1449",
+              "quote": "Dr. Seward tried one or two skeleton keys,"
+            }
+          ]
+        },
+        {
+          "name": "Animals, silver whistle, and terriers",
+          "meaning": "Flies, spiders, moths, rats, bats, and wolves recur in consumption, temptation, surveillance, or claimed vampire power. Arthur’s terriers provide a practical counter to the rat swarm.",
+          "evidence": [
+            {
+              "paragraphId": "p1360",
+              "quote": "he simply swallowed all the flies and spiders in the boxes"
+            },
+            {
+              "paragraphId": "p1623",
+              "quote": "big moths, in the night, with skull and cross-bones on their backs."
+            },
+            {
+              "paragraphId": "p1459",
+              "quote": "taking his little silver whistle from his pocket,"
+            },
+            {
+              "paragraphId": "p1459",
+              "quote": "three terriers came dashing round the corner of the house."
+            }
+          ]
+        },
+        {
+          "name": "Sleeping draught and exhausted sleep",
+          "meaning": "Sleep promises restoration but repeatedly becomes vulnerability, impaired awareness, or concealment of distress.",
+          "evidence": [
+            {
+              "paragraphId": "p1485",
+              "quote": "depriving myself of the power of waking."
+            },
+            {
+              "paragraphId": "p1657",
+              "quote": "I tried, but I could not wake him."
+            }
+          ]
+        },
+        {
+          "name": "Mina’s forehead scar",
+          "meaning": "The burn externalizes her imposed peril and becomes a visible focus for shame, consolation, and hoped-for release.",
+          "evidence": [
+            {
+              "paragraphId": "p1710",
+              "quote": "that red scar, the sign of God’s knowledge of what has been,"
+            },
+            {
+              "paragraphId": "p1718",
+              "quote": "Madam Mina’s forehead all white as ivory and with no stain!"
+            }
+          ]
+        },
+        {
+          "name": "Piccadilly house, Green Park, and locksmith’s tools",
+          "meaning": "The closing setting contrasts a deserted urban refuge with public normality. A park bench, cigars, a tradesman, and aristocratic authority enable an unobtrusive entry.",
+          "evidence": [
+            {
+              "paragraphId": "p1581",
+              "quote": "No. 347, Piccadilly."
+            },
+            {
+              "paragraphId": "p1724",
+              "quote": "strolled into the Green Park."
+            },
+            {
+              "paragraphId": "p1725",
+              "quote": "his rush-woven basket of tools."
+            },
+            {
+              "paragraphId": "p1726",
+              "quote": "It was immediately opened by Quincey Morris, beside whom stood Lord Godalming lighting a cigar."
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Van Helsing and Arthur",
+          "meaning": "Conflict over Lucy’s grave becomes painful consent, forgiveness, and a paternal bond.",
+          "evidence": [
+            {
+              "paragraphId": "p1209",
+              "quote": "I have a duty to do in protecting her grave from outrage;"
+            },
+            {
+              "paragraphId": "p1242",
+              "quote": "Do as you will, friend; do as you will."
+            },
+            {
+              "paragraphId": "p1268",
+              "quote": "laying his head on his breast, cried for a while silently,"
+            }
+          ]
+        },
+        {
+          "name": "Arthur and Lucy",
+          "meaning": "Bereaved love is tested by predatory imitation, then transformed into the act understood to restore Lucy’s peace and permit a final kiss.",
+          "evidence": [
+            {
+              "paragraphId": "p1236",
+              "quote": "Come, my husband, come!"
+            },
+            {
+              "paragraphId": "p1254",
+              "quote": "the hand of him that loved her best;"
+            },
+            {
+              "paragraphId": "p1270",
+              "quote": "Arthur bent and kissed her,"
+            }
+          ]
+        },
+        {
+          "name": "Lucy and the children",
+          "meaning": "The apparently nurturing posture of carrying a child conceals feeding and callous injury. The child is subsequently rescued.",
+          "evidence": [
+            {
+              "paragraphId": "p1232",
+              "quote": "a fair-haired child."
+            },
+            {
+              "paragraphId": "p1234",
+              "quote": "she flung to the ground, callous as a devil, the child"
+            },
+            {
+              "paragraphId": "p1246",
+              "quote": "We had left the child in safety,"
+            }
+          ]
+        },
+        {
+          "name": "Seward and Van Helsing",
+          "meaning": "Professional friendship alternates between suspicion and reliance; shared witnessing and medical work sustain their cooperation.",
+          "evidence": [
+            {
+              "paragraphId": "p1175",
+              "quote": "I wonder if his mind can have become in any way unhinged."
+            },
+            {
+              "paragraphId": "p1445",
+              "quote": "laying his hand on his shoulder,"
+            },
+            {
+              "paragraphId": "p1604",
+              "quote": "We must be alone with him when he becomes conscious, after the operation."
+            }
+          ]
+        },
+        {
+          "name": "Mina and Seward",
+          "meaning": "Reciprocal access to personal records establishes trust. Mina both protects the intimacy of his recorded grief and makes its information usable.",
+          "evidence": [
+            {
+              "paragraphId": "p1308",
+              "quote": "I did not trust you because I did not know you. But I know you now;"
+            },
+            {
+              "paragraphId": "p1312",
+              "quote": "I have copied out the words on my typewriter,"
+            }
+          ]
+        },
+        {
+          "name": "Mina, Arthur, and Quincey",
+          "meaning": "Lucy’s surviving friends form new bonds through consolation, offered siblinghood, and promises of help.",
+          "evidence": [
+            {
+              "paragraphId": "p1345",
+              "quote": "will you not let me be like a sister to you in your trouble?"
+            },
+            {
+              "paragraphId": "p1348",
+              "quote": "You will let me be like a brother, will you not, for all our lives"
+            },
+            {
+              "paragraphId": "p1353",
+              "quote": "Will you let me be your friend,"
+            }
+          ]
+        },
+        {
+          "name": "Mina and Jonathan",
+          "meaning": "Their partnership in arranging evidence is disrupted by protective secrecy, then reaffirmed through bodily comfort, restored confidence, and Mina’s insistence that Jonathan aid the hunt.",
+          "evidence": [
+            {
+              "paragraphId": "p1337",
+              "quote": "Mina and I have worked all day,"
+            },
+            {
+              "paragraphId": "p1492",
+              "quote": "on me this particular burden of silence must rest."
+            },
+            {
+              "paragraphId": "p1642",
+              "quote": "Jonathan, you must not leave me."
+            },
+            {
+              "paragraphId": "p1700",
+              "quote": "it was the last hope for _her_ that we should all work together."
+            }
+          ]
+        },
+        {
+          "name": "Dracula and Renfield",
+          "meaning": "Promised abundance of life induces invitation and submission. Renfield later resists Dracula to defend Mina and suffers fatal injury.",
+          "evidence": [
+            {
+              "paragraphId": "p1625",
+              "quote": "if you will fall down and worship me!"
+            },
+            {
+              "paragraphId": "p1630",
+              "quote": "I didn’t mean Him to take any more of her life,"
+            },
+            {
+              "paragraphId": "p1630",
+              "quote": "He raised me up and flung me down."
+            }
+          ]
+        },
+        {
+          "name": "Renfield and Mina",
+          "meaning": "Mina addresses Renfield courteously; his warning and later resistance reveal concern for her beyond his appetite for life.",
+          "evidence": [
+            {
+              "paragraphId": "p1360",
+              "quote": "She walked over to him, smiling pleasantly, and held out her hand."
+            },
+            {
+              "paragraphId": "p1366",
+              "quote": "Then don’t stay."
+            },
+            {
+              "paragraphId": "p1374",
+              "quote": "May He bless and keep you!"
+            }
+          ]
+        },
+        {
+          "name": "Seward and Renfield",
+          "meaning": "Medical authority, curiosity, suspicion, and coercion obstruct recognition of Renfield’s warning. His dying words become urgently valuable evidence.",
+          "evidence": [
+            {
+              "paragraphId": "p1436",
+              "quote": "Get to your bed and try to behave more discreetly."
+            },
+            {
+              "paragraphId": "p1566",
+              "quote": "I cannot think freely when my body is confined."
+            },
+            {
+              "paragraphId": "p1613",
+              "quote": "His words may be worth many lives;"
+            }
+          ]
+        },
+        {
+          "name": "Dracula and Mina",
+          "meaning": "Dracula attacks her as retaliation for intellectual opposition, forcibly feeds her his blood, and claims future command over her. These are coercive acts, not mutual intimacy.",
+          "evidence": [
+            {
+              "paragraphId": "p1660",
+              "quote": "You would help these men to hunt me and frustrate me in my designs!"
+            },
+            {
+              "paragraphId": "p1660",
+              "quote": "now you shall come to my call."
+            },
+            {
+              "paragraphId": "p1660",
+              "quote": "so that I must either suffocate or swallow some of the----"
+            }
+          ]
+        },
+        {
+          "name": "The hunters, workers, and institutional authority",
+          "meaning": "Carriers’ practical knowledge supplies the trail, while money, professional identity, and Godalming’s title open channels otherwise closed. The final entry depends on this social cooperation.",
+          "evidence": [
+            {
+              "paragraphId": "p1497",
+              "quote": "A half-crown tip put the deputy’s knowledge at my disposal,"
+            },
+            {
+              "paragraphId": "p1521",
+              "quote": "especially would I like to oblige his lordship."
+            },
+            {
+              "paragraphId": "p1723",
+              "quote": "My title will make it all right with the locksmith, and with any policeman that may come along."
+            },
+            {
+              "paragraphId": "p1725",
+              "quote": "The policeman nodded acquiescence,"
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "Van Helsing’s accounts of vampire powers, religious consequences, and historical origins combine witnessed events, inference, reported scholarship, and tradition. They should not all be illustrated as directly witnessed facts.",
+        "The identification with a historical Voivode is conditional: p1401 says “If it be so,”. The supplied section does not independently establish that identity.",
+        "Mina initially describes the mist and face as a dream in p1483. Later testimony supports an intrusion, but the precise boundary between sleep, stupor, perception, and supernatural influence remains uncertain.",
+        "The bat shot at by Quincey and the bat seen flying west are not independently identified as Dracula in those observations.",
+        "The apparent face in Carfax’s shadows is explicitly treated by Jonathan as possibly fear-assisted imagination in p1457.",
+        "Seward’s early interpretation of Renfield’s condition and the attendant’s proposed injury explanations are provisional; the later examination and Renfield’s testimony revise them.",
+        "The property letter names the Piccadilly purchaser “Count de Ville”; its connection to Dracula is the hunters’ contextual identification.",
+        "Mina’s descriptions of pollution and shame express her anguish. The group repeatedly affirms her goodness; the assault does not establish moral culpability.",
+        "Mina has not completed a transformation into a vampire within the supplied section. Jonathan explicitly notes that her teeth have not yet sharpened in p1698.",
+        "The exact destination of every earth box and the success of the planned searches remain unverified at the end. The last paragraph records entry to the Piccadilly house, not its search or Dracula’s defeat."
+      ]
+    },
+    {
+      "summary": "The section follows the destruction of Dracula’s London refuges, his escape by ship, the pursuit through ports and rivers, and the final confrontation beneath his Transylvanian castle. Mina’s threatened transformation makes her both a source of intelligence and a possible route for the Count to discover the hunters’ plans. Compassion, shared knowledge, faith, money, and practical cooperation sustain the pursuit. Dracula’s destruction brings him a moment of peace and releases Mina, but Quincey Morris dies. The seven-year epilogue turns sacrifice into family remembrance while questioning whether the surviving written record can prove what happened.",
+      "themes": [
+        {
+          "name": "Refuge, confinement, and denied return",
+          "meaning": "The campaign works by removing Dracula’s places of rest. His remaining earth-box becomes both transport and confinement; the eventual purification of his tomb and castle closes off his home as well.",
+          "evidence": [
+            {
+              "paragraphId": "p1737",
+              "quote": "he scatter these graves of him"
+            },
+            {
+              "paragraphId": "p2026",
+              "quote": "confined as he is between dawn and sunset in his wooden box."
+            },
+            {
+              "paragraphId": "p2129",
+              "quote": "never more can the Count enter there Un-Dead."
+            }
+          ]
+        },
+        {
+          "name": "Time as threat and opportunity",
+          "meaning": "Clocks, tides, travel schedules, sunrise, and sunset determine the pursuit. Dracula’s centuries contrast with Mina’s mortality; the climax is a race against the last sunlight.",
+          "evidence": [
+            {
+              "paragraphId": "p1811",
+              "quote": "he can live for centuries, and you are but mortal woman."
+            },
+            {
+              "paragraphId": "p1892",
+              "quote": "sunrise and sunset are to her times of peculiar freedom"
+            },
+            {
+              "paragraphId": "p2139",
+              "quote": "They are racing for the sunset."
+            }
+          ]
+        },
+        {
+          "name": "Compassion amid necessary destruction",
+          "meaning": "Mina insists that destroying the vampire should release a suffering soul rather than satisfy hatred. The repose of the destroyed women and Dracula’s final peace give this argument a visible culmination.",
+          "evidence": [
+            {
+              "paragraphId": "p1762",
+              "quote": "but it is not a work of hate."
+            },
+            {
+              "paragraphId": "p2128",
+              "quote": "the poor souls, I can pity them now and weep"
+            },
+            {
+              "paragraphId": "p2150",
+              "quote": "there was in the face a look of peace"
+            }
+          ]
+        },
+        {
+          "name": "Knowledge assembled through records",
+          "meaning": "The hunters combine diaries, typed copies, shipping papers, telegrams, maps, and sensory testimony. Mina’s careful reasoning restores the trail when force and expectation fail.",
+          "evidence": [
+            {
+              "paragraphId": "p1820",
+              "quote": "we have been over all the diaries again and again."
+            },
+            {
+              "paragraphId": "p2018",
+              "quote": "think without prejudice on the facts before me"
+            },
+            {
+              "paragraphId": "p2047",
+              "quote": "Her eyes have been where we were blinded."
+            }
+          ]
+        },
+        {
+          "name": "Invasion of the mind and uncertain agency",
+          "meaning": "Mina’s connection to Dracula permits observation but threatens involuntary disclosure and obedience. Her changing sleep and speech make apparent recovery difficult to interpret.",
+          "evidence": [
+            {
+              "paragraphId": "p1839",
+              "quote": "The same power that compels her silence may compel her speech."
+            },
+            {
+              "paragraphId": "p1876",
+              "quote": "I know that when the Count wills me I must go."
+            },
+            {
+              "paragraphId": "p1989",
+              "quote": "her power of reading the Count’s sensations may die away"
+            }
+          ]
+        },
+        {
+          "name": "Protection that also separates",
+          "meaning": "Protective measures restrict Mina’s movement and access to knowledge. Her voluntary promise creates emotional distance within her marriage, while the sacred circle shelters and confines her.",
+          "evidence": [
+            {
+              "paragraphId": "p1846",
+              "quote": "we must keep her ignorant of our intent"
+            },
+            {
+              "paragraphId": "p1865",
+              "quote": "a door had been shut between us."
+            },
+            {
+              "paragraphId": "p2111",
+              "quote": "the ring, which she could not leave no more than they could enter."
+            }
+          ]
+        },
+        {
+          "name": "Collective endurance against selfish isolation",
+          "meaning": "The group distributes watchkeeping, research, travel, and combat. Its mutual care contrasts with Dracula’s solitary preparation and willingness to abandon others.",
+          "evidence": [
+            {
+              "paragraphId": "p1816",
+              "quote": "we are all more strong together."
+            },
+            {
+              "paragraphId": "p1974",
+              "quote": "he is intent on being safe, careless of all."
+            },
+            {
+              "paragraphId": "p2070",
+              "quote": "let him watch all night"
+            }
+          ]
+        },
+        {
+          "name": "Faith, ritual, and spiritual peril",
+          "meaning": "Faith supports action in circumstances where survival alone is insufficient. Sacred objects, oaths, prayer, and the Burial Service make the struggle a contest over souls as well as bodies.",
+          "evidence": [
+            {
+              "paragraphId": "p1769",
+              "quote": "faith is our only anchor."
+            },
+            {
+              "paragraphId": "p1894",
+              "quote": "my soul is at stake"
+            },
+            {
+              "paragraphId": "p1915",
+              "quote": "the simple and beautiful service from the Burial of the Dead."
+            }
+          ]
+        },
+        {
+          "name": "Sacrifice transformed into remembrance",
+          "meaning": "Quincey’s willingness to risk himself culminates in his death at Mina’s release. The epilogue preserves him through a child’s name, birthday, and the family’s account of collective devotion.",
+          "evidence": [
+            {
+              "paragraphId": "p1882",
+              "quote": "if I am to be wiped out for it the next moment!"
+            },
+            {
+              "paragraphId": "p2157",
+              "quote": "with a smile and in silence, he died, a gallant gentleman."
+            },
+            {
+              "paragraphId": "p2159",
+              "quote": "but we call him Quincey."
+            }
+          ]
+        },
+        {
+          "name": "Memory without public proof",
+          "meaning": "The ending leaves the castle standing and the documentary evidence open to doubt. The survivors locate meaning in remembered courage and family life rather than public verification.",
+          "evidence": [
+            {
+              "paragraphId": "p2160",
+              "quote": "Every trace of all that had been was blotted out."
+            },
+            {
+              "paragraphId": "p2161",
+              "quote": "there is hardly one authentic document"
+            },
+            {
+              "paragraphId": "p2162",
+              "quote": "We want no proofs; we ask none to believe us!"
+            }
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "name": "Piccadilly dining-room, table, and enclosed yard",
+          "meaning": "A domestic London interior conceals earth-boxes and the Count’s practical belongings. Its window, flagged yard, and stable provide the route of escape; this is a specific architectural setting for an illustration.",
+          "evidence": [
+            {
+              "paragraphId": "p1727",
+              "quote": "a narrow stone-flagged yard"
+            },
+            {
+              "paragraphId": "p1728",
+              "quote": "the great dining-room table."
+            },
+            {
+              "paragraphId": "p1753",
+              "quote": "pushed open the stable door."
+            }
+          ]
+        },
+        {
+          "name": "Earth-boxes and the final square chest",
+          "meaning": "The recurring containers connect refuge, grave, freight, and vulnerability. The final chest exposes Dracula lying on earth immediately before his destruction.",
+          "evidence": [
+            {
+              "paragraphId": "p1727",
+              "quote": "Eight boxes only out of the nine"
+            },
+            {
+              "paragraphId": "p2137",
+              "quote": "a great square chest."
+            },
+            {
+              "paragraphId": "p2146",
+              "quote": "the Count lying within the box upon the earth"
+            }
+          ]
+        },
+        {
+          "name": "Keys and property deeds",
+          "meaning": "These ordinary objects reveal the Count’s distributed London footholds and allow the hunters to dismantle them. They support imagery of access, ownership, and coordinated investigation.",
+          "evidence": [
+            {
+              "paragraphId": "p1728",
+              "quote": "title deeds of the Piccadilly house"
+            },
+            {
+              "paragraphId": "p1728",
+              "quote": "a little heap of keys of all sorts and sizes"
+            }
+          ]
+        },
+        {
+          "name": "Basin of reddened water",
+          "meaning": "A grooming object makes suspected violence visible within an otherwise practical household inventory. The blood identification remains explicitly uncertain.",
+          "evidence": [
+            {
+              "paragraphId": "p1728",
+              "quote": "dirty water which was reddened as if with blood."
+            }
+          ]
+        },
+        {
+          "name": "Bank-notes and gold",
+          "meaning": "Money spills from Dracula’s cut coat and facilitates his escape. The hunters also depend on wealth for information, official cooperation, and rapid transport.",
+          "evidence": [
+            {
+              "paragraphId": "p1752",
+              "quote": "a bundle of bank-notes and a stream of gold fell out."
+            },
+            {
+              "paragraphId": "p2059",
+              "quote": "the wonderful power of money!"
+            }
+          ]
+        },
+        {
+          "name": "Kukri, bowie knife, and Winchesters",
+          "meaning": "Distinct physical weapons give the group concrete roles. Jonathan’s Kukri recurs from the London encounter to the final chest opening; his knife and Quincey’s bowie jointly destroy Dracula.",
+          "evidence": [
+            {
+              "paragraphId": "p1936",
+              "quote": "whetting the edge of the great Ghoorka knife"
+            },
+            {
+              "paragraphId": "p2143",
+              "quote": "the four men raised their Winchester rifles"
+            },
+            {
+              "paragraphId": "p2148",
+              "quote": "Mr. Morris’s bowie knife plunged into the heart."
+            }
+          ]
+        },
+        {
+          "name": "Crucifix, Wafer, and sacred circles",
+          "meaning": "Spiritual weapons visibly repel Dracula and form protective boundaries. The Wafer also excludes him from his tomb; Mina’s freedom to cross the circle after his destruction registers her release.",
+          "evidence": [
+            {
+              "paragraphId": "p1752",
+              "quote": "holding the Crucifix and Wafer in my left hand."
+            },
+            {
+              "paragraphId": "p2103",
+              "quote": "over the ring I passed some of the wafer"
+            },
+            {
+              "paragraphId": "p2153",
+              "quote": "the Holy circle did not now keep me back"
+            }
+          ]
+        },
+        {
+          "name": "Wild rose branch",
+          "meaning": "A proposed means of keeping Dracula within his box offers a botanical containment motif. Its effectiveness is attributed to superstition, and its actual use is not shown here.",
+          "evidence": [
+            {
+              "paragraphId": "p1881",
+              "quote": "we shall place a branch of the wild rose on it."
+            },
+            {
+              "paragraphId": "p1881",
+              "quote": "so at least says the superstition."
+            }
+          ]
+        },
+        {
+          "name": "Mina’s forehead scar and mirror",
+          "meaning": "The visible mark repeatedly interrupts hope, identifies threatened transformation, and occasions social fear. Its disappearance at the climax makes deliverance legible on her body.",
+          "evidence": [
+            {
+              "paragraphId": "p1836",
+              "quote": "in the mirror of the red mark upon my forehead"
+            },
+            {
+              "paragraphId": "p2085",
+              "quote": "she crossed herself and put out two fingers towards me"
+            },
+            {
+              "paragraphId": "p2156",
+              "quote": "the snow is not more stainless than her forehead!"
+            }
+          ]
+        },
+        {
+          "name": "White hair and clasped hands",
+          "meaning": "Jonathan’s altered hair embodies grief. Repeated handclasps express comfort, coercive intensity, promises, and recognition; they offer intimate alternatives to action imagery.",
+          "evidence": [
+            {
+              "paragraphId": "p1731",
+              "quote": "whose white hair matches well with the hollow burning eyes"
+            },
+            {
+              "paragraphId": "p1760",
+              "quote": "she took her husband’s grey head in her hands and kissed it"
+            },
+            {
+              "paragraphId": "p1763",
+              "quote": "till his knuckles looked white."
+            }
+          ]
+        },
+        {
+          "name": "Bell and corridor mattress",
+          "meaning": "Small domestic provisions turn friendship into sustained watchfulness. The mattress outside the bedroom makes protection physically present during the night.",
+          "evidence": [
+            {
+              "paragraphId": "p1767",
+              "quote": "placed at hand a bell"
+            },
+            {
+              "paragraphId": "p1773",
+              "quote": "stretched on a mattress, lay Mr. Morris, wide awake."
+            }
+          ]
+        },
+        {
+          "name": "Phonograph, typewriter, manuscripts, and safe",
+          "meaning": "Recording technologies carry testimony across speakers and locations. The portable typewriter supports Mina’s work during travel; the safe preserves the records that the epilogue finds insufficient as public proof.",
+          "evidence": [
+            {
+              "paragraphId": "p1819",
+              "quote": "Van Helsing’s message in the phonograph"
+            },
+            {
+              "paragraphId": "p2016",
+              "quote": "the “Traveller’s” typewriter"
+            },
+            {
+              "paragraphId": "p2161",
+              "quote": "the papers from the safe"
+            }
+          ]
+        },
+        {
+          "name": "Telegrams, maps, and train time-tables",
+          "meaning": "Modern communication and geographical planning make the pursuit possible while repeatedly exposing delay and mistaken expectations. Mina’s knowledge of schedules restores practical direction after the Galatz telegram.",
+          "evidence": [
+            {
+              "paragraphId": "p1947",
+              "quote": "reported entering Galatz at one o’clock to-day."
+            },
+            {
+              "paragraphId": "p1952",
+              "quote": "I always make a study of the time-tables now."
+            },
+            {
+              "paragraphId": "p2043",
+              "quote": "I have examined the map"
+            }
+          ]
+        },
+        {
+          "name": "Czarina Catherine, fog, and rigging",
+          "meaning": "The ship carries the concealed Count while its sounds reach Mina through trance. Localized and travelling fog hide its movements; maritime machinery supplies precise sensory detail.",
+          "evidence": [
+            {
+              "paragraphId": "p1800",
+              "quote": "the creaking of a chain"
+            },
+            {
+              "paragraphId": "p1827",
+              "quote": "a dense fog enveloped the ship"
+            },
+            {
+              "paragraphId": "p1921",
+              "quote": "Canvas and cordage strain and masts and yards creak."
+            }
+          ]
+        },
+        {
+          "name": "Rivers, open boats, and steam launch",
+          "meaning": "Water serves as transport, restraint, and an uncertain trail. The pursuit shifts from the Black Sea to the Sereth and Bistritza, with the launch’s furnace, lamp, and mechanical failure making the chase materially specific.",
+          "evidence": [
+            {
+              "paragraphId": "p2043",
+              "quote": "on a river in an open boat"
+            },
+            {
+              "paragraphId": "p2063",
+              "quote": "the light from the furnace door of the steam launch"
+            },
+            {
+              "paragraphId": "p2076",
+              "quote": "an accident when trying to force a way up the rapids."
+            }
+          ]
+        },
+        {
+          "name": "Carpathian roads, carriage, furs, and provisions",
+          "meaning": "The mountain approach combines wild beauty with increasing isolation and cold. Changing horses, warm wraps, and food make endurance part of the visual narrative.",
+          "evidence": [
+            {
+              "paragraphId": "p2080",
+              "quote": "a huge basket of provisions"
+            },
+            {
+              "paragraphId": "p2087",
+              "quote": "only our warm furs keep us comfortable."
+            },
+            {
+              "paragraphId": "p2089",
+              "quote": "the great spurs of the Carpathians"
+            },
+            {
+              "paragraphId": "p2089",
+              "quote": "a rude four-in-hand."
+            }
+          ]
+        },
+        {
+          "name": "Snow, wolves, and dying horses",
+          "meaning": "The natural environment threatens every party. Snow shapes the spectral encounter and the final battlefield; horses respond to terror and die during the night beside the sacred circle.",
+          "evidence": [
+            {
+              "paragraphId": "p2107",
+              "quote": "snow-flurries and the wreaths of mist took shape as of women with trailing garments."
+            },
+            {
+              "paragraphId": "p2113",
+              "quote": "the horses, they are all dead."
+            },
+            {
+              "paragraphId": "p2140",
+              "quote": "the wolves were gathering for their prey."
+            }
+          ]
+        },
+        {
+          "name": "Castle, chapel, tombs, and rusted hinges",
+          "meaning": "The castle is an elevated, isolated stronghold with an oppressive burial interior. Van Helsing disables doors and sanctifies Dracula’s tomb; the castle itself survives into the epilogue.",
+          "evidence": [
+            {
+              "paragraphId": "p2120",
+              "quote": "I broke them off the rusty hinges"
+            },
+            {
+              "paragraphId": "p2123",
+              "quote": "a tomb fretted with age and heavy with the dust of centuries"
+            },
+            {
+              "paragraphId": "p2134",
+              "quote": "perched a thousand feet on the summit of a sheer precipice"
+            },
+            {
+              "paragraphId": "p2160",
+              "quote": "The castle stood as before"
+            }
+          ]
+        },
+        {
+          "name": "Rock shelter, field-glasses, and leiter-wagon",
+          "meaning": "The natural hollow frames Mina’s observation of converging pursuers. Field-glasses reveal a moving chest against the snow, while the wagon carries Dracula toward the castle and sunset.",
+          "evidence": [
+            {
+              "paragraphId": "p2135",
+              "quote": "an entrance like a doorway between two boulders."
+            },
+            {
+              "paragraphId": "p2135",
+              "quote": "Taking his field-glasses from the case"
+            },
+            {
+              "paragraphId": "p2136",
+              "quote": "a long leiter-wagon"
+            }
+          ]
+        },
+        {
+          "name": "Dust, red sky, and stainless snow",
+          "meaning": "The ending joins bodily dissolution, the castle’s silhouette, and Mina’s restored forehead. These are distinct textual images of finality, surviving place, and release.",
+          "evidence": [
+            {
+              "paragraphId": "p2149",
+              "quote": "the whole body crumbled into dust"
+            },
+            {
+              "paragraphId": "p2151",
+              "quote": "every stone of its broken battlements was articulated against the light of the setting sun."
+            },
+            {
+              "paragraphId": "p2156",
+              "quote": "The curse has passed away!"
+            }
+          ]
+        },
+        {
+          "name": "Burial Service book and kneeling circle of friends",
+          "meaning": "A funeral rite performed for living Mina anticipates possible loss while bringing comfort. The gathered figures and interrupted reading form a solemn interior scene.",
+          "evidence": [
+            {
+              "paragraphId": "p1914",
+              "quote": "he began to read when she had got the book ready."
+            },
+            {
+              "paragraphId": "p1915",
+              "quote": "friends kneeling round that stricken and sorrowing lady"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Mina and Jonathan: love tested by hatred, secrecy, and separation",
+          "meaning": "Jonathan’s devotion drives violent anger; Mina redirects it toward pity. Their marriage endures restricted knowledge and separate journeys, and the epilogue gives their survival a family future.",
+          "evidence": [
+            {
+              "paragraphId": "p1765",
+              "quote": "I, too, may need such pity"
+            },
+            {
+              "paragraphId": "p1864",
+              "quote": "you will not tell me anything of the plans"
+            },
+            {
+              "paragraphId": "p2159",
+              "quote": "our boy’s birthday is the same day as that on which Quincey Morris died."
+            }
+          ]
+        },
+        {
+          "name": "Mina and Dracula: coercive bond turned into intelligence",
+          "meaning": "The Count’s blood-linked control threatens Mina’s autonomy, but the same connection lets the hunters learn his surroundings. Its apparent asymmetry becomes an advantage according to Van Helsing.",
+          "evidence": [
+            {
+              "paragraphId": "p1845",
+              "quote": "make her drink of his"
+            },
+            {
+              "paragraphId": "p1877",
+              "quote": "learn that which even I myself do not know."
+            },
+            {
+              "paragraphId": "p1975",
+              "quote": "At such times you go by my volition and not by his"
+            }
+          ]
+        },
+        {
+          "name": "Mina and Van Helsing: reciprocal guidance and protection",
+          "meaning": "Van Helsing guards and hypnotises Mina, but repeatedly relies on her judgment. Their mountain journey includes mutual care, and Mina prevents him from stepping outside the protective circle.",
+          "evidence": [
+            {
+              "paragraphId": "p2047",
+              "quote": "Our dear Madam Mina is once more our teacher."
+            },
+            {
+              "paragraphId": "p2085",
+              "quote": "I must make him rest whilst I drive."
+            },
+            {
+              "paragraphId": "p2108",
+              "quote": "Do not go without. Here you are safe!"
+            }
+          ]
+        },
+        {
+          "name": "Van Helsing and Seward: medical partnership and concealed fears",
+          "meaning": "The doctors privately discuss Mina’s transformation, disclosure risk, and possible destruction. Their protective intent also creates an unequal distribution of knowledge within the group.",
+          "evidence": [
+            {
+              "paragraphId": "p1843",
+              "quote": "something that you and I must talk of alone"
+            },
+            {
+              "paragraphId": "p1933",
+              "quote": "We talk of her often; we have not, however, said a word to the others."
+            }
+          ]
+        },
+        {
+          "name": "Quincey, Arthur, and Seward: established trust in action",
+          "meaning": "Past shared adventures support instinctive coordination, leadership, and paired pursuit. Their practical friendship is expressed through gestures, watchkeeping, and readiness.",
+          "evidence": [
+            {
+              "paragraphId": "p1751",
+              "quote": "Arthur and I had been accustomed to obey him implicitly."
+            },
+            {
+              "paragraphId": "p2052",
+              "quote": "We have been accustomed to hunt together"
+            }
+          ]
+        },
+        {
+          "name": "Mina and the three vampire women: offered sisterhood and refusal",
+          "meaning": "The women invite Mina into their company, making her possible transformation an immediate social threat. Her horror reassures Van Helsing that she has not yet joined them.",
+          "evidence": [
+            {
+              "paragraphId": "p2111",
+              "quote": "Come, sister. Come to us."
+            },
+            {
+              "paragraphId": "p2111",
+              "quote": "God be thanked she was not, yet, of them."
+            }
+          ]
+        },
+        {
+          "name": "Mina and the group: oath, threatened death, and restored participation",
+          "meaning": "Mina asks her friends to promise her destruction if transformation becomes intolerable. Later, when the trail fails, they restore her access to their information and her reasoning redirects the campaign.",
+          "evidence": [
+            {
+              "paragraphId": "p1897",
+              "quote": "You must promise me, one and all"
+            },
+            {
+              "paragraphId": "p2014",
+              "quote": "taking Mina again into our confidence."
+            },
+            {
+              "paragraphId": "p2046",
+              "quote": "The others kept shaking me by both hands"
+            }
+          ]
+        },
+        {
+          "name": "Dracula and hired intermediaries",
+          "meaning": "His escape depends on captains, agents, documents, and carriers. Money and ordinary commercial responsibilities move the box; Mina subsequently interprets Skinsky’s death as the removal of a trace.",
+          "evidence": [
+            {
+              "paragraphId": "p2010",
+              "quote": "handed over the box, so as to save porterage."
+            },
+            {
+              "paragraphId": "p2007",
+              "quote": "the property and the trust of my owners"
+            },
+            {
+              "paragraphId": "p2042",
+              "quote": "by murdering his agent."
+            }
+          ]
+        },
+        {
+          "name": "Quincey and Mina: service, release, and inherited remembrance",
+          "meaning": "Quincey guards Mina, accepts her difficult oath, and dies after seeing her freed. The Harkers’ child carries his name, extending the friendship beyond the pursuit.",
+          "evidence": [
+            {
+              "paragraphId": "p1774",
+              "quote": "One of us will be here all night."
+            },
+            {
+              "paragraphId": "p2154",
+              "quote": "It was worth for this to die!"
+            },
+            {
+              "paragraphId": "p2159",
+              "quote": "some of our brave friend’s spirit has passed into him."
+            }
+          ]
+        },
+        {
+          "name": "Survivors, child, and the private legacy of courage",
+          "meaning": "The final scene places the boy on Van Helsing’s knee and shifts the record’s purpose toward teaching him his mother’s courage and the devotion of her friends. Godalming and Seward’s marriages also establish renewed life after the ordeal.",
+          "evidence": [
+            {
+              "paragraphId": "p2161",
+              "quote": "Godalming and Seward are both happily married."
+            },
+            {
+              "paragraphId": "p2161",
+              "quote": "with our boy on his knee"
+            },
+            {
+              "paragraphId": "p2162",
+              "quote": "what a brave and gallant woman his mother is."
+            }
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The basin water is described as reddened as if with blood; the section does not establish that it is blood.",
+        "Many vampire rules, historical claims, and explanations of Dracula’s mind are statements by Van Helsing or deductions by Mina. Their certainty varies, and they should remain attributed.",
+        "The proposed wild rose restraint is explicitly called superstition; this section does not depict its use.",
+        "Mina’s trance reports provide sounds and sensations. The observers infer locations, transport, and actions from them; an illustration should distinguish reported sensation from confirmed scene.",
+        "Skinsky’s torn throat is reported, but the killing is not witnessed. Mina’s claim that Dracula murdered him is a surmise.",
+        "The Pruth, Sereth, and Bistritza route is developed through inference. The pursuers choose the Sereth and Bistritza, but the reported fast boat’s branch choice is initially unknown.",
+        "Van Helsing suspects supernatural influences on Mina’s sleep, appetite, and guidance. The precise causes are not independently established in each episode.",
+        "The text’s criminal typology, gender hierarchy, and ethnic generalizations belong to its characters and narrators; they should not be treated as factual research conclusions.",
+        "Mina’s forehead scar and the mark upon her throat are separately mentioned. They should not be merged into one invented wound.",
+        "The final destruction uses Jonathan’s knife at the throat and Quincey’s bowie at the heart; the earlier planned staking is not the action depicted in that climax.",
+        "Mina’s belief that Quincey’s spirit passed into her son is presented as a private belief, not a confirmed supernatural event.",
+        "The supplied section closes with the seven-year family note and its doubts about documentary proof. It does not establish public recognition of the events or identify the spouses of Godalming and Seward."
+      ]
+    }
+  ]
+}

@@ -9,3 +9,8 @@ trim_trailing_whitespace = true
 [*.{json,yml,yaml}]
 indent_style = space
 indent_size = 2
+
+[assets/proofs/**/raw.txt]
+end_of_line = unset
+trim_trailing_whitespace = false
+insert_final_newline = false

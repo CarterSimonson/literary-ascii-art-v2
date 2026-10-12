@@ -1,0 +1,28 @@
+{
+  "id": "gutenberg-345",
+  "title": "Dracula",
+  "author": "Stoker, Bram",
+  "source": "https://www.gutenberg.org/ebooks/345.txt.utf-8",
+  "record": {
+    "id": 345,
+    "title": "Dracula",
+    "authors": [
+      {
+        "name": "Stoker, Bram"
+      }
+    ],
+    "languages": [
+      "en"
+    ],
+    "formats": {
+      "text/html": "https://www.gutenberg.org/ebooks/345.html.images",
+      "application/epub+zip": "https://www.gutenberg.org/ebooks/345.epub3.images",
+      "application/x-mobipocket-ebook": "https://www.gutenberg.org/ebooks/345.kf8.images",
+      "application/rdf+xml": "https://www.gutenberg.org/ebooks/345.rdf",
+      "image/jpeg": "https://www.gutenberg.org/cache/epub/345/pg345.cover.medium.jpg",
+      "application/octet-stream": "https://www.gutenberg.org/cache/epub/345/pg345-h.zip",
+      "text/plain; charset=utf-8": "https://www.gutenberg.org/ebooks/345.txt.utf-8",
+      "text/plain; charset=us-ascii": "https://www.gutenberg.org/files/345/345-0.txt"
+    }
+  }
+}
