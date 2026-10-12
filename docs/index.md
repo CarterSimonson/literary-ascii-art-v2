@@ -6,6 +6,10 @@
 - [Agent instructions](../AGENTS.md): working conventions and product rules.
 - [Architecture](../ARCHITECTURE.md): implemented workflow and intended boundaries.
 - [Bootstrap](BOOTSTRAP.md): establish the first reproducible pipeline journey.
+- [Bookgen CLI contract](product-specs/bookgen-cli.md): commands, book-grouped
+  outputs, stage ownership, and retry behavior.
+- [Bookgen ideas execution plan](exec-plans/completed/bookgen-ideas.md): first Bun
+  CLI and Codex SDK tracer implementation and verification.
 - [Project tracking](project-tracking.md): Linear project, initial queue, and
   verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,

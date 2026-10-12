@@ -1,9 +1,9 @@
 # Bootstrap the literary-art pipeline
 
-The repository standards are in place, but the application has not been built.
-Use this guide to establish the first working journey. Choose implementation
-details to suit the product; do not add layers or integrations before they are
-needed.
+The first tracer is implemented: the Bun/TypeScript `bookgen ideas <book>` command
+generates ten concepts through the Codex SDK. Its [CLI contract](product-specs/bookgen-cli.md)
+defines book-grouped outputs and independent stage retries; the README documents
+setup and checks. Use this guide for the remaining artwork-to-poster journey.
 
 ## 1. Define the first observable outcome
 
@@ -24,15 +24,16 @@ documentation map.
 
 ## 2. Establish the project
 
-Choose the runtime and its conventional source layout. Make dependency setup
-reproducible and document actual install, run, and verification commands in the
-[README](../README.md). Update the [architecture](../ARCHITECTURE.md) with code
-locations, public interfaces, and allowed dependency directions.
+Bun, strict TypeScript, lint, formatting, tests, and CI are established. Extend
+the CLI with independent commands as pipeline stages are implemented. Keep
+actual setup and verification commands in the [README](../README.md) and update
+the [architecture](../ARCHITECTURE.md) with each new stage's boundaries and checks.
 
-Choose storage and versioning for masters, book texts, converted art, print files,
-mockups, product records, and store state. Define stage metadata that identifies
-inputs, outputs, settings, and tool versions. Keep disposable local output separate
-from durable assets.
+Local outputs belong under `output/<book-slug>/`, with `ideas.yaml`, latest-attempt
+traces, and future `raw/<idea-id>.png` masters kept distinct from later-stage
+artifacts. Choose durable production storage and versioning for masters, book
+texts, converted art, print files, mockups, product records, and store state.
+Each new command must define its owned paths and metadata before implementation.
 
 ## 3. Close the first feedback loop
 

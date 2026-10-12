@@ -27,6 +27,25 @@ We're building an end-to-end system for selling literary character art:
 
 Favor reproducible pipeline stages with explicit inputs, outputs, metadata, and validation. Keep generated masters, converted art, print files, mockups, product records, and store state distinct.
 
+## CLI and outputs
+
+- Use Bun and TypeScript. Every pipeline step must be independently executable
+  through the `bookgen` CLI; the first step is `bookgen ideas <book>` through the
+  Codex SDK, producing ten original poster composition ideas.
+- Aim for recognizable literary character-art posters in the spirit of
+  Litographs, grounded in the book and the source-art skill's conversion rules.
+- Generate one reusable source master; poster rendering adapts it to other sizes
+  by placing the art and filling the surrounding space. Keep image dimensions out
+  of composition ideas. Use a flexible palette with intended uses for colors;
+  silhouette, negative-space storytelling, and secondary motifs are optional.
+- Group local generated outputs under `output/<book-slug>/`: `ideas.yaml`, future
+  `raw/<idea-id>.png` masters, and separate later-stage artifacts. Keep output tidy
+  and ignored by Git.
+- Each command regenerates its own expected outputs at stable paths so steps can
+  be retried independently. Preserve the last valid artifact if generation fails;
+  never silently delete or rewrite another stage's outputs. See
+  [CLI contract](docs/product-specs/bookgen-cli.md) for metadata and retry details.
+
 ## Working conventions
 
 - Keep durable knowledge in the repository. Record decisions where a future

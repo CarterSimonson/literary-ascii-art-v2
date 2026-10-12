@@ -2,25 +2,34 @@
 
 ## Implemented today
 
-The only domain workflow is the
-[generate-book-art skill](.agents/skills/generate-book-art/SKILL.md), with agent UI
-metadata in `.agents/skills/generate-book-art/agents/openai.yaml`. It guides an
-agent through concepts, image generation, review, and refinement. It does not
-implement character conversion, poster rendering, or store operations.
+The Bun/TypeScript `bookgen` CLI implements idea generation through the Codex SDK.
+The [CLI contract](docs/product-specs/bookgen-cli.md) defines inputs, outputs, and
+retry semantics. Modules have these responsibilities:
 
-There is no application stack or source layout yet. The boundaries below describe
-the intended pipeline, not existing modules or enforced interfaces. Update this
-map with actual code locations and checks as stages are implemented.
+- `src/cli.ts`: command parsing, settings, progress, exit codes, and interruption.
+- `src/ideas/schema.ts`: version 2 concept/palette validation and book/idea folder
+  naming. Composition carries the visual design; palette lists colors and uses.
+- `src/ideas/prompt.ts`: versioned literary composition brief.
+- `src/ideas/codex.ts`: SDK adapter; streamed structured output from an isolated
+  temporary working directory with read-only sandbox and noninteractive execution.
+- `src/ideas/run.ts`: per-book locking, latest-attempt trace, artifact provenance,
+  timeout, validation, and atomic replacement of `ideas.yaml`.
+- `tests/`: input, output, retry, failure, and CLI checks using fake SDK events.
+
+The [generate-book-art skill](.agents/skills/generate-book-art/SKILL.md) guides
+concept selection, image generation, visual review, and refinement. Ideas are
+unapproved proposals. The CLI does not yet generate images, convert characters,
+render posters, or operate products or the store.
 
 ## Intended stage boundaries
 
-| Stage | Inputs | Outputs | Validation needed |
-| --- | --- | --- | --- |
-| Source artwork | Book identity, approved concept, palette | Transparent PNG master and generation metadata | Composition, transparency, palette, and visual legibility |
-| Character conversion | Approved master, identified book text, conversion settings | Character placement and source-color data with provenance | Pixel coverage, transparent-pixel skipping, character order, and color preservation |
-| Poster rendering | Converted art, font, layout, poster background, print settings | Print file and render metadata | Dimensions, resolution, font behavior, margins, and visual proof |
-| Product preparation | Validated print file, provider settings, editorial metadata | Mockups, product records, and listing drafts | Asset references and provider-specific requirements |
-| Store operations | Approved product records and external service responses | Published listings and separately recorded store state | External response validation and reconciliation |
+| Stage                | Inputs                                                         | Outputs                                                   | Validation needed                                                                   |
+| -------------------- | -------------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Source artwork       | Book identity, approved concept, palette                       | Transparent PNG master and generation metadata            | Composition, transparency, palette, and visual legibility                           |
+| Character conversion | Approved master, identified book text, conversion settings     | Character placement and source-color data with provenance | Pixel coverage, transparent-pixel skipping, character order, and color preservation |
+| Poster rendering     | Converted art, font, layout, poster background, print settings | Print file and render metadata                            | Dimensions, resolution, font behavior, margins, and visual proof                    |
+| Product preparation  | Validated print file, provider settings, editorial metadata    | Mockups, product records, and listing drafts              | Asset references and provider-specific requirements                                 |
+| Store operations     | Approved product records and external service responses        | Published listings and separately recorded store state    | External response validation and reconciliation                                     |
 
 ## Dependency rules
 
@@ -34,7 +43,8 @@ map with actual code locations and checks as stages are implemented.
 - A downstream stage must not silently modify an upstream artifact. Changed
   inputs produce a new result with its own provenance.
 - Keep generated masters, converted art, print files, mockups, product records,
-  and store state distinct. Select their actual storage layout during bootstrap.
+  and store state distinct under `output/<book-slug>/`. Declare each step's owned
+  paths as it is implemented; it may replace those files but not another step's.
 
 ## Reproducibility and external boundaries
 
@@ -50,9 +60,19 @@ the corresponding integration exists.
 
 ## Checks and open decisions
 
-No executable pipeline checks exist yet. The
-[bootstrap guide](docs/BOOTSTRAP.md) defines the first feedback loop and the
-behavior that its checks should cover. Runtime, character-grid rules, text
-normalization, font metrics, print format, asset storage, and external providers
-remain undecided. Record decisions and their rationale through the
-[documentation map](docs/index.md).
+`bun run check` enforces strict TypeScript, type-aware lint, formatting, and Bun
+tests; CI runs the same command after a frozen dependency install. Runtime
+validation enforces ten complete concepts with unique safe IDs and names, hex
+palettes, complete SDK turns, and safe book slugs. Tests cover atomic publication,
+failure preservation, trace replacement, locking, cancellation, and CLI errors.
+
+Composition descriptions are independent of output dimensions and do not require
+specific visual devices. Source generation will produce one reusable master;
+poster rendering owns size adaptation and the surrounding field. Negative-space
+storytelling and secondary motifs are available techniques rather than schema
+requirements. Palettes have no fixed role names, color count, or coverage ratios.
+
+The [bootstrap guide](docs/BOOTSTRAP.md) describes remaining stages. Character-grid
+rules, text normalization, font metrics, print format, durable asset storage, and
+external providers remain undecided. Record decisions and their rationale through
+the [documentation map](docs/index.md).

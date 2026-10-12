@@ -1,6 +1,6 @@
 ---
 name: generate-book-art
-description: Create bold, conversion-ready literary illustrations for classic books as transparent 2:3 PNG masters that will be rebuilt from monospaced characters. Use when Codex needs to research a book's visual language, propose original pictorial concepts, generate or refine book-inspired artwork, choose a limited palette and poster background, or evaluate art for the literary ASCII poster pipeline.
+description: Create bold, conversion-ready literary illustrations for classic books as transparent PNG masters that will be rebuilt from monospaced characters. Use when Codex needs to research a book's visual language, propose original pictorial concepts, generate or refine book-inspired artwork, choose a coherent palette with intended color uses, or evaluate art for the literary ASCII poster pipeline.
 ---
 
 # Generate Book Art
@@ -20,32 +20,32 @@ Create purely pictorial literary art whose intent survives reduction to a charac
 
 Before generating, propose three distinct directions. For each, state:
 
-1. The dominant visual mass or compact tableau.
-2. The subject revealed by silhouette or negative space.
-3. The secondary literary motif and how it is integrated.
-4. The dominant color, optional accent color, and proposed poster background.
-5. Why the idea remains legible after character conversion.
+1. The visual concept, arrangement, scale, and hierarchy.
+2. The concrete literary basis for the idea.
+3. A coherent palette listing colors and their intended uses.
+4. Why the idea remains legible after character conversion.
+
+Silhouette, negative-space storytelling, a secondary motif, and a two-stage read are useful devices when they strengthen the concept, not mandatory ingredients or separate fields. Do not invent a secondary motif just to fill a slot. Keep dimensions and aspect ratios in generation settings rather than composition descriptions.
 
 Recommend one direction. Do not generate until the user approves a direction, unless the user explicitly asks to skip concept approval.
 
-Favor a two-stage read: an immediate, recognizable subject followed by a subtler thematic discovery. Treat this as a strong default, not a rule that overrides a better book-specific idea.
+Use a two-stage read when it serves the book: an immediate visual identity followed by a subtler thematic discovery. A single clear scene, emblem, or abstract motif can be equally appropriate.
 
 ### 3. Build the generation brief
 
 Choose a palette as one system:
 
 - Deliver the master with a truly transparent background.
-- Recommend a separate finished-poster background, normally warm off-white or near-black.
-- Use one book-specific dominant artwork color for at least 80% of the visible art.
-- Permit one optional accent color.
-- Ensure both artwork colors contrast strongly with the recommended poster background.
+- List hex colors and their intended uses. Choose the number of colors and their distribution to serve the concept; do not require dominant/accent/foreground/background slots or coverage ratios.
+- If a poster field color is useful to recommend, identify it in the palette, but keep it out of the transparent source master.
+- Evaluate contrast among neighboring shapes and against the intended poster field. Prefer enough color separation to preserve the visual hierarchy after character conversion.
 
 Apply this visual specification:
 
-- 2:3 portrait composition.
+- Generate one reusable high-resolution master at poster-friendly dimensions chosen in the generation settings, normally portrait. Later rendering places that master within other poster sizes and fills the surrounding space. Do not bake a target poster size into the concept or regenerate the art for every size.
 - Purely pictorial: no title, author, lettering, numbers, logos, signature, or watermark.
-- One dominant text-bearing mass with clear negative-space storytelling; use either an emblem or a compact tableau according to the book.
-- Visible artwork occupies about 65–85% of the canvas with a deliberate transparent perimeter.
+- Use substantial text-bearing shapes with a clear arrangement suited to the book, whether a scene, emblem, or abstract motif.
+- Preserve a deliberate transparent perimeter so the master can be placed flexibly at render time.
 - Large, clean, evenly separated shapes with crisp edges and a screen-printed or vector-cut-paper character.
 - Prefer solid masses and negative-space cutouts. Allow only a few structural strokes when the subject needs them, such as masts, legs, cables, or columns.
 - Make every essential stroke and negative-space gap at least about 1% of the canvas width. Exaggerate fragile features rather than depicting them literally.
@@ -61,13 +61,13 @@ Use this prompt structure, replacing the bracketed values with the approved conc
 ```text
 Create a bold, purely pictorial illustration inspired by [BOOK TITLE] by [AUTHOR], designed as the source mask and color map for a literary character-art poster. Every opaque pixel will later become one monospaced character from the book, while every transparent pixel will be skipped.
 
-Concept: [DOMINANT MASS / TABLEAU]. Reveal [PRIMARY SUBJECT] through [SILHOUETTE OR NEGATIVE-SPACE MECHANISM]. Integrate [SECONDARY MOTIF] as [INTEGRATION]. Preserve the book-specific meaning: [LITERARY RATIONALE].
+Concept: [VISUAL CONCEPT AND ARRANGEMENT]. Preserve the book-specific meaning: [LITERARY RATIONALE]. Describe silhouette, negative-space storytelling, or an integrated secondary motif only when those devices are part of the approved concept.
 
-Composition: portrait 2:3. Use one substantial, unified visual mass occupying roughly 65–85% of the canvas, surrounded by a deliberate transparent perimeter. The composition must read immediately as a small thumbnail. Prefer large continuous shapes and expressive silhouette rhythm over literal detail. Use bold structural strokes only where necessary. Every important stroke and every negative-space gap must be wide, clean, evenly separated, and no thinner than about 1% of the canvas width.
+Composition: [PLACEMENT, SCALE, AND HIERARCHY]. Use substantial text-bearing shapes surrounded by a deliberate transparent perimeter. The composition must read immediately as a small thumbnail. Prefer large continuous shapes and expressive silhouette rhythm over literal detail. Use bold structural strokes only where necessary. Every important stroke and every negative-space gap must be wide, clean, evenly separated, and no thinner than about 1% of the canvas width.
 
-Palette: flat [DOMINANT COLOR] carries at least 80% of the visible artwork; use [ACCENT COLOR OR "no accent"] sparingly. The intended finished-poster background is [BACKGROUND COLOR AND HEX], but do not render that background into the image.
+Palette: [HEX COLORS AND THEIR INTENDED USES]. Use flat, fully opaque fills and maintain the approved color relationships. Apply only artwork colors to the master; any suggested poster field color belongs to later rendering.
 
-Output requirements: a largest-native-size 2:3 PNG with a genuinely transparent RGBA background and crisp, fully opaque, flat-color shapes. No white matte and no checkerboard pattern. No words, letters, title, author, numbers, logo, signature, or watermark. No gradients, shading, highlights, shadows, glow, blur, grain, texture, halftones, semitransparency, photorealism, 3D, painterly marks, crosshatching, hairlines, tiny details, border, frame, page, wall, or product mockup.
+Output requirements: one largest-native-size PNG at the chosen master generation dimensions with a genuinely transparent RGBA background and crisp, fully opaque, flat-color shapes. No white matte and no checkerboard pattern. No words, letters, title, author, numbers, logo, signature, or watermark. No gradients, shading, highlights, shadows, glow, blur, grain, texture, halftones, semitransparency, photorealism, 3D, painterly marks, crosshatching, hairlines, tiny details, border, frame, page, wall, or product mockup.
 ```
 
 Do not weaken the prompt with vague style labels such as "minimalist" alone. Describe the required geometry, hierarchy, palette, transparency, and failure conditions explicitly.
@@ -98,9 +98,8 @@ Continue inspecting edits at thumbnail size. Keep post-processing outside this s
 
 Provide:
 
-- The selected largest-native-size 2:3 transparent PNG master.
-- The recommended poster background name and hex value.
-- The dominant artwork color and optional accent color as hex values.
-- A concise concept statement identifying the primary and secondary literary reads.
+- The selected largest-native-size transparent PNG master, with its generation dimensions recorded separately.
+- The approved palette as hex colors with their intended uses, identifying a suggested poster field color if applicable.
+- A concise composition statement and literary rationale, with any secondary read described only when the concept uses one.
 
 Do not rasterize a background into the master. Do not run the downstream character conversion unless the user asks.
