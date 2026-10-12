@@ -56,3 +56,4 @@ decision during bootstrap.
 - [Architecture](ARCHITECTURE.md)
 - [Documentation map and execution-plan conventions](docs/index.md)
 - [Bootstrap guide](docs/BOOTSTRAP.md)
+- [Linear project and work queue](docs/project-tracking.md)

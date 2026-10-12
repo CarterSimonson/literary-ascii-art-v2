@@ -8,6 +8,13 @@
 - [Bootstrap](docs/BOOTSTRAP.md): remaining work to establish the first working pipeline.
 - [Generate book art](.agents/skills/generate-book-art/SKILL.md): source-art workflow.
 
+## Project tracking
+
+- Linear project: [Literary ASCII Art v2](https://linear.app/codekips/project/literary-ascii-art-v2-6cfd6b18fd52).
+- Linear team: Codekips (`COD`).
+- [Tracking conventions and initial queue](docs/project-tracking.md). Linear owns
+  current issue status and dependencies; keep durable designs and plans here.
+
 ## Product
 
 We're building an end-to-end system for selling literary character art:

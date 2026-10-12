@@ -6,6 +6,8 @@
 - [Agent instructions](../AGENTS.md): working conventions and product rules.
 - [Architecture](../ARCHITECTURE.md): implemented workflow and intended boundaries.
 - [Bootstrap](BOOTSTRAP.md): establish the first reproducible pipeline journey.
+- [Project tracking](project-tracking.md): Linear project, initial queue, and
+  verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,
   verification, and remaining work.
 
