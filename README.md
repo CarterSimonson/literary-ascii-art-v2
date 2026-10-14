@@ -1,8 +1,8 @@
 # Literary ASCII Art v2
 
-An end-to-end system for creating and selling literary character art. Each opaque
-source-image pixel becomes a monospaced character from the book, preserving the
-pixel's color; transparent pixels are skipped. The resulting artwork becomes a
+An end-to-end system for creating and selling literary character art. For each target, a render-only copy of the source image is resized to a character
+grid. Each visible, non-background grid pixel becomes a monospaced character from the book, preserving
+the sampled pixel's color; transparent and background pixels are skipped. The resulting artwork becomes a
 print-ready poster and, eventually, a product in an online store.
 
 ## Current state
@@ -19,8 +19,10 @@ PNG per idea through the same authenticated Codex CLI, and deterministically cle
 alpha and artwork colors. Images remain unapproved candidates for human review.
 `bookgen fetch <book-id>` downloads the pinned Project Gutenberg English edition
 and uses Codex to identify non-book sections dynamically. It saves the original,
-clean text, and provenance for future conversion. Character conversion, poster
-rendering, product preparation, and store operations remain future steps.
+clean text, and provenance for conversion. `bookgen render <book-id> --idea <idea-id>`
+combines a selected master with the fetched text into printable character-art PNGs
+for all output targets, or one explicit `--target`. Product preparation and store
+operations remain future steps.
 
 ## Setup and commands
 
@@ -87,7 +89,7 @@ bookgen ideas --help
 bookgen images --help
 ```
 
-All commands use your Codex login and configured Codex model; `--model` overrides
+Ideas, images, and fetch use your Codex login and configured Codex model; `--model` overrides
 that model, not the native image backend. No separate Images API key is required.
 Images requires a Codex CLI/account with native image generation available; it
 fails explicitly if that capability is unavailable. It creates a temporary
@@ -103,7 +105,86 @@ request to the native tool; the manifest records actual returned dimensions.
 Legacy title-style ideas calls such as `bookgen ideas "Dracula" --author "Bram Stoker"`
 still work with a valid registry. Lowercase ID-shaped arguments resolve as registry
 IDs. Add new books to the registry to use them throughout the pipeline.
-Failed commands exit nonzero; success prints the absolute artifact/manifest path.
+Failed commands exit nonzero; success prints absolute artifact paths (one poster
+path per target for render).
+
+## Output targets
+
+Add or edit print targets directly in [output-targets.yaml](output-targets.yaml),
+just as books are maintained in `books.yaml`; neither registry has an add command.
+The initial portrait targets are `poster-18x24` (5400 × 7200 px) and
+`poster-24x36` (7200 × 10800 px), both at 300 PPI with no bleed and a 150 px
+(½-inch) empty gutter on every edge.
+
+Each target declares finished `size_inches`, full-file `canvas_px`, and explicit
+per-edge `bleed_px` and `gutter_px`. Bleed lies outside the finished trim boundary.
+The gutter lies inside it and contains only the poster background color, with no
+characters or artwork, to accommodate frame overlap. Targets can override each
+edge independently. If a printer requires bleed, include it in the canvas size;
+keep the finished physical size unchanged.
+
+The validated loader rejects invalid dimensions and insets that leave no content
+area. Rendering consumes this registry and leaves it unchanged. See the [registry contract](docs/product-specs/bookgen-cli.md#output-target-registry).
+
+## Rendering posters
+
+Choose a generated idea and run:
+
+```sh
+bookgen render dracula --idea the-descending-count
+bookgen render dracula --idea the-descending-count --target poster-18x24
+bookgen render dracula --idea the-descending-count --background '#FAF4E8'
+bookgen render --help
+```
+
+The default is every registered output target. `--targets <path>` selects a target
+registry, while `--registry` still selects books. Render runs locally without Codex
+or network access. It requires matching `ideas.yaml`, `raw/manifest.yaml`, the
+selected PNG, and `text/manifest.yaml` plus `book.txt`; stale identities and hashes
+fail before publication. Selecting an idea is explicit, but does not mark upstream
+art or the resulting poster as approved.
+
+Rendering strips Markdown presentation and collapses Unicode whitespace to single
+spaces in a copy of the book text. Word spacing and punctuation remain; bold, emphasis/underline markers,
+strikethrough, code delimiters, headings/list markers, and HTML tags do not. Links
+contribute their labels, and entities are decoded. Remaining `*`, `_`, backticks,
+`~`, control and invisible format characters are removed. Original text is untouched.
+
+The font minimum is **6.5 points** (about 27.1 px at 300 PPI), matching the old
+prototype's physical type size. Roboto Mono Bold is bundled through a pinned
+Fontsource dependency, with no system font fallback. Unsupported or blank glyphs
+become `?` and are listed in the manifest; ordinary spaces remain blank. Glyphs retain their natural proportions.
+
+Each target gets a nearest-neighbor working copy sized for rectangular character
+cells: nominal width is 0.63 × font size, and row height accommodates the font and
+its glyph bounds. Both cell dimensions round up to whole pixels. The working grid
+compensates for the rectangular cells so the complete artwork retains its physical
+proportions, within one cell of rounding. It is centered inside the bleed and
+½-inch gutters, with extra space left as background. The master stays unchanged;
+small details can disappear during downsampling.
+
+Each visible, non-background grid pixel gets one character in row-major order and
+its sampled sRGB ink color. Transparent pixels, opaque white (`#FFFFFF`), and
+pixels exactly matching `--background` consume no text and stay blank. Other
+light artwork colors remain eligible. A space from the book consumes one artwork
+cell and leaves it blank, preserving spaces between words. The renderer uses as
+much of the book's leading text as fits without shrinking the font. If the text
+is shorter than the grid requires, it repeats to fill the artwork. The manifest
+records character counts, omitted text, and any cycling.
+
+Blank glyph space, transparent pixels, gutters, and bleed use the background color
+(default white). PNGs are full-color, not grayscale. Antialiasing blends ink with
+the background at glyph edges, so character art appears lighter than a solid source
+image. Review full-size and physical proofs before approving a print.
+
+Outputs are `output/<book-id>/print/<idea-id>/<target-id>/poster.png` and
+`manifest.yaml`. PNGs have exact target dimensions, an sRGB profile, and print
+resolution derived from the finished size after removing bleed. Manifests record
+input/output hashes, target snapshot, text cleanup, font hash, layout, and text
+cycling. Selected targets publish as a complete batch; failure preserves the last
+batch, and single-target reruns preserve other targets. Wait for command completion
+before reading outputs. After a forced kill, confirm no render is active before
+removing `output/<book-id>/.render.lock`; the next valid run recovers publication.
 
 ## Outputs and retries
 
@@ -168,7 +249,7 @@ margin of 2% of source width on each side. Poster field colors are excluded by t
 generation brief and selected artwork palette. Opaque mattes and empty artwork
 are rejected; cleanup does not infer background removal, repair composition, or
 verify literary accuracy. Final masters are RGBA PNGs with binary alpha and flat
-palette colors, ready as inputs for a future conversion step.
+palette colors, ready as inputs for the render stage.
 
 Images generates into staging and publishes `raw/` as one complete set. A successful
 rerun replaces all PNGs and the manifest, including obsolete idea IDs. A failed
@@ -205,7 +286,7 @@ Ambiguity fails explicitly; the command never chooses another source or edition.
 Code checks every removal's exact boundary lines and copies retained text without
 rewriting it. `text/book.txt` uses UTF-8, LF newlines, and one final newline;
 original punctuation, indentation, line wrapping, and paragraph breaks remain.
-Future conversion owns glyph filtering, whitespace traversal, and character order.
+Rendering owns glyph filtering, whitespace normalization, and character order.
 The manifest records hashes, source URL/ID, observed edition notes, processing
 version, and the agent's removal decisions. Cleanup remains unapproved for human
 review: structural validation cannot prove every editorial judgment correct.

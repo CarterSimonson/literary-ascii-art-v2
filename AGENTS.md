@@ -20,7 +20,7 @@
 We're building an end-to-end system for selling literary character art:
 
 1. Create original book-inspired source artwork.
-2. Convert each opaque source pixel into a monospaced character from the book; skip transparent pixels and preserve source colors.
+2. Resize a render-only copy to the target character grid, then convert visible pixels into monospaced characters from the book; preserve word spaces and sampled colors, and skip transparent, white, and background-colored pixels.
 3. Render print-ready posters.
 4. Create dropshipping products, mockups, metadata, and listings.
 5. Operate and maintain the online store.
@@ -36,6 +36,7 @@ Favor reproducible pipeline stages with explicit inputs, outputs, metadata, and 
   generates and cleans one unapproved PNG candidate per idea through Codex CLI.
 - Aim for recognizable literary character-art posters in the spirit of
   Litographs, grounded in the book and the source-art skill's conversion rules.
+- Render with a 6.5 pt minimum font, rectangular cells, and nearest-neighbor working grids. Fit as much text as the grid allows; keep the original master unchanged.
 - Generate one reusable source master; poster rendering adapts it to other sizes
   by placing the art and filling the surrounding space. Keep image dimensions out
   of composition ideas. Use a flexible palette with intended uses for colors;
