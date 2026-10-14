@@ -2,23 +2,38 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default [
-  { ignores: ["node_modules/**", "output/**", "coverage/**", ".artifacts/**"] },
+  {
+    ignores: [
+      "node_modules/**",
+      "output/**",
+      "coverage/**",
+      ".artifacts/**",
+      ".worktrees/**",
+    ],
+  },
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: "error",
+      reportUnusedInlineConfigs: "error",
+    },
+    rules: {
+      "array-callback-return": ["error", { checkForEach: true }],
+      curly: ["error", "all"],
+      "max-depth": ["error", 4],
+      "no-else-return": ["error", { allowElseIf: false }],
+      "no-implicit-coercion": "error",
+      "no-lonely-if": "error",
+      "no-multi-assign": "error",
+      "no-nested-ternary": "error",
+      "no-param-reassign": "error",
+      "no-sequences": ["error", { allowInParentheses: false }],
+    },
+  },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked.map((config) => ({
     ...config,
     files: ["**/*.ts"],
   })),
-  {
-    files: [
-      "src/fetch/**/*.ts",
-      "src/books.ts",
-      "src/cli.ts",
-      "scripts/**/*.ts",
-      "tests/fetch.test.ts",
-      "tests/gutenberg-corpus.test.ts",
-    ],
-    rules: { curly: ["error", "all"] },
-  },
   {
     files: ["**/*.ts"],
     languageOptions: {

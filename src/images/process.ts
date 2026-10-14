@@ -34,14 +34,16 @@ export async function processImage(
         ] as const,
     );
   z.number().int().min(1).max(255).parse(alphaThreshold);
-  if (!png.subarray(0, 8).equals(pngSignature))
+  if (!png.subarray(0, 8).equals(pngSignature)) {
     throw new Error("Generated image must be PNG");
+  }
   const image = sharp(png, { limitInputPixels: 16_777_216 });
   const header = await image.metadata();
-  if (!header.hasAlpha || (header.pages ?? 1) !== 1)
+  if (!header.hasAlpha || (header.pages ?? 1) !== 1) {
     throw new Error(
       "Generated PNG must be a single image with genuine alpha transparency",
     );
+  }
   const { data, info } = await image
     .toColourspace("srgb")
     .ensureAlpha()
@@ -54,9 +56,13 @@ export async function processImage(
   let sourceTransparent = 0;
   for (let offset = 0; offset < data.length; offset += 4) {
     const alpha = data[offset + 3] ?? 0;
-    if (alpha === 0) sourceTransparent++;
+    if (alpha === 0) {
+      sourceTransparent++;
+    }
     const nextAlpha = alpha < alphaThreshold ? 0 : 255;
-    if (alpha !== nextAlpha) normalizedAlpha++;
+    if (alpha !== nextAlpha) {
+      normalizedAlpha++;
+    }
     data[offset + 3] = nextAlpha;
     if (nextAlpha === 0) {
       transparent++;
@@ -81,20 +87,26 @@ export async function processImage(
         distance = candidate;
       }
     }
-    if (!nearest) throw new Error("Artwork palette is empty");
-    if (distance > 0) mappedColors++;
+    if (!nearest) {
+      throw new Error("Artwork palette is empty");
+    }
+    if (distance > 0) {
+      mappedColors++;
+    }
     data[offset] = nearest[0];
     data[offset + 1] = nearest[1];
     data[offset + 2] = nearest[2];
   }
-  if (sourceTransparent === 0)
+  if (sourceTransparent === 0) {
     throw new Error(
       "Generated PNG has no fully transparent pixels; refusing to guess or erase an opaque background",
     );
-  if (opaque === 0)
+  }
+  if (opaque === 0) {
     throw new Error(
       "Generated image has no opaque artwork after alpha cleanup",
     );
+  }
   const padding = Math.max(1, Math.ceil(info.width * 0.02));
   const width = info.width + padding * 2;
   const height = info.height + padding * 2;

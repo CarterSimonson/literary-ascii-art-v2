@@ -73,10 +73,11 @@ export async function generateCandidate(
         2,
       ) + "\n",
     );
-    if (colors.some((color) => !palette.has(color)))
+    if (colors.some((color) => !palette.has(color))) {
       throw new Error(
         `Image ${idea.id} selected colors outside its idea palette`,
       );
+    }
     const processed = await processImage(
       image.png,
       colors,

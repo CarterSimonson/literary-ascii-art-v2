@@ -4,6 +4,8 @@
   "useTabs": false,
   "semi": true,
   "singleQuote": false,
+  "arrowParens": "always",
+  "objectWrap": "preserve",
   "trailingComma": "all",
   "endOfLine": "lf",
   "proseWrap": "preserve"

@@ -109,7 +109,9 @@ export async function runIdeas(
         join(traceDirectory, "events.jsonl"),
         JSON.stringify(event) + "\n",
       );
-      if (event.type === "thread.started") threadId = event.thread_id;
+      if (event.type === "thread.started") {
+        threadId = event.thread_id;
+      }
       if (event.type === "turn.completed") {
         completed = true;
         usage = event.usage;
@@ -124,12 +126,17 @@ export async function runIdeas(
           finalResponse + "\n",
         );
       }
-      if (event.type === "turn.failed") throw new Error(event.error.message);
-      if (event.type === "error") throw new Error(event.message);
+      if (event.type === "turn.failed") {
+        throw new Error(event.error.message);
+      }
+      if (event.type === "error") {
+        throw new Error(event.message);
+      }
     }
     signal.throwIfAborted();
-    if (!completed)
+    if (!completed) {
       throw new Error("Codex stream ended without a completed turn");
+    }
     const response = parseIdeasResponse(finalResponse);
     const artifact = {
       schema_version: IDEAS_SCHEMA_VERSION,
