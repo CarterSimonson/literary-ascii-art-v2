@@ -1,0 +1,112 @@
+[
+  {
+    "id": 345,
+    "name": "Dracula",
+    "source_sha256": "96cd16eacdbfebae8fdda5591f66e0cc8ee76be18e0cd1aca02bc00615782d28",
+    "source_url": "https://www.gutenberg.org/cache/epub/345/pg345.txt",
+    "header": "The Project Gutenberg eBook of Dracula\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: Dracula\n\nAuthor: Bram Stoker\n\n\n        \nRelease date: October 1, 1995 [eBook #345]\n                Most recently updated: September 24, 2025\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/345\n\nCredits: Chuck Greif and the Online Distributed Proofreading Team\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK DRACULA ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK DRACULA ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 11,
+    "name": "Alice's Adventures in Wonderland",
+    "source_sha256": "01b38ea4c710a84bc18d0bd41271a5a1a92b94e97b2812f4dece97d4a694725e",
+    "source_url": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+    "header": "The Project Gutenberg eBook of Alice's Adventures in Wonderland\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: Alice's Adventures in Wonderland\n\nAuthor: Lewis Carroll\n\n\n        \nRelease date: June 27, 2008 [eBook #11]\n                Most recently updated: June 26, 2025\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/11\n\nCredits: Arthur DiBianca and David Widger\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK ALICE'S ADVENTURES IN WONDERLAND ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK ALICE'S ADVENTURES IN WONDERLAND ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 1342,
+    "name": "Pride and Prejudice",
+    "source_sha256": "3f6bb9d6f78e0293b56acd4714dd68cb7d6d1d293402031ce9d5a216bcaf9d75",
+    "source_url": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+    "header": "The Project Gutenberg eBook of Pride and Prejudice\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: Pride and Prejudice\n\nAuthor: Jane Austen\n\n\n        \nRelease date: June 1, 1998 [eBook #1342]\n                Most recently updated: September 1, 2026\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/1342\n\nCredits: Chuck Greif and the Online Distributed Proofreading Team at http://www.pgdp.net (This file was produced from images available at The Internet Archive)\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK PRIDE AND PREJUDICE ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK PRIDE AND PREJUDICE ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 84,
+    "name": "Frankenstein",
+    "source_sha256": "7810cd483cffcf2cc8a1d8f0d5807931e69d4f48cd14149b8c76f88af82fead3",
+    "source_url": "https://www.gutenberg.org/cache/epub/84/pg84.txt",
+    "header": "The Project Gutenberg eBook of Frankenstein; or, the modern prometheus\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: Frankenstein; or, the modern prometheus\n\nAuthor: Mary Wollstonecraft Shelley\n\n\n        \nRelease date: October 1, 1993 [eBook #84]\n                Most recently updated: February 10, 2026\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/84\n\nCredits: Judith Boss, Christy Phillips, Lynn Hanninen and David Meltzer. HTML version by Al Haines.\n        Further corrections by Menno de Leeuw.\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK FRANKENSTEIN; OR, THE MODERN PROMETHEUS ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK FRANKENSTEIN; OR, THE MODERN PROMETHEUS ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 2701,
+    "name": "Moby Dick",
+    "source_sha256": "b5e88b71a1cda068e9ab1d94344c9d932338ba6da1a66def97a1aecd9cfcc87d",
+    "source_url": "https://www.gutenberg.org/cache/epub/2701/pg2701.txt",
+    "header": "The Project Gutenberg eBook of Moby Dick; Or, The Whale\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: Moby Dick; Or, The Whale\n\nAuthor: Herman Melville\n\n\n        \nRelease date: July 1, 2001 [eBook #2701]\n                Most recently updated: October 9, 2026\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/2701\n\nCredits: Daniel Lazarus, Jonesey, and David Widger\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK MOBY DICK; OR, THE WHALE ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK MOBY DICK; OR, THE WHALE ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 1661,
+    "name": "The Adventures of Sherlock Holmes",
+    "source_sha256": "922e2a12ccb43a4c9544c260b2166c6ad2097aeb5957faeee113f173bb857cd0",
+    "source_url": "https://www.gutenberg.org/cache/epub/1661/pg1661.txt",
+    "header": "The Project Gutenberg eBook of The Adventures of Sherlock Holmes\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: The Adventures of Sherlock Holmes\n\nAuthor: Arthur Conan Doyle\n\n\n        \nRelease date: March 1, 1999 [eBook #1661]\n                Most recently updated: October 10, 2023\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/1661\n\nCredits: an anonymous Project Gutenberg volunteer and Jose Menendez\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK THE ADVENTURES OF SHERLOCK HOLMES ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK THE ADVENTURES OF SHERLOCK HOLMES ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 2600,
+    "name": "War and Peace",
+    "source_sha256": "2d5bb2ad5f422765e714617e21fa31bbaf8958aa79682c86fca6660fcc5d1b2b",
+    "source_url": "https://www.gutenberg.org/cache/epub/2600/pg2600.txt",
+    "header": "The Project Gutenberg eBook of War and Peace\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: War and Peace\n\nAuthor: graf Leo Tolstoy\n\nTranslator: Aylmer Maude\n        Louise Maude\n\n\n        \nRelease date: April 1, 2001 [eBook #2600]\n                Most recently updated: June 14, 2022\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/2600\n\nCredits: An Anonymous Volunteer and David Widger\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK WAR AND PEACE ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK WAR AND PEACE ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 1514,
+    "name": "A Midsummer Night's Dream",
+    "source_sha256": "e8626a628112990c8505dd1098276e6f75040cc268690d018ee6694c71888ea4",
+    "source_url": "https://www.gutenberg.org/cache/epub/1514/pg1514.txt",
+    "header": "The Project Gutenberg eBook of A Midsummer Night's Dream\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: A Midsummer Night's Dream\n\nAuthor: William Shakespeare\n\n\n        \nRelease date: November 1, 1998 [eBook #1514]\n                Most recently updated: September 18, 2025\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/1514\n\nCredits: the PG Shakespeare Team, a team of about twenty Project Gutenberg volunteers\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK A MIDSUMMER NIGHT'S DREAM ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK A MIDSUMMER NIGHT'S DREAM ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 132,
+    "name": "The Art of War",
+    "source_sha256": "2301ae1ce20875381a316b2fd0ac5ada00f71bacdc732458a11b3674b358e360",
+    "source_url": "https://www.gutenberg.org/cache/epub/132/pg132.txt",
+    "header": "The Project Gutenberg eBook of The Art of War\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: The Art of War\n\nAuthor: active 6th century B.C. Sunzi\n\nTranslator: Lionel Giles\n\n\n        \nRelease date: May 1, 1994 [eBook #132]\n                Most recently updated: October 10, 2026\n\nLanguage: English\n\nOriginal publication: , 1910\n\nOther information and formats: www.gutenberg.org/ebooks/132\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK THE ART OF WAR ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK THE ART OF WAR ***",
+    "newline": "\r\n",
+    "bom": false
+  },
+  {
+    "id": 1322,
+    "name": "Leaves of Grass",
+    "source_sha256": "77c066a8774e2b04d8bfbc570d9aa5131410355cd6062ab5962ac773240f3140",
+    "source_url": "https://www.gutenberg.org/cache/epub/1322/pg1322.txt",
+    "header": "The Project Gutenberg eBook of Leaves of Grass\n    \nThis eBook is for the use of anyone anywhere in the United States and\nmost other parts of the world at no cost and with almost no restrictions\nwhatsoever. You may copy it, give it away or re-use it under the terms\nof the Project Gutenberg License included with this eBook or online\nat www.gutenberg.org. If you are not located in the United States,\nyou will have to check the laws of the country where you are located\nbefore using this eBook.\n\nTitle: Leaves of Grass\n\nAuthor: Walt Whitman\n\n\n        \nRelease date: May 1, 1998 [eBook #1322]\n                Most recently updated: October 29, 2024\n\nLanguage: English\n\nOther information and formats: www.gutenberg.org/ebooks/1322\n\nCredits: G. Fuhrman and David Widger\n\n",
+    "start_marker": "*** START OF THE PROJECT GUTENBERG EBOOK LEAVES OF GRASS ***",
+    "end_marker": "*** END OF THE PROJECT GUTENBERG EBOOK LEAVES OF GRASS ***",
+    "newline": "\r\n",
+    "bom": false
+  }
+]

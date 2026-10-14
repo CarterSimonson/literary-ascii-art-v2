@@ -3,3 +3,4 @@ books:
   dracula:
     title: Dracula
     author: Bram Stoker
+    gutenberg_id: 345

@@ -8,7 +8,7 @@ setup and checks. Use this guide for the remaining artwork-to-poster journey.
 
 ## 1. Define the first observable outcome
 
-Start with an approved transparent PNG and an identified book text. Produce
+Start with an approved transparent PNG and reviewed `bookgen fetch` text. Produce
 character art and a poster proof with recorded inputs and settings. Establish
 acceptance criteria for pixel-to-character mapping, character order and wrapping,
 text normalization, font geometry, source colors, and print output before building
@@ -18,7 +18,8 @@ Run `bookgen images <book-id>` and review/select a generated candidate as the
 master. The [source-art skill](../.agents/skills/generate-book-art/SKILL.md) guides
 visual quality and any requested refinement. Use a small deterministic
 fixture for conversion checks so routine verification does not require image
-generation.
+generation. Run `bookgen fetch <book-id>` independently and review its clean text
+and recorded removals before conversion.
 
 Defer dropshipping and store integrations until the local artwork-to-poster
 journey works. Record material product decisions and acceptance criteria in the
