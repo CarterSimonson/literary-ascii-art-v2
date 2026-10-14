@@ -1,7 +1,8 @@
 # Bootstrap the literary-art pipeline
 
-The first tracer is implemented: the Bun/TypeScript `bookgen ideas <book>` command
-generates ten concepts through the Codex SDK. Its [CLI contract](product-specs/bookgen-cli.md)
+The Bun/TypeScript `bookgen ideas <book-id>` and `bookgen images <book-id>` commands
+generate ten concepts and one cleaned PNG per concept through the Codex SDK/CLI. Its
+[CLI contract](product-specs/bookgen-cli.md)
 defines book-grouped outputs and independent stage retries; the README documents
 setup and checks. Use this guide for the remaining artwork-to-poster journey.
 
@@ -13,8 +14,9 @@ acceptance criteria for pixel-to-character mapping, character order and wrapping
 text normalization, font geometry, source colors, and print output before building
 on those choices.
 
-The [source-art skill](../.agents/skills/generate-book-art/SKILL.md) can supply a
-master through its existing concept and approval workflow. Use a small deterministic
+Run `bookgen images <book-id>` and review/select a generated candidate as the
+master. The [source-art skill](../.agents/skills/generate-book-art/SKILL.md) guides
+visual quality and any requested refinement. Use a small deterministic
 fixture for conversion checks so routine verification does not require image
 generation.
 
@@ -30,7 +32,7 @@ actual setup and verification commands in the [README](../README.md) and update
 the [architecture](../ARCHITECTURE.md) with each new stage's boundaries and checks.
 
 Local outputs belong under `output/<book-slug>/`, with `ideas.yaml`, latest-attempt
-traces, and future `raw/<idea-id>.png` masters kept distinct from later-stage
+traces, and `raw/<idea-id>.png` masters kept distinct from later-stage
 artifacts. Choose durable production storage and versioning for masters, book
 texts, converted art, print files, mockups, product records, and store state.
 Each new command must define its owned paths and metadata before implementation.

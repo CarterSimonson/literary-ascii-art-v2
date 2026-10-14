@@ -65,7 +65,7 @@ describe("bookgen command interface", (): void => {
   test.each([
     ["missing title", ["ideas"]],
     ["extra argument", ["ideas", "Dracula", "unexpected"]],
-    ["unknown command", ["images", "Dracula"]],
+    ["unknown command", ["unknown", "Dracula"]],
     ["unknown flag", ["ideas", "Dracula", "--oops"]],
     ["blank title", ["ideas", "  "]],
     ["unsafe slug", ["ideas", "Dracula", "--slug", "../../outside"]],
@@ -114,5 +114,108 @@ describe("bookgen command interface", (): void => {
     expect(await child.exited).toBe(0);
     expect(stdout).toContain("bookgen ideas");
     expect(stdout).toContain("--author");
+  });
+
+  test("both commands resolve the same registry ID", async (): Promise<void> => {
+    let ideasCalled = false;
+    let imagesCalled = false;
+    const silent = { stdout: (): void => {}, stderr: (): void => {} };
+    expect(
+      await runCli(["ideas", "dracula"], {
+        ...silent,
+        run: (request): Promise<string> => {
+          expect(request).toMatchObject({
+            title: "Dracula",
+            author: "Bram Stoker",
+            slug: "dracula",
+          });
+          ideasCalled = true;
+          return Promise.resolve("ideas.yaml");
+        },
+      }),
+    ).toBe(0);
+    expect(
+      await runCli(
+        [
+          "images",
+          "dracula",
+          "--output",
+          "custom-output",
+          "--model",
+          "chosen-model",
+          "--size",
+          "1024x1024",
+          "--alpha-threshold",
+          "180",
+          "--timeout",
+          "30",
+        ],
+        {
+          ...silent,
+          images: (request): Promise<string> => {
+            expect(request).toEqual({
+              title: "Dracula",
+              author: "Bram Stoker",
+              slug: "dracula",
+              outputRoot: "custom-output",
+              model: "chosen-model",
+              size: "1024x1024",
+              alphaThreshold: 180,
+              timeoutSeconds: 30,
+            });
+            imagesCalled = true;
+            return Promise.resolve("raw/manifest.yaml");
+          },
+        },
+      ),
+    ).toBe(0);
+    expect(ideasCalled).toBe(true);
+    expect(imagesCalled).toBe(true);
+  });
+
+  test.each(
+    [
+      ["images"],
+      ["images", "unknown"],
+      ["ideas", "unknown"],
+      ["ideas", "dracula", "--slug", "different"],
+      ["images", "../escape"],
+      ["images", "dracula", "--size", "bad"],
+      ["images", "dracula", "--alpha-threshold", "0"],
+      ["images", "dracula", "--alpha-threshold", "256"],
+      ["images", "dracula", "--timeout", "0"],
+    ].map((args) => [args] as [string[]]),
+  )(
+    "invalid registry/image input fails before generation: %j",
+    async (args): Promise<void> => {
+      let called = false;
+      const unexpected = (): Promise<string> => {
+        called = true;
+        return Promise.resolve("unexpected");
+      };
+      expect(
+        await runCli(args, {
+          run: unexpected,
+          images: unexpected,
+          stdout: (): void => {},
+          stderr: (): void => {},
+        }),
+      ).toBe(1);
+      expect(called).toBe(false);
+    },
+  );
+
+  test("images help works without reading a registry or authenticating", async (): Promise<void> => {
+    let output = "";
+    expect(
+      await runCli(["images", "--help", "--registry", "/missing/books.yaml"], {
+        stdout: (message): void => {
+          output += message;
+        },
+        stderr: (): void => {},
+      }),
+    ).toBe(0);
+    expect(output).toContain("bookgen images");
+    expect(output).toContain("--alpha-threshold");
   });
 });

@@ -7,16 +7,18 @@ print-ready poster and, eventually, a product in an online store.
 
 ## Current state
 
-`bookgen` is a Bun/TypeScript CLI. Its first command, `bookgen ideas <book>`, uses
+`bookgen` is a Bun/TypeScript CLI. `bookgen ideas <book-id>` uses
 the Codex SDK to generate ten original poster composition ideas, validated and
 saved as book-grouped YAML with a trace of the latest attempt. It follows the
 [source-art skill](.agents/skills/generate-book-art/SKILL.md) for bold, transparent
 compositions and coherent palettes, aiming for literary character-art posters
 in the spirit of [Litographs](https://www.litographs.com/).
 
-Ideas are proposals. Image generation, character conversion, poster rendering,
-product preparation, and store operations remain future CLI steps. Image
-generation will require concept selection through the source-art workflow.
+`bookgen images <book-id>` consumes all ten ideas, generates one native transparent
+PNG per idea through the same authenticated Codex CLI, and deterministically cleans
+alpha and artwork colors. Images remain unapproved candidates for human review.
+Character conversion, poster rendering, product preparation, and store operations
+remain future steps.
 
 ## Setup and commands
 
@@ -38,7 +40,8 @@ CLI without linking:
 
 ```sh
 bun run bookgen --help
-bun run bookgen ideas "Dracula" --author "Bram Stoker"
+bun run bookgen ideas dracula
+bun run bookgen images dracula
 ```
 
 The [Codex SDK](https://learn.chatgpt.com/docs/codex-sdk) includes its pinned Codex
@@ -54,24 +57,65 @@ file. The SDK inherits your Codex configuration and authentication; omit `--mode
 to use your configured default. Generation consumes your Codex usage or configured
 provider's API usage.
 
-```sh
-bookgen ideas "Dracula" --author "Bram Stoker"
-bookgen ideas "Dracula" --author "Bram Stoker" --timeout 600
-bookgen ideas "The Trial" --author "Franz Kafka" --slug kafka-the-trial
-bookgen ideas --help
+Define reusable book identities in the root [books.yaml](books.yaml):
+
+```yaml
+schema_version: 1
+books:
+  dracula:
+    title: Dracula
+    author: Bram Stoker
 ```
 
-Options: `--author`, `--slug`, `--output` (default `output` relative to your current
-directory), `--model`, and `--timeout` (default 300 seconds). Quote multiword titles.
-Use an explicit slug to distinguish same-title books or editions, or for titles
-that cannot be normalized into a lowercase ASCII folder name. Input errors and
-failed attempts exit nonzero; success prints the absolute YAML path to stdout.
+Registry keys are stable lowercase IDs used as output folder names. Both commands
+accept `--registry <path>` (default `books.yaml` in the calling directory) and
+`--output <directory>` (default `output`). Unknown IDs and malformed registries
+fail before generation. Registered identity cannot be overridden by flags.
+
+```sh
+bookgen ideas dracula
+bookgen images dracula
+bookgen images dracula --timeout 900
+bookgen ideas --help
+bookgen images --help
+```
+
+Both commands use your Codex login and configured Codex model; `--model` overrides
+that model, not the native image backend. No separate Images API key is required.
+Images requires a Codex CLI/account with native image generation available; it
+fails explicitly if that capability is unavailable. It creates a temporary
+workspace with write access so Codex can copy the generated PNG into it.
+
+Ideas timeout defaults to 300 seconds. Images timeout defaults to 600 seconds
+**per attempt**, with sequential generation and at most one replacement per idea; a
+full batch may take several minutes.
+Images accepts `--size` (`1024x1536` default, `1536x1024`, or `1024x1024`) as a
+request to the native tool; the manifest records actual returned dimensions.
+`--alpha-threshold` defaults to 128 (valid range 1–255).
+
+Legacy title-style ideas calls such as `bookgen ideas "Dracula" --author "Bram Stoker"`
+still work with a valid registry. Lowercase ID-shaped arguments resolve as registry
+IDs. Add new books to the registry to use them throughout the pipeline.
+Failed commands exit nonzero; success prints the absolute artifact/manifest path.
 
 ## Outputs and retries
 
 ```text
 output/dracula/
   ideas.yaml
+  raw/
+    <idea-id>.png
+    manifest.yaml
+  traces/images/
+    ideas.yaml
+    run.json
+    <idea-id>/
+      attempt-1/           # attempt-2 exists only for a replacement
+        prompt.txt
+        events.jsonl
+        generated.png
+        response.json
+        failure.json       # only on failure
   traces/ideas/
     prompt.txt
     events.jsonl
@@ -88,14 +132,40 @@ with surrounding space filled at render time. The trace saves the exact prompt, 
 events, raw response when available, completion/failure status, and token usage.
 The CLI uses the model's knowledge of the book; it does not fetch or verify the
 original text in this first stage. Human review still evaluates literary fidelity
-and visual quality before image generation.
+and visual quality before selecting artwork for downstream conversion.
 
 Rerunning the command replaces `ideas.yaml` only after a complete, validated
 response, and replaces the latest trace on each attempt. Failed attempts preserve
-the last valid YAML. Other stages' files, including future `raw/<idea-id>.png`
+the last valid YAML. Other stages' files, including `raw/<idea-id>.png`
 masters, remain intact. Only one ideas attempt per book may run at a time. After
 a forced process kill, confirm no run is active before removing a stale
 `output/<slug>/.ideas.lock` directory. See the [CLI contract](docs/product-specs/bookgen-cli.md).
+
+Images validates the entire ideas YAML against the registry before generating.
+Each native original, including rejected candidates when available, remains in the
+latest trace. A failed candidate gets one replacement attempt before the batch fails.
+Cleanup keeps source geometry,
+sets alpha below the cutoff to zero and all remaining alpha to 255, maps opaque
+pixels to the nearest selected artwork palette color in sRGB, and adds a transparent
+margin of 2% of source width on each side. Poster field colors are excluded by the
+generation brief and selected artwork palette. Opaque mattes and empty artwork
+are rejected; cleanup does not infer background removal, repair composition, or
+verify literary accuracy. Final masters are RGBA PNGs with binary alpha and flat
+palette colors, ready as inputs for a future conversion step.
+
+Images generates into staging and publishes `raw/` as one complete set. A successful
+rerun replaces all PNGs and the manifest, including obsolete idea IDs. A failed
+batch preserves the previous complete set and replaces only the latest images
+trace. Ideas and later-stage files remain intact. The manifest records upstream
+YAML hash, image/prompt hashes, palette, dimensions, processing settings, usage,
+native visual-review notes, and `review_status: unapproved`; stale outputs can be
+detected by their input hash.
+Changing ideas during image generation causes the attempt to fail.
+
+Only one images run per book may execute at a time. After a forced kill, confirm
+no run is active before removing `output/<id>/.images.lock`. The next run restores
+`.raw.previous` if a kill interrupted publication; staging is rebuilt. Publication
+uses directory renames with recovery, so readers should wait for CLI completion.
 
 Generated `output/`, dependencies, coverage, and local environment files are
 ignored by Git. These local outputs are iteration artifacts; durable production
@@ -114,15 +184,16 @@ bun test
 
 `check` runs strict TypeScript, type-aware ESLint with zero warnings, Prettier,
 and Bun tests. CI installs from the frozen lockfile and runs the same checks.
-Routine tests use a fake SDK event stream and require no credentials or network;
-the live ideas command is the integration check. Editor whitespace defaults are
+Routine tests use fake Codex generation and small PNG fixtures, with no credentials
+or network. Live ideas/images commands exercise the real Codex integration. Editor
+whitespace defaults are
 in `.editorconfig`; formatting is defined in `.prettierrc.json`.
 
 ## Intended pipeline and project knowledge
 
 Every stage must be independently executable through `bookgen`, with explicit
 inputs, outputs, provenance, validation, and ownership of retryable output paths:
-ideas → approved source artwork → character conversion → poster rendering →
+ideas → image candidates → approved source artwork → character conversion → poster rendering →
 product preparation → store operations.
 
 - [Agent instructions](AGENTS.md)

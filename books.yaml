@@ -1,0 +1,5 @@
+schema_version: 1
+books:
+  dracula:
+    title: Dracula
+    author: Bram Stoker
