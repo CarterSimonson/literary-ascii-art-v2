@@ -19,6 +19,7 @@ import {
   imagesRequestSchema,
   parseIdeasArtifact,
   type ImagesRequest,
+  type Idea,
 } from "./schema.ts";
 
 export interface ImagesRunOptions {
@@ -34,9 +35,79 @@ async function exists(path: string): Promise<boolean> {
     await lstat(path);
     return true;
   } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT")
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
       return false;
+    }
     throw error;
+  }
+}
+
+type Candidate = Awaited<ReturnType<typeof generateCandidate>>;
+type ImageRecord = Candidate["processed"]["metadata"] & {
+  idea_id: string;
+  path: string;
+  attempt: number;
+  prompt_sha256: string;
+  generated_sha256: string;
+  sha256: string;
+  artwork_colors: string[];
+  native_review_notes: string[];
+  thread_id: Candidate["image"]["threadId"];
+  usage: Candidate["image"]["usage"];
+};
+
+async function generateAndStageIdea(
+  request: ImagesRequest,
+  idea: Idea,
+  staging: string,
+  trace: string,
+  options: ImagesRunOptions,
+): Promise<ImageRecord> {
+  let previousFailure: string | undefined;
+
+  for (let attempt = 1; ; attempt++) {
+    const attemptTrace = join(trace, idea.id, `attempt-${String(attempt)}`);
+
+    try {
+      const { image, processed, prompt, colors } = await generateCandidate(
+        request,
+        idea,
+        attemptTrace,
+        options,
+        previousFailure,
+      );
+
+      await writeFile(join(staging, `${idea.id}.png`), processed.png);
+
+      return {
+        idea_id: idea.id,
+        path: `${idea.id}.png`,
+        attempt,
+        prompt_sha256: sha256(prompt),
+        generated_sha256: sha256(image.png),
+        sha256: sha256(processed.png),
+        artwork_colors: colors,
+        native_review_notes: image.reviewNotes ?? [],
+        thread_id: image.threadId,
+        usage: image.usage,
+        ...processed.metadata,
+      };
+    } catch (error) {
+      previousFailure = errorMessage(error);
+      await mkdir(attemptTrace, { recursive: true });
+      await writeFile(
+        join(attemptTrace, "failure.json"),
+        JSON.stringify({ error: previousFailure }, null, 2) + "\n",
+      );
+
+      if (options.signal?.aborted || attempt === 2) {
+        throw error;
+      }
+
+      options.onProgress?.(
+        `Replacing failed image ${idea.id}: ${previousFailure}`,
+      );
+    }
   }
 }
 
@@ -59,15 +130,16 @@ export async function runImages(
   try {
     await mkdir(lock);
   } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "EEXIST")
+    if (error instanceof Error && "code" in error && error.code === "EEXIST") {
       throw new Error(
         `An images run is already active for ${request.slug}. Lock: ${lock}`,
         { cause: error },
       );
+    }
     throw error;
   }
   const startedAt = new Date().toISOString();
-  const records: object[] = [];
+  const records: ImageRecord[] = [];
   let currentIdea: string | null = null;
   let published = false;
   let completed = false;
@@ -111,11 +183,15 @@ export async function runImages(
   };
   try {
     if (await exists(backup)) {
-      if (!(await exists(raw))) await rename(backup, raw);
-      else await rm(backup, { recursive: true });
+      if (!(await exists(raw))) {
+        await rename(backup, raw);
+      } else {
+        await rm(backup, { recursive: true });
+      }
     }
-    if ((await exists(raw)) && !(await lstat(raw)).isDirectory())
+    if ((await exists(raw)) && !(await lstat(raw)).isDirectory()) {
       throw new Error("raw must be a regular directory");
+    }
     await rm(staging, { recursive: true, force: true });
     await mkdir(staging);
     await rm(trace, { recursive: true, force: true });
@@ -129,51 +205,21 @@ export async function runImages(
         `Generating image ${String(index + 1)}/${String(ideas.length)}: ${idea.id}`,
       );
       await writeTrace("running");
-      let previousFailure: string | undefined;
-      for (const attempt of [1, 2]) {
-        const attemptTrace = join(trace, idea.id, `attempt-${String(attempt)}`);
-        try {
-          const { image, processed, prompt, colors } = await generateCandidate(
-            request,
-            idea,
-            attemptTrace,
-            options,
-            previousFailure,
-          );
-          await writeFile(join(staging, `${idea.id}.png`), processed.png);
-          records.push({
-            idea_id: idea.id,
-            path: `${idea.id}.png`,
-            attempt,
-            prompt_sha256: sha256(prompt),
-            generated_sha256: sha256(image.png),
-            sha256: sha256(processed.png),
-            artwork_colors: colors,
-            native_review_notes: image.reviewNotes ?? [],
-            thread_id: image.threadId,
-            usage: image.usage,
-            ...processed.metadata,
-          });
-          break;
-        } catch (error) {
-          previousFailure = errorMessage(error);
-          await mkdir(attemptTrace, { recursive: true });
-          await writeFile(
-            join(attemptTrace, "failure.json"),
-            JSON.stringify({ error: previousFailure }, null, 2) + "\n",
-          );
-          if (options.signal?.aborted || attempt === 2) throw error;
-          options.onProgress?.(
-            `Replacing failed image ${idea.id}: ${previousFailure}`,
-          );
-        }
-      }
+      const record = await generateAndStageIdea(
+        request,
+        idea,
+        staging,
+        trace,
+        options,
+      );
+      records.push(record);
     }
     options.signal?.throwIfAborted();
-    if (sha256(await readFile(ideasPath, "utf8")) !== provenance.ideas_sha256)
+    if (sha256(await readFile(ideasPath, "utf8")) !== provenance.ideas_sha256) {
       throw new Error(
         "ideas.yaml changed during generation; rerun images against the new ideas",
       );
+    }
     await writeFile(
       join(staging, "manifest.yaml"),
       stringify(
@@ -188,11 +234,15 @@ export async function runImages(
     );
     options.signal?.throwIfAborted();
     await writeTrace("ready");
-    if (await exists(raw)) await rename(raw, backup);
+    if (await exists(raw)) {
+      await rename(raw, backup);
+    }
     try {
       await rename(staging, raw);
     } catch (error) {
-      if (await exists(backup)) await rename(backup, raw);
+      if (await exists(backup)) {
+        await rename(backup, raw);
+      }
       throw error;
     }
     published = true;
@@ -202,7 +252,9 @@ export async function runImages(
   } catch (error) {
     if (published) {
       await rm(raw, { recursive: true, force: true });
-      if (await exists(backup)) await rename(backup, raw);
+      if (await exists(backup)) {
+        await rename(backup, raw);
+      }
     }
     await mkdir(trace, { recursive: true });
     await writeTrace("failed", errorMessage(error));

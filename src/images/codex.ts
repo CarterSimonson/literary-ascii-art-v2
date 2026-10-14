@@ -47,8 +47,12 @@ export const generateImageWithCodex: ImageGenerator = async (input) => {
     for await (const event of events) {
       input.signal.throwIfAborted();
       await input.onEvent(event);
-      if (event.type === "turn.failed") throw new Error(event.error.message);
-      if (event.type === "error") throw new Error(event.message);
+      if (event.type === "turn.failed") {
+        throw new Error(event.error.message);
+      }
+      if (event.type === "error") {
+        throw new Error(event.message);
+      }
       if (event.type === "turn.completed") {
         completed = true;
         usage = event.usage;
@@ -56,20 +60,23 @@ export const generateImageWithCodex: ImageGenerator = async (input) => {
       if (
         event.type === "item.completed" &&
         event.item.type === "agent_message"
-      )
+      ) {
         response = event.item.text;
+      }
     }
     input.signal.throwIfAborted();
-    if (!completed)
+    if (!completed) {
       throw new Error("Codex stream ended without a completed turn");
+    }
     const file = join(workingDirectory, "master.png");
     let png: Buffer | undefined;
     try {
       const stat = await lstat(file);
-      if (!stat.isFile() || stat.size > 50 * 1024 * 1024)
+      if (!stat.isFile() || stat.size > 50 * 1024 * 1024) {
         throw new Error(
           "Codex must save a regular PNG file of at most 50 MiB as master.png",
         );
+      }
       png = await readFile(file);
       await input.onImage?.(png);
     } catch (error) {
@@ -77,13 +84,18 @@ export const generateImageWithCodex: ImageGenerator = async (input) => {
         error instanceof Error &&
         "code" in error &&
         error.code === "ENOENT"
-      ))
+      )) {
         throw error;
+      }
     }
     const json: unknown = JSON.parse(response);
     const result = imageResponseSchema.parse(json);
-    if (result.error !== null) throw new Error(result.error);
-    if (!png) throw new Error("Codex did not save master.png");
+    if (result.error !== null) {
+      throw new Error(result.error);
+    }
+    if (!png) {
+      throw new Error("Codex did not save master.png");
+    }
     return {
       png,
       artworkColors: result.artwork_colors,

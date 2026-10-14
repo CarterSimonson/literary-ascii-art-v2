@@ -223,6 +223,7 @@ Readers should wait for CLI success before consuming the manifest and text.
 bun run check
 bun run typecheck
 bun run lint
+bun run lint:fix
 bun run format:check
 bun run format
 bun test
@@ -230,6 +231,20 @@ bun test
 
 `check` runs strict TypeScript, type-aware ESLint with zero warnings, Prettier,
 and Bun tests. CI installs from the frozen lockfile and runs the same checks.
+Lint requires braces for all conditionals and loops, rejects nested ternaries
+and unnecessary `else` blocks after returns, and reports unused ESLint
+suppressions and redundant inline configuration. TypeScript rules also require
+explicit function return types, consistent type imports, exhaustive switches,
+and strict equality. Use `lint:fix` for automatic code fixes and `format` for
+formatting; CI checks both without rewriting files. Logical phase boundaries
+and broader readability conventions still require review.
+Array callbacks must return values where required; `forEach` callbacks must not
+return values. Type conversions must use explicit forms such as `Number(value)`
+and `Boolean(value)` rather than shorthand such as `+value` and `!!value`.
+Lint also limits block nesting to four levels and rejects chained assignments,
+comma expressions, parameter reassignment, and lone `if` statements inside
+`else` blocks. Parameter property mutation remains allowed. Prettier keeps arrow
+parameter parentheses and preserves deliberately multiline object literals.
 Routine tests use fake Codex generation, small PNG fixtures, and real Gutenberg
 header fixtures, with no credentials or network. To validate the text parser against
 ten live books, run `bun scripts/validate-gutenberg.ts`; use `--offline` to replay

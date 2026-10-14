@@ -133,13 +133,11 @@ export async function runCli(
           "Registered books get author and folder identity from the registry; omit --author and --slug",
         );
       }
+      const author = registered?.author ?? flags.author;
+
       const request = requestSchema.parse({
         title: registered?.title ?? title,
-        ...(registered
-          ? { author: registered.author }
-          : flags.author !== undefined
-            ? { author: flags.author }
-            : {}),
+        ...(author !== undefined ? { author } : {}),
         slug: registered?.slug ?? flags.slug ?? titleToSlug(title),
         outputRoot: flags.output,
         ...(flags.model !== undefined ? { model: flags.model } : {}),

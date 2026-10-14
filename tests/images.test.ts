@@ -154,10 +154,17 @@ describe("conversion-ready PNG cleanup", (): void => {
       for (let x = 0; x < info.width; x++) {
         const offset = (y * info.width + x) * 4;
         expect([0, 255]).toContain(data[offset + 3] ?? -1);
-        if (y === 0 || x === 0 || y === info.height - 1 || x === info.width - 1)
+        if (
+          y === 0 ||
+          x === 0 ||
+          y === info.height - 1 ||
+          x === info.width - 1
+        ) {
           expect(data[offset + 3]).toBe(0);
-        if (data[offset + 3] === 255)
+        }
+        if (data[offset + 3] === 255) {
           opaqueColors.add(data.subarray(offset, offset + 3).toString("hex"));
+        }
       }
     }
     expect([...opaqueColors].sort()).toEqual(["183d49", "80182a"]);
@@ -204,10 +211,11 @@ describe("complete image sets and independent reruns", (): void => {
         await input.onImage?.(png);
         throw new Error("Composition review failed");
       }
-      if (calls === 2)
+      if (calls === 2) {
         expect(input.prompt).toContain(
           "previous candidate failed: Composition review failed",
         );
+      }
       return generator()(input);
     };
     const path = await runImages(request(), { generate: replace });
@@ -306,7 +314,9 @@ describe("complete image sets and independent reruns", (): void => {
     const previous = await readFile(path, "utf8");
     let count = 0;
     const fail: ImageGenerator = async (input): ReturnType<ImageGenerator> => {
-      if (++count >= 3) throw new Error("Connection lost");
+      if (++count >= 3) {
+        throw new Error("Connection lost");
+      }
       return generator()(input);
     };
     await saveIdeas("replacement");
@@ -454,7 +464,9 @@ describe("complete image sets and independent reruns", (): void => {
   });
   test("brief preserves composition and excludes poster field colors and conversion", (): void => {
     const idea = ideasResponse().ideas[0];
-    if (!idea) throw new Error("fixture missing");
+    if (!idea) {
+      throw new Error("fixture missing");
+    }
     const prompt = buildImagePrompt(request(), idea);
     expect(prompt).toContain(idea.composition);
     expect(prompt).toContain("exclude any color whose sole intended use");

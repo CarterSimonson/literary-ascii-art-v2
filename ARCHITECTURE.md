@@ -90,7 +90,7 @@ the corresponding integration exists.
 ## Checks and open decisions
 
 `bun run check` enforces strict TypeScript, type-aware lint, formatting, and Bun
-tests; CI runs the same command after a frozen dependency install. Runtime
+tests; CI runs the same checks as separately named steps after a frozen dependency install. Runtime
 validation enforces ten complete concepts with unique safe IDs and names, hex
 palettes, complete SDK turns, and safe book slugs. Tests cover ideas atomic
 publication, complete image-set replacement and recovery,
