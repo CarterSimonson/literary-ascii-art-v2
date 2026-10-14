@@ -17,8 +17,10 @@ in the spirit of [Litographs](https://www.litographs.com/).
 `bookgen images <book-id>` consumes all ten ideas, generates one native transparent
 PNG per idea through the same authenticated Codex CLI, and deterministically cleans
 alpha and artwork colors. Images remain unapproved candidates for human review.
-Character conversion, poster rendering, product preparation, and store operations
-remain future steps.
+`bookgen fetch <book-id>` downloads the pinned Project Gutenberg English edition
+and uses Codex to identify non-book sections dynamically. It saves the original,
+clean text, and provenance for future conversion. Character conversion, poster
+rendering, product preparation, and store operations remain future steps.
 
 ## Setup and commands
 
@@ -65,22 +67,27 @@ books:
   dracula:
     title: Dracula
     author: Bram Stoker
+    gutenberg_id: 345
 ```
 
-Registry keys are stable lowercase IDs used as output folder names. Both commands
+Registry keys are stable lowercase IDs used as output folder names. All commands
 accept `--registry <path>` (default `books.yaml` in the calling directory) and
 `--output <directory>` (default `output`). Unknown IDs and malformed registries
-fail before generation. Registered identity cannot be overridden by flags.
+fail before generation. Registered identity cannot be overridden by flags. Every entry requires a positive
+integer `gutenberg_id`; this explicitly selects the source edition. English is
+required. Add a separate registry ID for a different edition or translation.
 
 ```sh
 bookgen ideas dracula
 bookgen images dracula
 bookgen images dracula --timeout 900
+bookgen fetch dracula
+bookgen fetch --help
 bookgen ideas --help
 bookgen images --help
 ```
 
-Both commands use your Codex login and configured Codex model; `--model` overrides
+All commands use your Codex login and configured Codex model; `--model` overrides
 that model, not the native image backend. No separate Images API key is required.
 Images requires a Codex CLI/account with native image generation available; it
 fails explicitly if that capability is unavailable. It creates a temporary
@@ -103,6 +110,16 @@ Failed commands exit nonzero; success prints the absolute artifact/manifest path
 ```text
 output/dracula/
   ideas.yaml
+  text/
+    source.txt
+    book.txt
+    manifest.yaml
+  traces/fetch/
+    source.txt
+    prompt.txt
+    events.jsonl
+    response.json
+    run.json
   raw/
     <idea-id>.png
     manifest.yaml
@@ -130,8 +147,8 @@ motifs are optional visual devices. Image dimensions belong to generation
 settings: one reusable master will be placed within different poster sizes,
 with surrounding space filled at render time. The trace saves the exact prompt, SDK
 events, raw response when available, completion/failure status, and token usage.
-The CLI uses the model's knowledge of the book; it does not fetch or verify the
-original text in this first stage. Human review still evaluates literary fidelity
+The ideas stage uses the model's knowledge of the book; it does not consume or
+verify the fetched text. Human review still evaluates literary fidelity
 and visual quality before selecting artwork for downstream conversion.
 
 Rerunning the command replaces `ideas.yaml` only after a complete, validated
@@ -171,6 +188,35 @@ Generated `output/`, dependencies, coverage, and local environment files are
 ignored by Git. These local outputs are iteration artifacts; durable production
 asset storage remains a later decision.
 
+## Fetching book text
+
+`bookgen fetch <book-id>` works independently of ideas/images. Download and cleanup
+share a 300-second timeout (`--timeout`, 1–3600). `--model` selects the cleanup
+agent model; otherwise it uses the configured Codex model and existing login.
+
+The command downloads UTF-8 plain text from the pinned Gutenberg ID and checks
+English metadata, ebook ID, and START/END markers. Codex inspects a numbered copy
+of that specific book, verifies identity/completeness, and selects inclusive
+removal ranges for contents lists, transcriber notes, publication matter,
+illustration placeholders, and remaining Gutenberg material. Author prefaces,
+dedications, epigraphs, headings, narrative, poetry, and author notes stay.
+Ambiguity fails explicitly; the command never chooses another source or edition.
+
+Code checks every removal's exact boundary lines and copies retained text without
+rewriting it. `text/book.txt` uses UTF-8, LF newlines, and one final newline;
+original punctuation, indentation, line wrapping, and paragraph breaks remain.
+Future conversion owns glyph filtering, whitespace traversal, and character order.
+The manifest records hashes, source URL/ID, observed edition notes, processing
+version, and the agent's removal decisions. Cleanup remains unapproved for human
+review: structural validation cannot prove every editorial judgment correct.
+
+Fetch owns only `text/` and `traces/fetch/`. The latest trace retains the download
+and agent response, including on cleanup failure. A successful rerun replaces the
+complete text set; failure preserves the previous set. `.fetch.lock` prevents
+concurrent runs. After a forced kill, confirm no run is active before removing
+the lock; the next run recovers `.text.previous` if publication was interrupted.
+Readers should wait for CLI success before consuming the manifest and text.
+
 ## Development and verification
 
 ```sh
@@ -184,8 +230,11 @@ bun test
 
 `check` runs strict TypeScript, type-aware ESLint with zero warnings, Prettier,
 and Bun tests. CI installs from the frozen lockfile and runs the same checks.
-Routine tests use fake Codex generation and small PNG fixtures, with no credentials
-or network. Live ideas/images commands exercise the real Codex integration. Editor
+Routine tests use fake Codex generation, small PNG fixtures, and real Gutenberg
+header fixtures, with no credentials or network. To validate the text parser against
+ten live books, run `bun scripts/validate-gutenberg.ts`; use `--offline` to replay
+the full downloads cached in `.artifacts/gutenberg-validation/`. This validates
+downloads and deterministic parsing, without running editorial cleanup agents. Live ideas/images commands exercise the real Codex integration. Editor
 whitespace defaults are
 in `.editorconfig`; formatting is defined in `.prettierrc.json`.
 

@@ -1,8 +1,8 @@
 # Bookgen CLI contract
 
 Every pipeline step is independently invocable through the Bun/TypeScript
-`bookgen` CLI. Current steps are `ideas` and `images`, both using the authenticated
-Codex CLI through its TypeScript SDK. Outputs are grouped by stable book ID.
+`bookgen` CLI. Current steps are `ideas`, `images`, and `fetch`, using the authenticated
+Codex CLI through its TypeScript SDK for generation and text cleanup. Outputs are grouped by stable book ID.
 
 ## Shared book identity
 
@@ -14,16 +14,19 @@ books:
   dracula:
     title: Dracula
     author: Bram Stoker
+    gutenberg_id: 345
 ```
 
 Each key is a lowercase ASCII ID, words separated by hyphens, at most 100
-characters. Entries require nonempty title and author. IDs determine output
+characters. Entries require nonempty title and author plus a positive integer `gutenberg_id`.
+The Gutenberg ID pins the English source edition; no other text provider or
+automatic edition selection is supported. IDs determine output
 folders; choose separate IDs for editions or same-title books. Registry schema
 version, entries, duplicate YAML keys and safe IDs are validated before generation.
-Unknown IDs fail with instructions to edit the registry. Both commands accept
+Unknown IDs fail with instructions to edit the registry. All commands accept
 `--registry <path>` and `--output <directory>`; defaults are `books.yaml` and
 `output`, relative to the calling directory. The registry is never rewritten by
-pipeline commands. Neither command hardcodes a Codex model; `--model` is optional.
+pipeline commands. No command hardcodes a Codex model; `--model` is optional.
 
 `ideas` also retains legacy title calls with `--author` and `--slug` when the
 argument is not ID-shaped. A valid registry is still required. Registered IDs
@@ -113,6 +116,79 @@ uncleaned original as a final artifact; a human must still inspect full size and
 choosing a master. Quantization may change color boundaries; original PNGs remain
 in traces for diagnosis and future improvements.
 
+## Fetch
+
+`bookgen fetch <book-id>` is independent of ideas/images and requires no upstream
+artifact. It downloads the pinned English edition from
+`https://www.gutenberg.org/cache/epub/<id>/pg<id>.txt` directly, without scraping
+catalog/search pages. No alternative ID, format, provider, or translation is
+silently selected. Missing/unavailable text fails with the URL and HTTP status.
+See Gutenberg's [download guidance](https://www.gutenberg.org/policy/robot_access.html).
+This is one text request per run, not a bulk crawler; bulk synchronization would
+need Gutenberg's harvesting/mirroring workflow.
+
+`--registry` and `--output` use the shared defaults. `--model` optionally overrides
+the cleanup agent model. `--timeout` defaults to 300 seconds (range 1–3600), covering
+download and agent work. The download rejects redirects, non-success HTTP status,
+non-plain-text content, sources over 20 MiB, invalid UTF-8, unsupported control
+characters, absent/mismatched ebook ID, non-English language metadata, and missing,
+duplicate, or reversed Gutenberg START/END markers. Unsupported older layouts
+fail explicitly rather than guess boundaries.
+
+Code removes the Gutenberg wrapper. A Codex agent in an isolated read-only
+workspace inspects the header and numbered JSONL body, with web search disabled.
+It verifies registry identity, English language, and completeness and dynamically
+identifies contents lists, transcriber/production notes, publisher matter,
+standalone illustration placeholders, and remaining Gutenberg boilerplate.
+Author-written prefaces, dedications, epigraphs, headings, prose, verse, and notes
+remain. Source text is untrusted data, not instructions. There are no book-specific
+rules or fixed chapter boundaries. Edition/translation notes reflect source
+information only; the pinned ID is the authoritative edition selector.
+
+The agent emits structured inclusive body-line ranges, exact first/last-line
+anchors, reasons, and edition notes. Uncertainty, identity/completeness rejection,
+incomplete agent turns, malformed responses, unsorted/overlapping/out-of-bounds
+ranges, mismatched anchors, empty results, or removal of more than half the
+non-whitespace characters fail before publication. Structural checks cannot prove
+editorial correctness, so cleanup records `review_status: unapproved`.
+
+Code alone creates the final text by omitting validated ranges and inserting a
+blank line at each removal. It normalizes CRLF/CR to LF, removes the UTF-8 BOM and
+outer empty lines, and appends exactly one final LF. Retained punctuation,
+Unicode, indentation, hard wrapping, and internal blank lines remain unchanged.
+There is no reflow, paraphrase, Unicode normalization, or glyph filtering.
+
+### Text artifact and handoff
+
+Fetch owns `output/<book-id>/text/`:
+
+- `source.txt`: exact downloaded bytes, including original Gutenberg wrapper.
+- `book.txt`: clean UTF-8/LF text for future character conversion.
+- `manifest.yaml`: schema version 1, registry identity including Gutenberg ID,
+  language `en`, source/catalog URLs, paths relative to this manifest, source/text
+  SHA-256 hashes and byte counts, Unicode code-point count (including whitespace),
+  timestamps, bookgen/SDK/cleanup versions, prompt hash, requested model, timeout,
+  thread/usage, observed edition notes, and removal ranges/anchors/reasons.
+
+`cleanup.body_start_line` and `body_end_line` locate the body within the source
+following BOM removal and LF normalization, using 1-based inclusive source lines.
+Removal ranges use 1-based inclusive lines relative to that body. The manifest and
+original therefore suffice to reproduce and audit cleanup without another model
+call. Consumers load `book.txt` via the manifest, validate identity and hashes,
+and record the chosen text hash alongside their selected image hash. Rendering
+and character traversal remain separate future stages.
+
+Fetch also owns `traces/fetch/`: prompt, SDK event JSONL, final raw response when
+available, downloaded source when available, and run status/error/provenance. Each
+valid attempt replaces the prior trace. Invalid registry/request inputs leave
+existing output and traces intact. A `.fetch.lock` prevents concurrent runs.
+Stage into `.text.staging`, move the old text set to `.text.previous`, and publish
+only after complete validation. Restore the previous set on publication failure;
+the next run recovers a backup if a forced kill left `text/` missing. Successful
+reruns remove obsolete files only within `text/`. Failures preserve prior text,
+ideas, images, and downstream artifacts. Readers must wait for CLI completion;
+the two directory renames are recoverable but not a continuously atomic view.
+
 ## Output ownership and reruns
 
 ```text
@@ -173,9 +249,14 @@ poster sizes and fill surrounding space without regenerating the source artwork.
 
 ## Acceptance criteria
 
+- Fetch requires a pinned Gutenberg ID, English text, complete agent cleanup,
+  and validated removal anchors; it preserves verbatim retained text and source.
+- Fetch manifests replay cleanup and identify both input and output hashes;
+  failures, cancellation, timeout, and concurrent runs preserve the prior set.
+
 - Fresh frozen dependency install and `bun run check` pass.
 - Help/input errors do not invoke Codex. Unknown book IDs and malformed registries
-  fail before generation; both stages resolve the same registered identity.
+  fail before generation; all stages resolve the same registered identity.
 - Ideas produces exactly ten validated concepts and preserves YAML on failure.
 - Images produces one PNG per idea with binary alpha, selected palette colors,
   transparent perimeter, manifest and latest-attempt traces.

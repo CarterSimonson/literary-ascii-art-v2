@@ -9,6 +9,17 @@ export default [
     files: ["**/*.ts"],
   })),
   {
+    files: [
+      "src/fetch/**/*.ts",
+      "src/books.ts",
+      "src/cli.ts",
+      "scripts/**/*.ts",
+      "tests/fetch.test.ts",
+      "tests/gutenberg-corpus.test.ts",
+    ],
+    rules: { curly: ["error", "all"] },
+  },
+  {
     files: ["**/*.ts"],
     languageOptions: {
       parserOptions: {

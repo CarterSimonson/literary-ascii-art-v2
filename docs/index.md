@@ -12,6 +12,10 @@
   CLI and Codex SDK tracer implementation and verification.
 - [Bookgen images execution plan](exec-plans/completed/bookgen-images.md): shared
   book registry, native Codex image generation, cleanup, and rerun verification.
+- [Bookgen fetch execution plan](exec-plans/completed/bookgen-fetch.md): pinned
+  Gutenberg editions, dynamic cleanup ranges, reproducible text artifacts, and verification.
+- [Fetch readability refactor](exec-plans/completed/fetch-readability.md): coding
+  conventions, phase boundaries, and unchanged-artifact verification.
 - [Project tracking](project-tracking.md): Linear project, initial queue, and
   verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,

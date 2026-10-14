@@ -2,7 +2,7 @@
 
 ## Implemented today
 
-The Bun/TypeScript `bookgen` CLI implements idea and image generation through the Codex SDK/CLI.
+The Bun/TypeScript `bookgen` CLI implements idea/image generation and Gutenberg text fetching with Codex cleanup.
 The [CLI contract](docs/product-specs/bookgen-cli.md) defines inputs, outputs, and
 retry semantics. Modules have these responsibilities:
 
@@ -25,6 +25,15 @@ retry semantics. Modules have these responsibilities:
   artwork palette validation and cleanup boundary.
 - `src/images/run.ts`: per-book images lock, sequential generation, input hash
   checks, stage-owned set replacement/recovery, provenance, and latest traces.
+- `src/fetch/download.ts`: bounded, timed Gutenberg plain-text download.
+- `src/fetch/text.ts`: UTF-8/header/boundary checks, validated range extraction,
+  and faithful text normalization without rewriting.
+- `src/fetch/schema.ts` and `src/fetch/codex.ts`: versioned cleanup instructions,
+  structured removal ranges, and isolated read-only agent inspection.
+- `src/fetch/run.ts`: orchestration, deadline/cancellation, and latest-attempt trace.
+- `src/fetch/artifact.ts`: source/text provenance and staged artifact assembly.
+- `src/fetch/publication.ts`: per-book locking, complete-set publication, rollback,
+  and recovery after interrupted publication.
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.
 
@@ -33,6 +42,12 @@ concept selection, image generation, visual review, and refinement. Ideas and ge
 unapproved candidates. The images command intentionally consumes every idea, as
 authorized by the user, without a selection gate. The CLI does not yet convert
 characters, render posters, or operate products or the store.
+
+Text fetching runs independently of artwork. The required registry Gutenberg ID
+selects an English edition; code downloads it and strips its explicit wrapper.
+Codex dynamically identifies non-book ranges, while code validates anchors and
+copies remaining text. The text manifest records source and clean hashes plus
+all removal decisions. Semantic cleanup remains unapproved for human review.
 
 ## Intended stage boundaries
 
@@ -91,6 +106,6 @@ storytelling and secondary motifs are available techniques rather than schema
 requirements. Palettes have no fixed role names, color count, or coverage ratios.
 
 The [bootstrap guide](docs/BOOTSTRAP.md) describes remaining stages. Character-grid
-rules, text normalization, font metrics, print format, durable asset storage, and
+rules, conversion-specific whitespace/glyph handling, font metrics, print format, durable asset storage, and
 external providers remain undecided. Record decisions and their rationale through
 the [documentation map](docs/index.md).

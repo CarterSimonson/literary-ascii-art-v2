@@ -87,10 +87,17 @@ describe("shared book registry", (): void => {
       path,
       stringify({
         schema_version: 1,
-        books: { dracula: { title: "Dracula", author: "Bram Stoker" } },
+        books: {
+          dracula: {
+            title: "Dracula",
+            author: "Bram Stoker",
+            gutenberg_id: 345,
+          },
+        },
       }),
     );
     expect(await resolveBook("dracula", path)).toEqual({
+      gutenberg_id: 345,
       title: "Dracula",
       author: "Bram Stoker",
       slug: "dracula",

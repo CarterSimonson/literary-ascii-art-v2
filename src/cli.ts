@@ -6,19 +6,25 @@ import { requestSchema, titleToSlug } from "./ideas/schema.ts";
 import { findBook, resolveBook } from "./books.ts";
 import { runImages } from "./images/run.ts";
 import { imagesRequestSchema } from "./images/schema.ts";
+import type { FetchRequest } from "./fetch/schema.ts";
+import { runFetch, type FetchOptions } from "./fetch/run.ts";
 
-interface IdeasFlags {
+interface GenerationFlags {
   registry: string;
-  author?: string;
-  slug?: string;
   output: string;
   model?: string;
   timeout: number;
 }
 
+interface IdeasFlags extends GenerationFlags {
+  author?: string;
+  slug?: string;
+}
+
 export interface CliOptions {
   run?: typeof runIdeas;
   images?: typeof runImages;
+  fetchBook?: typeof runFetch;
   stdout?: (message: string) => void;
   stderr?: (message: string) => void;
   signal?: AbortSignal;
@@ -56,6 +62,48 @@ export async function runCli(
     .version(packageJson.version)
     .exitOverride()
     .configureOutput({ writeOut: stdout, writeErr: stderr });
+
+  program
+    .command("fetch")
+    .description(
+      "Fetch Gutenberg text and identify non-book sections through Codex",
+    )
+    .argument("<book-id>", "Book ID in the registry")
+    .option("--registry <path>", "Book registry YAML", "books.yaml")
+    .option("--output <directory>", "Output root", "output")
+    .option("--model <model>", "Override the configured Codex model")
+    .option(
+      "--timeout <seconds>",
+      "Download and cleanup timeout",
+      parseTimeout,
+      300,
+    )
+    .action(async (id: string, flags: GenerationFlags): Promise<void> => {
+      const book = await resolveBook(id, flags.registry);
+      const request: FetchRequest = {
+        ...book,
+        outputRoot: flags.output,
+        timeoutSeconds: flags.timeout,
+      };
+
+      if (flags.model) {
+        request.model = flags.model;
+      }
+
+      const fetchOptions: FetchOptions = {
+        onProgress: (message): void => {
+          stderr(`${message}…\n`);
+        },
+      };
+
+      if (options.signal) {
+        fetchOptions.signal = options.signal;
+      }
+
+      const fetchBook = options.fetchBook ?? runFetch;
+      const path = await fetchBook(request, fetchOptions);
+      stdout(`${path}\n`);
+    });
 
   program
     .command("ideas")
@@ -131,10 +179,11 @@ export async function runCli(
       "Alpha cutoff (1–255)",
       (value: string): number => {
         const threshold = Number(value);
-        if (!Number.isInteger(threshold) || threshold < 1 || threshold > 255)
+        if (!Number.isInteger(threshold) || threshold < 1 || threshold > 255) {
           throw new InvalidArgumentError(
             "Alpha threshold must be an integer from 1 to 255",
           );
+        }
         return threshold;
       },
       128,
@@ -153,7 +202,9 @@ export async function runCli(
       ): Promise<void> => {
         const book = await resolveBook(id, flags.registry);
         const request = imagesRequestSchema.parse({
-          ...book,
+          title: book.title,
+          author: book.author,
+          slug: book.slug,
           outputRoot: flags.output,
           ...(flags.model ? { model: flags.model } : {}),
           timeoutSeconds: flags.timeout,
@@ -174,7 +225,9 @@ export async function runCli(
     await program.parseAsync(argv, { from: "user" });
     return 0;
   } catch (error) {
-    if (error instanceof CommanderError) return error.exitCode;
+    if (error instanceof CommanderError) {
+      return error.exitCode;
+    }
     stderr(`bookgen: ${errorMessage(error)}\n`);
     return 1;
   }
