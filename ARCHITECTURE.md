@@ -2,11 +2,12 @@
 
 ## Implemented today
 
-The Bun/TypeScript `bookgen` CLI implements idea generation through the Codex SDK.
+The Bun/TypeScript `bookgen` CLI implements idea and image generation through the Codex SDK/CLI.
 The [CLI contract](docs/product-specs/bookgen-cli.md) defines inputs, outputs, and
 retry semantics. Modules have these responsibilities:
 
 - `src/cli.ts`: command parsing, settings, progress, exit codes, and interruption.
+- `src/books.ts` and `books.yaml`: shared validated book-ID registry.
 - `src/ideas/schema.ts`: version 2 concept/palette validation and book/idea folder
   naming. Composition carries the visual design; palette lists colors and uses.
 - `src/ideas/prompt.ts`: versioned literary composition brief.
@@ -14,12 +15,24 @@ retry semantics. Modules have these responsibilities:
   temporary working directory with read-only sandbox and noninteractive execution.
 - `src/ideas/run.ts`: per-book locking, latest-attempt trace, artifact provenance,
   timeout, validation, and atomic replacement of `ideas.yaml`.
-- `tests/`: input, output, retry, failure, and CLI checks using fake SDK events.
+- `src/images/schema.ts`: validated requests and imported ideas/book identity.
+- `src/images/prompt.ts`: native generation brief and artwork palette selection.
+- `src/images/codex.ts`: isolated temporary write workspace, native generation
+  through authenticated Codex, streamed events, and fixed PNG file ingestion.
+- `src/images/process.ts`: Sharp PNG decoding, binary alpha, nearest-sRGB palette
+  mapping, transparent padding, and validation without resampling artwork.
+- `src/images/candidate.ts`: per-attempt trace, original preservation, timeout,
+  artwork palette validation and cleanup boundary.
+- `src/images/run.ts`: per-book images lock, sequential generation, input hash
+  checks, stage-owned set replacement/recovery, provenance, and latest traces.
+- `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
+  and decoded PNG fixtures.
 
 The [generate-book-art skill](.agents/skills/generate-book-art/SKILL.md) guides
-concept selection, image generation, visual review, and refinement. Ideas are
-unapproved proposals. The CLI does not yet generate images, convert characters,
-render posters, or operate products or the store.
+concept selection, image generation, visual review, and refinement. Ideas and generated images are
+unapproved candidates. The images command intentionally consumes every idea, as
+authorized by the user, without a selection gate. The CLI does not yet convert
+characters, render posters, or operate products or the store.
 
 ## Intended stage boundaries
 
@@ -49,8 +62,9 @@ render posters, or operate products or the store.
 ## Reproducibility and external boundaries
 
 Record the book and text source, master identity, stage settings, tool versions,
-and input/output identities with each result. Image generation also needs its
-prompt and approval context; retaining the selected master makes downstream work
+and input/output identities with each result. Image generation records its
+prompt, selected artwork palette, settings, and unapproved review status; retaining
+the selected master makes downstream work
 reproducible even when generation itself cannot be replayed exactly.
 
 Validate imported images, text, fonts, provider responses, and store responses
@@ -63,11 +77,15 @@ the corresponding integration exists.
 `bun run check` enforces strict TypeScript, type-aware lint, formatting, and Bun
 tests; CI runs the same command after a frozen dependency install. Runtime
 validation enforces ten complete concepts with unique safe IDs and names, hex
-palettes, complete SDK turns, and safe book slugs. Tests cover atomic publication,
-failure preservation, trace replacement, locking, cancellation, and CLI errors.
+palettes, complete SDK turns, and safe book slugs. Tests cover ideas atomic
+publication, complete image-set replacement and recovery,
+failure preservation, trace replacement, locking, cancellation, upstream identity
+and hash validation, binary alpha/palette cleanup, and CLI errors. Automated image
+checks cannot establish composition, minimum feature widths, or literary fidelity;
+human review remains necessary before choosing a master for conversion.
 
 Composition descriptions are independent of output dimensions and do not require
-specific visual devices. Source generation will produce one reusable master;
+specific visual devices. Source generation produces one reusable master per idea;
 poster rendering owns size adaptation and the surrounding field. Negative-space
 storytelling and secondary motifs are available techniques rather than schema
 requirements. Palettes have no fixed role names, color count, or coverage ratios.

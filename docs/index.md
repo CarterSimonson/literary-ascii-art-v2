@@ -10,6 +10,8 @@
   outputs, stage ownership, and retry behavior.
 - [Bookgen ideas execution plan](exec-plans/completed/bookgen-ideas.md): first Bun
   CLI and Codex SDK tracer implementation and verification.
+- [Bookgen images execution plan](exec-plans/completed/bookgen-images.md): shared
+  book registry, native Codex image generation, cleanup, and rerun verification.
 - [Project tracking](project-tracking.md): Linear project, initial queue, and
   verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,

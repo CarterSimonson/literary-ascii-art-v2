@@ -30,15 +30,17 @@ Favor reproducible pipeline stages with explicit inputs, outputs, metadata, and 
 ## CLI and outputs
 
 - Use Bun and TypeScript. Every pipeline step must be independently executable
-  through the `bookgen` CLI; the first step is `bookgen ideas <book>` through the
+  through the `bookgen` CLI; the first step is `bookgen ideas <book-id>` through the
   Codex SDK, producing ten original poster composition ideas.
+- Resolve shared book IDs through root `books.yaml`. `bookgen images <book-id>`
+  generates and cleans one unapproved PNG candidate per idea through Codex CLI.
 - Aim for recognizable literary character-art posters in the spirit of
   Litographs, grounded in the book and the source-art skill's conversion rules.
 - Generate one reusable source master; poster rendering adapts it to other sizes
   by placing the art and filling the surrounding space. Keep image dimensions out
   of composition ideas. Use a flexible palette with intended uses for colors;
   silhouette, negative-space storytelling, and secondary motifs are optional.
-- Group local generated outputs under `output/<book-slug>/`: `ideas.yaml`, future
+- Group local generated outputs under `output/<book-id>/`: `ideas.yaml`,
   `raw/<idea-id>.png` masters, and separate later-stage artifacts. Keep output tidy
   and ignored by Git.
 - Each command regenerates its own expected outputs at stable paths so steps can
