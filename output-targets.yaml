@@ -1,0 +1,38 @@
+schema_version: 1
+targets:
+  poster-18x24:
+    name: 18 × 24 inch poster
+    size_inches:
+      width: 18
+      height: 24
+    canvas_px:
+      width: 5400
+      height: 7200
+    bleed_px:
+      top: 0
+      right: 0
+      bottom: 0
+      left: 0
+    gutter_px:
+      top: 150
+      right: 150
+      bottom: 150
+      left: 150
+  poster-24x36:
+    name: 24 × 36 inch poster
+    size_inches:
+      width: 24
+      height: 36
+    canvas_px:
+      width: 7200
+      height: 10800
+    bleed_px:
+      top: 0
+      right: 0
+      bottom: 0
+      left: 0
+    gutter_px:
+      top: 150
+      right: 150
+      bottom: 150
+      left: 150

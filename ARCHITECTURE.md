@@ -2,12 +2,15 @@
 
 ## Implemented today
 
-The Bun/TypeScript `bookgen` CLI implements idea/image generation and Gutenberg text fetching with Codex cleanup.
+The Bun/TypeScript `bookgen` CLI implements idea/image generation, Gutenberg text
+fetching with Codex cleanup, and local character-art poster rendering.
 The [CLI contract](docs/product-specs/bookgen-cli.md) defines inputs, outputs, and
 retry semantics. Modules have these responsibilities:
 
 - `src/cli.ts`: command parsing, settings, progress, exit codes, and interruption.
 - `src/books.ts` and `books.yaml`: shared validated book-ID registry.
+- `src/output-targets.ts` and `output-targets.yaml`: validated print-target registry
+  with finished sizes, full canvas dimensions, bleed, and empty framing gutters.
 - `src/ideas/schema.ts`: version 2 concept/palette validation and book/idea folder
   naming. Composition carries the visual design; palette lists colors and uses.
 - `src/ideas/prompt.ts`: versioned literary composition brief.
@@ -34,14 +37,22 @@ retry semantics. Modules have these responsibilities:
 - `src/fetch/artifact.ts`: source/text provenance and staged artifact assembly.
 - `src/fetch/publication.ts`: per-book locking, complete-set publication, rollback,
   and recovery after interrupted publication.
+- `src/render/input.ts`: target selection and validated upstream snapshots/hashes.
+- `src/render/text.ts` and `src/render/convert.ts`: render-only text cleanup and
+  nearest-neighbor working grids and row-major pixel-to-character mapping,
+  independent of glyph rasterization.
+- `src/render/font.ts` and `src/render/raster.ts`: pinned font outlines, 6.5 pt rectangular-cell
+  layout, source-color glyph rendering, and exact print-size PNG encoding.
+- `src/render/run.ts` and `src/render/publication.ts`: rendering orchestration,
+  manifests, locking, staged batch replacement, and publication recovery.
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.
 
 The [generate-book-art skill](.agents/skills/generate-book-art/SKILL.md) guides
 concept selection, image generation, visual review, and refinement. Ideas and generated images are
 unapproved candidates. The images command intentionally consumes every idea, as
-authorized by the user, without a selection gate. The CLI does not yet convert
-characters, render posters, or operate products or the store.
+authorized by the user, without a selection gate. Render requires explicit idea selection and leaves posters unapproved for human
+review. The CLI does not yet operate products or the store.
 
 Text fetching runs independently of artwork. The required registry Gutenberg ID
 selects an English edition; code downloads it and strips its explicit wrapper.
@@ -105,7 +116,8 @@ poster rendering owns size adaptation and the surrounding field. Negative-space
 storytelling and secondary motifs are available techniques rather than schema
 requirements. Palettes have no fixed role names, color count, or coverage ratios.
 
-The [bootstrap guide](docs/BOOTSTRAP.md) describes remaining stages. Character-grid
-rules, conversion-specific whitespace/glyph handling, font metrics, print format, durable asset storage, and
-external providers remain undecided. Record decisions and their rationale through
+The [render contract](docs/product-specs/bookgen-cli.md#render) defines character-grid
+rules, whitespace/glyph handling, font geometry, and PNG output. The
+[bootstrap guide](docs/BOOTSTRAP.md) describes remaining production work. Durable
+asset storage and external providers remain undecided. Record decisions and their rationale through
 the [documentation map](docs/index.md).

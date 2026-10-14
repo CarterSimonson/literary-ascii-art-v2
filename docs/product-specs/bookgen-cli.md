@@ -1,8 +1,9 @@
 # Bookgen CLI contract
 
 Every pipeline step is independently invocable through the Bun/TypeScript
-`bookgen` CLI. Current steps are `ideas`, `images`, and `fetch`, using the authenticated
-Codex CLI through its TypeScript SDK for generation and text cleanup. Outputs are grouped by stable book ID.
+`bookgen` CLI. Current steps are `ideas`, `images`, `fetch`, and `render`. Generation and text
+cleanup use the authenticated Codex CLI through its TypeScript SDK; rendering is
+entirely local. Outputs are grouped by stable book ID.
 
 ## Shared book identity
 
@@ -33,6 +34,46 @@ argument is not ID-shaped. A valid registry is still required. Registered IDs
 cannot override registry identity with these flags. Images requires a registered
 ID and exact matching title, author and ID in `ideas.yaml`; rerun ideas after an
 identity change.
+
+## Output target registry
+
+The root `output-targets.yaml` is manually maintained versioned configuration,
+separate from `books.yaml` and generated outputs. Its shape is `schema_version: 1`
+and `targets`, keyed by stable lowercase hyphen-separated IDs (at most 100
+characters). There are no registry-management commands. Pipeline
+commands use `--registry` for books only; render uses `--targets` for this registry.
+
+Each target requires:
+
+- `name`: nonempty display name, at most 240 characters.
+- `size_inches`: positive finite `width` and `height` of the finished, trimmed poster.
+- `canvas_px`: positive integer `width` and `height` of the entire print file,
+  including any bleed. These explicit dimensions are authoritative for rendering.
+- `bleed_px`: nonnegative integer `top`, `right`, `bottom`, and `left` insets from
+  the full canvas to the trim boundary. This region is cut off during production.
+- `gutter_px`: nonnegative integer insets on the same four edges, measured inward
+  from the trim boundary. This visibly empty border contains only the poster
+  background color, never characters or artwork. It accommodates frame overlap.
+
+Layout is full canvas → inset bleed → finished poster → inset gutter → content
+area. The poster background extends through the gutter and bleed. Insets are
+explicit for every target; no hidden defaults or additional safe margin apply.
+Bleed and gutter together must leave a positive content width and height.
+Pixel dimensions and insets must be safe integers. Unknown fields, unsupported
+versions, unsafe IDs, and duplicate YAML keys are rejected.
+
+The initial `poster-18x24` and `poster-24x36` targets use the requested
+5400 × 7200 and 7200 × 10800 px canvases, zero bleed, and 150 px gutters on all
+edges. This is a ½-inch border at 300 PPI, chosen to leave visible space beyond
+typical frame overlap. Other resolutions and per-edge overrides are allowed;
+the schema does not enforce 300 PPI or derive pixel dimensions from inches.
+
+`src/output-targets.ts` exposes `findOutputTarget` and `resolveOutputTarget`,
+following the book registry loader pattern. Both validate the entire file;
+`resolveOutputTarget` rejects unknown IDs with instructions to edit the registry.
+An optional registry path defaults to `output-targets.yaml` relative to the calling
+directory. Loading never modifies the registry or generated artifacts.
+Render consumes this registry; provider-specific print settings remain future work.
 
 ## Ideas
 
@@ -189,6 +230,111 @@ reruns remove obsolete files only within `text/`. Failures preserve prior text,
 ideas, images, and downstream artifacts. Readers must wait for CLI completion;
 the two directory renames are recoverable but not a continuously atomic view.
 
+## Render
+
+`bookgen render <book-id> --idea <idea-id>` combines a selected source master and
+fetched text for all registered output targets. `--target <target-id>` selects one;
+there is no implicit idea selection or `--all-targets` flag. `--targets <path>`
+defaults to `output-targets.yaml`; `--registry` and `--output` retain their shared
+meanings. `--background '#RRGGBB'` defaults to white. No Codex call, network access,
+font download, or upstream mutation occurs at render time.
+
+### Input and conversion contract
+
+Read snapshots of ideas, image/text manifests, selected PNG, book text, and target
+registry. Require matching book title/author/ID and pinned Gutenberg edition,
+current ideas hash, selected image/text hashes, and recorded source dimensions.
+Reject duplicate upstream IDs, unknown selections, nonregular or oversized inputs
+(over 50 MiB), non-PNG or multi-image masters, nonbinary alpha, and empty artwork.
+Only canonical `raw/<idea-id>.png` and `text/book.txt` manifest references are accepted.
+All target entries are validated, even for a single-target run. An empty target
+selection fails. Recheck every input snapshot immediately before publication.
+
+Conversion is independent of rasterization (`src/render/convert.ts`). Decode the
+master as RGBA in sRGB and validate binary alpha. For each target, nearest-neighbor
+sample a render-only copy to the target's character grid, selecting source pixel
+centers with `floor((coordinate + 0.5) * sourceSize / gridSize)`. This preserves
+sampled RGB values and binary alpha without altering the master; downsampling may
+lose small features. Grid dimensions compensate for rectangular character cells.
+Reject a grid that loses all opaque artwork.
+
+Assign one Unicode code point per visible, non-background grid pixel, traversing
+left-to-right and then top-to-bottom. Transparent pixels, opaque white (`#FFFFFF`),
+and pixels exactly matching the configured background receive no character and do
+not advance the stream. Other pale colors remain eligible. Reject a grid with no
+visible artwork after exclusion. A word space consumes an eligible cell and leaves
+it blank; it is never replaced with a fallback glyph. Use the leading text that fits; there is no requirement to fit the
+entire book. If text is exhausted, repeat from the beginning to fill the artwork.
+Record text used, omitted characters, and complete/partial cycles per target.
+
+For render only, parse Markdown to textual content with Marked, retaining link
+labels, image alt text, code contents, and table cell text. Discard markup, HTML
+comments, script/style contents, and tags; decode HTML entities, normalize NFC,
+collapse Unicode whitespace to one ordinary space, trim surrounding whitespace,
+and remove controls, format characters, and residual `*`, `_`, backticks, and `~`.
+Keep separators between Markdown blocks, table cells, and explicit line breaks.
+Preserve word spacing, other punctuation, and letters. Reject an empty result.
+This intentionally favors dense art over source typography and readability.
+Fetch artifacts remain unchanged. The pinned Roboto Mono Latin Bold 700 font is
+loaded as outlines through OpenType.js; unsupported or empty glyphs other than word spaces become `?`,
+with unique replacements recorded. No platform font substitution is allowed.
+
+### Raster layout and output
+
+Subtract bleed and gutter from the full canvas to obtain the content rectangle.
+The minimum/default font size is **6.5 points**, converted to pixels using target
+PPI (`6.5 * PPI / 72`, about 27.083 px at 300 PPI). The minimum applies to the actual font em
+size, not the grid cell. It does not shrink when the full book does not fit.
+
+Use rectangular cells: width is `ceil(fontSizePixels * 0.63)`; height is
+`ceil(max(fontSizePixels, glyphBoundsHeight))`. Bounds cover all unique supported
+text glyphs at that font size. Center the natural, unstretched font outlines within
+each cell using a shared baseline and monospaced advance. Roboto Mono's bundled
+bold face is weight 700; the prototype requested 800, which is not available in
+this bundled family.
+
+Fit the full source aspect ratio inside the content rectangle, divide fitted
+width/height by cell width/height, and floor to integer grid dimensions. Resample
+the working copy to that grid. Its aspect ratio differs from the master to
+compensate for the rectangular cells; the physical artwork preserves the source
+proportions within one cell of rounding. Center the resulting grid, with an odd
+extra pixel placed on the bottom/right. Reject targets too small for a single cell
+or larger than 100 megapixels. Surrounding space stays background-only.
+
+Sharp rasterizes font outlines once per glyph and target. Composite each glyph
+mask in the sampled source pixel's sRGB color on the configured background;
+antialiasing blends edge pixels. Blank glyph space, transparent pixels, gutters,
+and bleed retain the background. Output is full-color; ink colors are preserved
+but apparent color is lighter because glyphs occupy only part of each cell.
+Print proofs still need human review.
+
+Derive horizontal/vertical PPI from the trimmed pixel size and finished inches.
+Require agreement within 0.1 PPI and density within 1–100,000 PPI; record the rounded
+integer density in the manifest and PNG metadata. Encode an opaque RGB PNG with
+sRGB profile at the exact full-canvas dimensions. Font binaries and dependencies
+are pinned; manifests include font hash, dependency versions, source hashes,
+cleaned and substituted text hashes, character/cycle counts, skipped background
+and transparent pixel counts, target snapshot,
+background, layout, output hash, and `review_status: unapproved`.
+
+### Publication
+
+Render owns `print/<idea-id>/<target-id>/poster.png` and `manifest.yaml`. One
+`.render.lock` per book serializes renders. Stage a copy of the selected idea's
+existing print directory in `print/.<idea-id>.staging`, replacing only selected
+target subdirectories. This preserves unselected targets, including targets no
+longer in the registry. It may temporarily require another copy of existing prints.
+
+After all selected targets finish and snapshot checks pass, rename the old idea
+directory to `print/.<idea-id>.previous` and publish staging. Roll back a failed
+publication rename. On the next valid run, restore a backup if final output is
+missing, otherwise discard the old backup. Failed generation, changed inputs, and
+cancellation before publication preserve existing output. Clean staging and release
+the lock on handled failures; a forced kill may require manually removing a stale
+lock after confirming no render remains active. Readers must await successful CLI
+completion because the two directory renames are recoverable, not continuously
+atomic. Success prints one absolute poster path per selected target.
+
 ## Output ownership and reruns
 
 ```text
@@ -244,10 +390,14 @@ Artifacts/traces are local ignored iteration outputs at stable paths, not run
 archives. Authentication and tool availability failures are explicit; generation
 is stochastic, and recorded inputs/settings/hashes provide provenance rather than
 identical future generation. Retaining the selected master makes conversion and
-rendering reproducible. Poster rendering will place the master within different
-poster sizes and fill surrounding space without regenerating the source artwork.
+rendering reproducible. Poster rendering uses target-specific working grids and fills surrounding space
+without regenerating or modifying the source master.
 
 ## Acceptance criteria
+
+- Render preserves sampled pixel/character mapping, validates upstream hashes,
+  defaults to all targets, keeps type at 6.5 pt, respects bleed/gutters, and publishes selected targets
+  together while preserving previous output on failure and unrelated targets.
 
 - Fetch requires a pinned Gutenberg ID, English text, complete agent cleanup,
   and validated removal anchors; it preserves verbatim retained text and source.

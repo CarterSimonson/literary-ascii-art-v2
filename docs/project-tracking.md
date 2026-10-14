@@ -44,7 +44,8 @@ and recorded in COD-66.
 | [COD-75](https://linear.app/codekips/issue/COD-75) | Publish products and reconcile store state       | COD-74                            |
 
 Bun/TypeScript and the local output layout are now established by the
-[bookgen CLI contract](product-specs/bookgen-cli.md). Grid/text behavior, font
-metrics, print settings, and durable production storage remain open decisions.
+[bookgen CLI contract](product-specs/bookgen-cli.md). The render contract now defines grid/text behavior, font metrics, and initial
+print settings. Durable production storage and provider-specific requirements
+remain open decisions.
 The initial queue predates the ideas tracer; consult Linear for live scope and
 status. No provider or storefront has been selected.

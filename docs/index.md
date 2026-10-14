@@ -14,6 +14,8 @@
   book registry, native Codex image generation, cleanup, and rerun verification.
 - [Bookgen fetch execution plan](exec-plans/completed/bookgen-fetch.md): pinned
   Gutenberg editions, dynamic cleanup ranges, reproducible text artifacts, and verification.
+- [Bookgen render execution plan](exec-plans/completed/bookgen-render.md):
+  full-color print output, 6.5 pt typography, sampled character grids, and verification.
 - [Fetch readability refactor](exec-plans/completed/fetch-readability.md): coding
   conventions, phase boundaries, and unchanged-artifact verification.
 - [Project tracking](project-tracking.md): Linear project, initial queue, and

@@ -8,6 +8,8 @@ import { runImages } from "./images/run.ts";
 import { imagesRequestSchema } from "./images/schema.ts";
 import type { FetchRequest } from "./fetch/schema.ts";
 import { runFetch, type FetchOptions } from "./fetch/run.ts";
+import { runRender } from "./render/run.ts";
+import { renderRequestSchema } from "./render/input.ts";
 
 interface GenerationFlags {
   registry: string;
@@ -25,6 +27,7 @@ export interface CliOptions {
   run?: typeof runIdeas;
   images?: typeof runImages;
   fetchBook?: typeof runFetch;
+  render?: typeof runRender;
   stdout?: (message: string) => void;
   stderr?: (message: string) => void;
   signal?: AbortSignal;
@@ -216,6 +219,63 @@ export async function runCli(
           },
         });
         stdout(`${path}\n`);
+      },
+    );
+
+  program
+    .command("render")
+    .description(
+      "Render a selected idea as printable character art for all output targets",
+    )
+    .argument("<book-id>", "Book ID in the registry")
+    .requiredOption("--idea <idea-id>", "Selected generated artwork")
+    .option(
+      "--target <target-id>",
+      "Render only this target (default: all targets)",
+    )
+    .option("--registry <path>", "Book registry YAML", "books.yaml")
+    .option(
+      "--targets <path>",
+      "Output target registry YAML",
+      "output-targets.yaml",
+    )
+    .option("--output <directory>", "Output root", "output")
+    .option(
+      "--background <hex>",
+      "Poster background color (#RRGGBB)",
+      "#FFFFFF",
+    )
+    .action(
+      async (
+        id: string,
+        flags: {
+          idea: string;
+          target?: string;
+          registry: string;
+          targets: string;
+          output: string;
+          background: string;
+        },
+      ): Promise<void> => {
+        const book = await resolveBook(id, flags.registry);
+        const request = renderRequestSchema.parse({
+          ...book,
+          idea: flags.idea,
+          target: flags.target,
+          targetRegistry: flags.targets,
+          outputRoot: flags.output,
+          background: flags.background,
+        });
+        const paths = await (options.render ?? runRender)(request, {
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message): void => {
+            stderr(`${message}…\n`);
+          },
+        });
+
+        for (const path of paths) {
+          stdout(`${path}\n`);
+        }
       },
     );
 
