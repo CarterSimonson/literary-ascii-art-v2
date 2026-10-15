@@ -75,8 +75,9 @@ all removal decisions. Semantic cleanup remains unapproved for human review.
 - Conversion consumes approved artwork and book text without invoking image
   generation or depending on a store or dropshipping service.
 - Rendering consumes converted data without changing the master or character
-  mapping. The poster background is a render input; it is not painted into the
-  transparent master.
+  mapping. The underlying paper color is a render input; it is not painted into
+  the transparent master. Illustrated environments are opaque source artwork
+  carrying text; transparent openings can reveal subjects through missing text.
 - Product preparation consumes validated print files. Publishing and store
   reconciliation belong at the external-service boundary.
 - A downstream stage must not silently modify an upstream artifact. Changed

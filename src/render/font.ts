@@ -12,7 +12,7 @@ export interface RenderFont {
 export async function loadRenderFont(): Promise<RenderFont> {
   const path = new URL(
     import.meta
-      .resolve("@fontsource/roboto-mono/files/roboto-mono-latin-700-normal.woff"),
+      .resolve("@fontsource/noto-sans-mono/files/noto-sans-mono-latin-900-normal.woff"),
   );
   const bytes = await readFile(path);
   const font = parse(
@@ -22,7 +22,7 @@ export async function loadRenderFont(): Promise<RenderFont> {
   return {
     font,
     sha256: createHash("sha256").update(bytes).digest("hex"),
-    name: "Roboto Mono Latin Bold 700",
+    name: "Noto Sans Mono Latin Black 900",
   };
 }
 

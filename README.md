@@ -151,12 +151,12 @@ contribute their labels, and entities are decoded. Remaining `*`, `_`, backticks
 `~`, control and invisible format characters are removed. Original text is untouched.
 
 The font minimum is **6.5 points** (about 27.1 px at 300 PPI), matching the old
-prototype's physical type size. Roboto Mono Bold is bundled through a pinned
+prototype's physical type size. Noto Sans Mono Black (weight 900) is bundled through a pinned
 Fontsource dependency, with no system font fallback. Unsupported or blank glyphs
 become `?` and are listed in the manifest; ordinary spaces remain blank. Glyphs retain their natural proportions.
 
 Each target gets a nearest-neighbor working copy sized for rectangular character
-cells: nominal width is 0.63 × font size, and row height accommodates the font and
+cells: nominal width is 0.60 × font size (17 px at 300 PPI), and row height accommodates the font and
 its glyph bounds. Both cell dimensions round up to whole pixels. The working grid
 compensates for the rectangular cells so the complete artwork retains its physical
 proportions, within one cell of rounding. It is centered inside the bleed and
@@ -223,8 +223,13 @@ output/dracula/
 
 YAML contains book identity, generation provenance, and ten concepts with
 composition, literary basis, a list of hex colors with intended uses, and
-conversion rationale. Silhouette, negative-space storytelling, and secondary
-motifs are optional visual devices. Image dimensions belong to generation
+conversion rationale. Concepts describe text-filled regions and empty forms,
+including negative-space-led directions alongside positive silhouettes and mixed
+compositions. Colored illustrated environments carry text; transparent openings
+can reveal the principal subject. The environment spans the interior art area,
+continuing behind and around subjects to a narrow outer placement margin; avoid
+large unused transparent expanses around isolated objects. Only the underlying paper color belongs to
+rendering. Secondary motifs remain optional. Image dimensions belong to generation
 settings: one reusable master will be placed within different poster sizes,
 with surrounding space filled at render time. The trace saves the exact prompt, SDK
 events, raw response when available, completion/failure status, and token usage.
@@ -245,11 +250,16 @@ latest trace. A failed candidate gets one replacement attempt before the batch f
 Cleanup keeps source geometry,
 sets alpha below the cutoff to zero and all remaining alpha to 255, maps opaque
 pixels to the nearest selected artwork palette color in sRGB, and adds a transparent
-margin of 2% of source width on each side. Poster field colors are excluded by the
-generation brief and selected artwork palette. Opaque mattes and empty artwork
+margin of 2% of source width on each side. Underlying paper colors are excluded by the
+generation brief and selected artwork palette; illustrated sky, sea, walls, and
+foliage remain opaque artwork. Unintended opaque mattes and empty artwork
 are rejected; cleanup does not infer background removal, repair composition, or
 verify literary accuracy. Final masters are RGBA PNGs with binary alpha and flat
 palette colors, ready as inputs for the render stage.
+
+Before approving a composition, inspect a rendered character preview as well as
+the source thumbnail. Grid sampling must preserve the empty forms, and colored
+fields must retain enough visual weight after solid fills become glyphs.
 
 Images generates into staging and publishes `raw/` as one complete set. A successful
 rerun replaces all PNGs and the manifest, including obsolete idea IDs. A failed
