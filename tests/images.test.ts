@@ -462,14 +462,16 @@ describe("complete image sets and independent reruns", (): void => {
       "previous",
     );
   });
-  test("brief preserves composition and excludes poster field colors and conversion", (): void => {
+  test("brief preserves composition and excludes underlying paper colors and conversion", (): void => {
     const idea = ideasResponse().ideas[0];
     if (!idea) {
       throw new Error("fixture missing");
     }
     const prompt = buildImagePrompt(request(), idea);
     expect(prompt).toContain(idea.composition);
-    expect(prompt).toContain("exclude any color whose sole intended use");
+    expect(prompt).toContain(
+      "Exclude only colors whose sole intended use is the underlying paper",
+    );
     expect(prompt).toContain("Do not perform character conversion");
     expect(prompt).toContain("transparent_background=true");
   });

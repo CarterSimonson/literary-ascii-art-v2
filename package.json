@@ -21,7 +21,7 @@
     "check": "bun run typecheck && bun run lint && bun run format:check && bun test"
   },
   "dependencies": {
-    "@fontsource/roboto-mono": "5.3.0",
+    "@fontsource/noto-sans-mono": "5.3.0",
     "@openai/codex-sdk": "0.162.1",
     "commander": "15.0.0",
     "entities": "8.1.0",

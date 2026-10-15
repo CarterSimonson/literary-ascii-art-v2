@@ -99,7 +99,7 @@ export async function runRender(
         join(directory, "manifest.yaml"),
         stringify({
           schema_version: 1,
-          render_version: 2,
+          render_version: 3,
           bookgen_version: packageJson.version,
           dependencies: packageJson.dependencies,
           generated_at: new Date().toISOString(),

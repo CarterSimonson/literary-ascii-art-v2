@@ -5,7 +5,7 @@ import type { CharacterArt } from "./convert.ts";
 import { rasterizeGlyphs, type RenderFont, type FontMetrics } from "./font.ts";
 
 export const MINIMUM_FONT_POINTS = 6.5;
-export const FONT_ASPECT_RATIO = 0.63;
+export const FONT_ASPECT_RATIO = 0.6;
 
 export function targetLayout(
   source: Pick<CharacterArt, "width" | "height">,

@@ -21,7 +21,12 @@ import {
   decodeMaster,
   sampleGrid,
 } from "../src/render/convert.ts";
-import { loadRenderFont, supportedCharacters } from "../src/render/font.ts";
+import {
+  fontMetrics,
+  loadRenderFont,
+  rasterizeGlyphs,
+  supportedCharacters,
+} from "../src/render/font.ts";
 import { sha256, type RenderRequest } from "../src/render/input.ts";
 import { targetLayout } from "../src/render/raster.ts";
 import { runRender } from "../src/render/run.ts";
@@ -235,6 +240,66 @@ describe("render text and character conversion", (): void => {
 });
 
 describe("print layout and publication", (): void => {
+  test("keeps the heavy font within tighter cells while preserving text density", async (): Promise<void> => {
+    const font = await loadRenderFont();
+    const text = Array.from(
+      "The sun was setting behind the mountains, and the box lay before them. ",
+    );
+    const characters = [...text, ...Array.from("ÀÉÇé—“”‘’")];
+    const metrics = fontMetrics(characters, font.font);
+    const layout = targetLayout(
+      { width: 3, height: 2 },
+      { ...target, id: "small" },
+      metrics,
+    );
+    const scale = layout.fontSizePixels / font.font.unitsPerEm;
+
+    for (const character of new Set(characters)) {
+      if (character === " ") {
+        continue;
+      }
+
+      const glyph = font.font.charToGlyph(character);
+      const bounds = glyph.getBoundingBox();
+      const advance = (glyph.advanceWidth ?? font.font.unitsPerEm) * scale;
+      const offset = (layout.cellWidth - advance) / 2;
+
+      expect(offset + bounds.x1 * scale).toBeGreaterThanOrEqual(0);
+      expect(offset + bounds.x2 * scale).toBeLessThanOrEqual(layout.cellWidth);
+      expect(layout.baseline - bounds.y2 * scale).toBeGreaterThanOrEqual(0);
+      expect(layout.baseline - bounds.y1 * scale).toBeLessThanOrEqual(
+        layout.cellHeight,
+      );
+    }
+
+    const textLayout = targetLayout(
+      { width: 3, height: 2 },
+      { ...target, id: "small" },
+      fontMetrics(text, font.font),
+    );
+    const masks = await rasterizeGlyphs(text, font.font, textLayout);
+    let ink = 0;
+
+    for (const character of text) {
+      if (character === " ") {
+        continue;
+      }
+
+      const mask = masks.get(character);
+
+      if (!mask) {
+        throw new Error("Missing text glyph");
+      }
+
+      ink += mask.reduce((sum, alpha) => sum + alpha / 255, 0);
+    }
+
+    const coverage =
+      ink / (text.length * textLayout.cellWidth * textLayout.cellHeight);
+
+    expect(coverage).toBeGreaterThan(0.24);
+  });
+
   test("fits a rectangular grid without shrinking the 6.5 pt font", (): void => {
     const metrics = { top: 0.8, bottom: -0.2 };
     const layout = targetLayout(
@@ -244,13 +309,13 @@ describe("print layout and publication", (): void => {
     );
     expect(layout).toMatchObject({
       fontSizePoints: 6.5,
-      cellWidth: 18,
+      cellWidth: 17,
       cellHeight: 28,
-      gridWidth: 9,
+      gridWidth: 10,
       gridHeight: 4,
-      left: 11,
+      left: 7,
       top: 68,
-      width: 162,
+      width: 170,
       height: 112,
       ppi: 300,
     });
@@ -311,8 +376,8 @@ describe("print layout and publication", (): void => {
           x >= 177 ||
           y < 9 ||
           y >= 239 ||
-          (x >= 65 && x < 119 && y >= 68 && y < 124) ||
-          (x >= 47 && x < 65 && y >= 68 && y < 96)
+          (x >= 58 && x < 126 && y >= 68 && y < 124) ||
+          (x >= 41 && x < 58 && y >= 68 && y < 96)
         ) {
           expect(pixel).toEqual([255, 255, 255]);
         }
@@ -338,14 +403,16 @@ describe("print layout and publication", (): void => {
       ),
     );
     expect(manifest).toMatchObject({
+      render_version: 3,
+      font: { name: "Noto Sans Mono Latin Black 900" },
       idea_id: "concept-1",
       target: { id: "small" },
       conversion: {
-        character_count: 24,
+        character_count: 26,
         text_characters: 4,
         full_text_cycles: 6,
-        remaining_characters: 0,
-        grid_width: 9,
+        remaining_characters: 2,
+        grid_width: 10,
         grid_height: 4,
       },
       output: { sha256: sha256(png) },

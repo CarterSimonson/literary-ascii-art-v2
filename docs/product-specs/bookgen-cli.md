@@ -92,15 +92,28 @@ fetching the original text. Literary accuracy requires review.
 provenance, and ten concepts with unique safe IDs and distinct names. Each concept
 contains `id`, `name`, `composition`, `literary_basis`, `palette`, and
 `conversion_resilience`. Palette is a nonempty list of `{ color, use }` entries,
-without fixed roles, count or coverage ratios. Poster field colors may be
-suggested with that intended use and remain outside the source master.
+without fixed roles, count or coverage ratios. Underlying paper colors may be
+suggested with that intended use and remain outside the source master. Illustrated
+environments such as sky, sea, walls and foliage are opaque text-bearing artwork.
 
-Composition describes the picture and arrangement. Silhouette, negative-space
-storytelling, secondary motifs and two-stage reads are optional devices, not
-mandatory ingredients. Favor substantial flat opaque shapes, transparent
-perimeter and legible strokes/gaps. Dimensions and aspect ratio belong to image
+Composition describes the picture, arrangement, text-filled regions and empty
+forms. Include negative-space-led directions among the ten concepts, alongside
+positive silhouettes and mixed compositions; no per-concept device or coverage
+quota is required. Favor broad connected opaque fields, deliberate transparent
+openings, a small outer placement margin and legible strokes/gaps. An empty subject
+may emerge from its colored surroundings. The environment spans the entire interior
+art area, continuing behind and around subjects to the narrow outer margin.
+Interior transparency represents intentional subjects, meaningful openings or
+separation channels; large unused transparent expanses around objects are a visual
+failure even when a negative-space motif elsewhere succeeds. Secondary motifs and two-stage reads
+remain optional. Dimensions and aspect ratio belong to image
 settings, not idea compositions. Version 1 used fixed palette roles and separate
 visual-device fields; rerun ideas to replace it with version 2.
+
+Deliberate transparent gaps and gutters between objects remain valid for separation,
+rhythm and breathing room. They may interrupt colored fields. Evaluate whitespace
+by compositional purpose rather than maximizing coverage; preserve designed gaps
+while removing large leftover blank areas.
 
 Replace `ideas.yaml` atomically only after the full response validates. Failure,
 timeout and interruption preserve the prior valid YAML. Replace `traces/ideas/`
@@ -138,7 +151,8 @@ Settings:
 - `--model` overrides the Codex agent model, not a specific image model.
 
 The Codex response selects artwork colors from the idea palette, excluding entries
-used solely for the poster field. Reject colors outside that palette. Deterministic
+used solely for underlying paper, while retaining illustrated environment colors.
+Reject colors outside that palette. Deterministic
 post-processing with Sharp:
 
 1. Decode a single PNG with actual alpha, bounded to 16,777,216 pixels, into sRGB
@@ -156,6 +170,11 @@ widths, silhouette quality or removal of an almost-opaque background. Codex reco
 uncleaned original as a final artifact; a human must still inspect full size and thumbnail before
 choosing a master. Quantization may change color boundaries; original PNGs remain
 in traces for diagnosis and future improvements.
+
+Source thumbnails do not establish final conversion quality. Before approval,
+review a rendered character preview at the target grid and font size for recognizable
+empty forms and sufficient visual weight in the text-bearing fields. A colored
+environment is valid artwork; only an unintended matte is a background failure.
 
 ## Fetch
 
@@ -275,7 +294,7 @@ and remove controls, format characters, and residual `*`, `_`, backticks, and `~
 Keep separators between Markdown blocks, table cells, and explicit line breaks.
 Preserve word spacing, other punctuation, and letters. Reject an empty result.
 This intentionally favors dense art over source typography and readability.
-Fetch artifacts remain unchanged. The pinned Roboto Mono Latin Bold 700 font is
+Fetch artifacts remain unchanged. The pinned Noto Sans Mono Latin Black 900 font is
 loaded as outlines through OpenType.js; unsupported or empty glyphs other than word spaces become `?`,
 with unique replacements recorded. No platform font substitution is allowed.
 
@@ -286,12 +305,13 @@ The minimum/default font size is **6.5 points**, converted to pixels using targe
 PPI (`6.5 * PPI / 72`, about 27.083 px at 300 PPI). The minimum applies to the actual font em
 size, not the grid cell. It does not shrink when the full book does not fit.
 
-Use rectangular cells: width is `ceil(fontSizePixels * 0.63)`; height is
+Use rectangular cells: width is `ceil(fontSizePixels * 0.60)`; height is
 `ceil(max(fontSizePixels, glyphBoundsHeight))`. Bounds cover all unique supported
 text glyphs at that font size. Center the natural, unstretched font outlines within
-each cell using a shared baseline and monospaced advance. Roboto Mono's bundled
-bold face is weight 700; the prototype requested 800, which is not available in
-this bundled family.
+each cell using a shared baseline and monospaced advance. The bundled Black face
+is weight 900; at 300 PPI the 6.5 pt text uses 17×28 px cells for Dracula.
+Render version 3 records this font and spacing change; the font hash identifies
+the pinned outlines. No synthetic bolding or platform font substitution is used.
 
 Fit the full source aspect ratio inside the content rectangle, divide fitted
 width/height by cell width/height, and floor to integer grid dimensions. Resample
