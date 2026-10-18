@@ -45,6 +45,12 @@ retry semantics. Modules have these responsibilities:
   layout, source-color glyph rendering, and exact print-size PNG encoding.
 - `src/render/run.ts` and `src/render/publication.ts`: rendering orchestration,
   manifests, locking, staged batch replacement, and publication recovery.
+- `src/evals/suite.ts` and `evals/image-prompt/`: frozen image-prompt eval suite
+  (Gatsby ideas) with validation and a suite hash.
+- `src/evals/metrics.ts`, `src/evals/masks.ts`, and `src/evals/grid.ts`: versioned,
+  deterministic image metrics from the native PNG and cleaned master, scored on
+  the 24 × 36 character grid. See the
+  [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.
 

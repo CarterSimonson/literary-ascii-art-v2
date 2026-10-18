@@ -1,0 +1,37 @@
+schema_version: 1
+purpose: "Accent separation: the green light must stay ringed by a transparent
+  channel instead of touching the primary field."
+source: output/the-great-gatsby/ideas.yaml, ideas prompt v6, generated 2026-10-18
+idea:
+  id: the-distance-of-desire
+  name: The Distance of Desire
+  composition: One rectangular field of primary-ink book text fills the interior
+    up to a narrow transparent placement margin. A large transparent silhouette
+    of Gatsby in profile occupies the lower-left portion, leaning forward with
+    one arm extended diagonally toward the upper right. Simplify the hand into a
+    connected, gently cupped shape. Broad text-bearing wedges entering the
+    silhouette distinguish the jacket opening and bent elbow; bold transparent
+    channels articulate the trouser division and cuff. The sole accent is one
+    small green rectangular light across a generous expanse of uninterrupted
+    text, isolated from the primary ink by a transparent channel. Include no
+    shoreline or other scenery. Use smooth vector contours, with every important
+    channel, limb, and gap at least about 1% of canvas width. No display
+    lettering, logos, shading, gradients, texture, distress, hairlines, tiny
+    decoration, photorealism, frame, or mockup.
+  literary_basis: "Gatsby reaches toward the green light at the end of Daisy's
+    dock. The composition makes the intervening distance its central subject:
+    his longing depends on imagining that Daisy, the past, and social acceptance
+    remain attainable. His forward lean also recalls the novel's closing tension
+    between striving ahead and being drawn backward."
+  palette:
+    - color: "#263D48"
+      use: "Primary text ink: muted midnight blue."
+    - color: "#52745D"
+      use: "Accent ink: the single green light."
+    - color: "#F5F0E5"
+      use: "Suggested paper: warm ivory showing through all transparent areas."
+  conversion_resilience: The long arm, forward-leaning torso, and large
+    surrounding voids establish the gesture before any clothing detail is
+    visible. The simplified hand and substantial limb widths survive replacement
+    of solid ink with small characters; the isolated green rectangle remains a
+    clear destination.

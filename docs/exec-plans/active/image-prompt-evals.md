@@ -311,10 +311,48 @@ Decided by the agent, as delegated by the user:
 ## Progress
 
 - [x] Plan drafted and revised with the user's decisions (2026-10-18).
-- [ ] Implementation steps 1–6.
+- [x] Step 1: `evals/image-prompt/` freezes the three Gatsby ideas (copied from
+      the ideas v6 run); `src/evals/suite.ts` loads and validates them and hashes
+      the suite.
+- [x] Step 2: `src/evals/metrics.ts` (metrics version 1) and `src/evals/masks.ts`,
+      with synthetic-fixture specs in `tests/evals.test.ts`.
+      `src/evals/grid.ts` computes the 24 × 36 character grid exactly as render
+      does. `bun scripts/eval-trace-metrics.ts <book-id> [--output <dir>]` scores a
+      book's published masters against their traced natives.
+- [ ] Steps 3–6.
 - [ ] Round 1 and iteration.
+
+## Discoveries
+
+Gatsby v4 traces scored with metrics version 1 (24 × 36 grid 405 × 364 cells):
+
+| Metric                  | weight-of-shirts | distance-of-desire | machine-of-carelessness |
+| ----------------------- | ---------------- | ------------------ | ----------------------- |
+| Native haze fraction    | 0.014            | 0.303              | 0.428                   |
+| Cleanup change fraction | 0                | 0.188              | 0.032                   |
+| Off-palette fraction    | 0                | 0.059              | 0.054                   |
+| Field rectangularity    | 1.000            | 0.857              | 1.000                   |
+| Opaque components       | 3                | 4                  | 3                       |
+| Cutouts (largest share) | 1 (1.00)         | 2 (0.97)           | 5 (0.42)                |
+| Grid cutout survival    | 1                | 1                  | 1                       |
+| Edge raggedness         | 0.040            | 0.039              | 0.007                   |
+| Accent contact          | —                | 1.000              | —                       |
+
+- The ranking matches the known results: shirts is cleanest; machine has the
+  haziest native image and a fragmented subject; desire's green light touches the
+  primary field along its whole outline, and cleanup rebuilt 19% of its area.
+- Native haze separates the images far more than any cleaned-master metric, which
+  confirms that metrics must read the native PNG.
+- Edge raggedness does not yet match perception: shirts scores rougher than
+  machine, probably because narrow designed folds count as protrusions at a
+  3 px smoothing radius. Calibrate it against the user's tags in round 1 before
+  relying on it.
+- Thin-feature fractions are all below 1%, and every significant cutout survives
+  the 24 × 36 grid, so these metrics may matter only for more detailed variants.
+- Shirts has three opaque components although it looks like one field; inspect
+  what the two extra islands are when building the review interface.
 
 ## Next action
 
-Implement step 1 (Gatsby suite fixtures) and step 2 (metrics), then confirm on the
-existing Gatsby v4 traces before building generation.
+Step 3: `bookgen eval generate` with prompt templates, parallel workers,
+per-image publication, resume, and retry, reusing `src/images/candidate.ts`.
