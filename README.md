@@ -352,7 +352,7 @@ Routine tests use fake Codex generation, small PNG fixtures, and real Gutenberg
 header fixtures, with no credentials or network. To validate the text parser against
 ten live books, run `bun scripts/validate-gutenberg.ts`; use `--offline` to replay
 the full downloads cached in `.artifacts/gutenberg-validation/`. This validates
-downloads and deterministic parsing, without running editorial cleanup agents. Live ideas/images commands exercise the real Codex integration. To score a book's published masters and traced native images with the image-prompt eval metrics, run `bun scripts/eval-trace-metrics.ts <book-id>`. Editor
+downloads and deterministic parsing, without running editorial cleanup agents. Live ideas/images commands exercise the real Codex integration. Editor
 whitespace defaults are
 in `.editorconfig`; formatting is defined in `.prettierrc.json`.
 
