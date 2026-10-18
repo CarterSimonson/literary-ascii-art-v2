@@ -2,6 +2,9 @@
 
 ## Entry points
 
+- [The Odyssey pipeline run](exec-plans/completed/odyssey-pipeline.md): execution
+  of all implemented stages, verified outputs, and artwork-quality findings.
+
 - [README](../README.md): purpose, current state, and actual development commands.
 - [Agent instructions](../AGENTS.md): working conventions and product rules.
 - [Architecture](../ARCHITECTURE.md): implemented workflow and intended boundaries.

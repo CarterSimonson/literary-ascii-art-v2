@@ -3,6 +3,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Codex, type ThreadEvent } from "@openai/codex-sdk";
 import { z } from "zod";
+import {
+  ART_GENERATION_MODEL,
+  ART_GENERATION_REASONING_EFFORT,
+} from "../generation-settings.ts";
 import { createIdeasResponseSchema } from "./schema.ts";
 
 export interface GenerationInput {
@@ -21,7 +25,8 @@ export const generateWithCodex: IdeaGenerator = async function* (input) {
   try {
     const codex = new Codex();
     const thread = codex.startThread({
-      ...(input.model ? { model: input.model } : {}),
+      model: input.model ?? ART_GENERATION_MODEL,
+      modelReasoningEffort: ART_GENERATION_REASONING_EFFORT,
       workingDirectory,
       skipGitRepoCheck: true,
       sandboxMode: "read-only",

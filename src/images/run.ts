@@ -10,6 +10,10 @@ import {
 import { join, resolve } from "node:path";
 import { parse, stringify } from "yaml";
 import packageJson from "../../package.json";
+import {
+  ART_GENERATION_MODEL,
+  ART_GENERATION_REASONING_EFFORT,
+} from "../generation-settings.ts";
 import { errorMessage } from "../ideas/run.ts";
 import type { ImageGenerator } from "./codex.ts";
 import { generateCandidate } from "./candidate.ts";
@@ -151,7 +155,8 @@ export async function runImages(
     bookgen_version: packageJson.version,
     sdk_version: packageJson.dependencies["@openai/codex-sdk"],
     provider: "codex-cli",
-    requested_model: request.model ?? null,
+    requested_model: request.model ?? ART_GENERATION_MODEL,
+    reasoning_effort: ART_GENERATION_REASONING_EFFORT,
     requested_size: request.size,
     timeout_seconds_per_attempt: request.timeoutSeconds,
     maximum_attempts_per_image: 2,

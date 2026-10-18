@@ -34,6 +34,10 @@ interface IdeasFlags extends GenerationFlags {
   count: number;
 }
 
+interface FetchFlags extends GenerationFlags {
+  editionContext?: string;
+}
+
 export interface CliOptions {
   run?: typeof runIdeas;
   images?: typeof runImages;
@@ -116,12 +120,16 @@ export async function runCli(
     .option("--output <directory>", "Output root", "output")
     .option("--model <model>", "Override the configured Codex model")
     .option(
+      "--edition-context <text>",
+      "Known edition limitations for cleanup review and provenance",
+    )
+    .option(
       "--timeout <seconds>",
       "Download and cleanup timeout",
       parseTimeout,
       300,
     )
-    .action(async (id: string, flags: GenerationFlags): Promise<void> => {
+    .action(async (id: string, flags: FetchFlags): Promise<void> => {
       const book = await resolveBook(id, flags.registry);
       const request: FetchRequest = {
         ...book,
@@ -131,6 +139,10 @@ export async function runCli(
 
       if (flags.model) {
         request.model = flags.model;
+      }
+
+      if (flags.editionContext !== undefined) {
+        request.editionContext = flags.editionContext;
       }
 
       const fetchOptions: FetchOptions = {
@@ -159,7 +171,7 @@ export async function runCli(
     )
     .option("--slug <slug>", "Override the book's output folder name")
     .option("--output <directory>", "Output root", "output")
-    .option("--model <model>", "Override the configured Codex model")
+    .option("--model <model>", "Override gpt-6.1-sol (reasoning effort: high)")
     .option("--timeout <seconds>", "Codex request timeout", parseTimeout, 300)
     .option(
       "--count <number>",
@@ -212,7 +224,7 @@ export async function runCli(
     .argument("<book-id>", "Book ID in the registry")
     .option("--registry <path>", "Book registry YAML", "books.yaml")
     .option("--output <directory>", "Output root", "output")
-    .option("--model <model>", "Override the configured Codex model")
+    .option("--model <model>", "Override gpt-6.1-sol (reasoning effort: high)")
     .option(
       "--timeout <seconds>",
       "Timeout per image attempt",

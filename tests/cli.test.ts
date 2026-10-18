@@ -46,7 +46,7 @@ describe("bookgen command interface", (): void => {
     expect(stdout).toBe("/custom-output/hugo-les-miserables/ideas.yaml\n");
   });
 
-  test("defaults to a title-derived folder, output root, and configured Codex model", async (): Promise<void> => {
+  test("defaults to a title-derived folder and output root without a model override", async (): Promise<void> => {
     const run: typeof runIdeas = (request): Promise<string> => {
       expect(request).toEqual({
         title: "Dracula",
