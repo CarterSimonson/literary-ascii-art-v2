@@ -25,6 +25,7 @@ export interface FetchProvenance {
   cleanup_version: number;
   prompt_sha256: string;
   requested_model: string | null;
+  edition_context: string | null;
   timeout_seconds: number;
 }
 
@@ -51,6 +52,7 @@ export function createProvenance(
     cleanup_version: CLEANUP_VERSION,
     prompt_sha256: sha256(prompt),
     requested_model: request.model ?? null,
+    edition_context: request.editionContext ?? null,
     timeout_seconds: request.timeoutSeconds,
   };
 }

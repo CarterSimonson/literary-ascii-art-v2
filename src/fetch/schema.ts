@@ -8,6 +8,7 @@ export const fetchRequestSchema = registeredBookSchema.extend({
   outputRoot: z.string().trim().min(1),
   timeoutSeconds: z.number().int().min(1).max(3600),
   model: z.string().trim().min(1).optional(),
+  editionContext: z.string().trim().min(1).max(4000).optional(),
 });
 
 export type FetchRequest = z.infer<typeof fetchRequestSchema>;

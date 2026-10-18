@@ -3,6 +3,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Codex, type ThreadEvent, type Usage } from "@openai/codex-sdk";
 import { z } from "zod";
+import {
+  ART_GENERATION_MODEL,
+  ART_GENERATION_REASONING_EFFORT,
+} from "../generation-settings.ts";
 import { imageResponseSchema } from "./schema.ts";
 
 export interface ImageGenerationInput {
@@ -30,7 +34,8 @@ export const generateImageWithCodex: ImageGenerator = async (input) => {
       config: { features: { image_generation: true } },
     });
     const thread = codex.startThread({
-      ...(input.model ? { model: input.model } : {}),
+      model: input.model ?? ART_GENERATION_MODEL,
+      modelReasoningEffort: ART_GENERATION_REASONING_EFFORT,
       workingDirectory,
       skipGitRepoCheck: true,
       sandboxMode: "workspace-write",

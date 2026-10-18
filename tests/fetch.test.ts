@@ -220,6 +220,34 @@ describe("Gutenberg content contract", (): void => {
 });
 
 describe("fetch publication and failures", (): void => {
+  test("edition context is recorded without bypassing unresolved cleanup uncertainty", async (): Promise<void> => {
+    const editionContext = "The user accepts omitted illustrations.";
+    const request = { ...fetchRequest(), editionContext };
+    const path = await runFetch(request, {
+      transport,
+      generate: (input) => {
+        expect(input.prompt).toContain(editionContext);
+        return cleanupGenerator()(input);
+      },
+    });
+    const prior = await readFile(path, "utf8");
+    const manifest: unknown = parse(prior);
+    expect(manifest).toMatchObject({ edition_context: editionContext });
+
+    expect(
+      await rejection(
+        runFetch(request, {
+          transport,
+          generate: cleanupGenerator({
+            ...plan,
+            uncertainty: "The final chapter may be missing.",
+          }),
+        }),
+      ),
+    ).toThrow("final chapter");
+    expect(await readFile(path, "utf8")).toBe(prior);
+  });
+
   test("successful reruns replace only text and failed cleanup preserves the last set", async (): Promise<void> => {
     const options = { transport, generate: cleanupGenerator() };
     const path = await runFetch(fetchRequest(), options);
@@ -356,6 +384,8 @@ describe("download boundary and command", (): void => {
           root,
           "--model",
           "chosen",
+          "--edition-context",
+          "The user accepts omitted illustrations.",
           "--timeout",
           "60",
         ],
@@ -368,6 +398,7 @@ describe("download boundary and command", (): void => {
               gutenberg_id: 345,
               outputRoot: root,
               model: "chosen",
+              editionContext: "The user accepts omitted illustrations.",
               timeoutSeconds: 60,
             });
             called = true;

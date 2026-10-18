@@ -4,3 +4,7 @@ books:
     title: Dracula
     author: Bram Stoker
     gutenberg_id: 345
+  odyssey:
+    title: The Odyssey
+    author: Homer
+    gutenberg_id: 1727

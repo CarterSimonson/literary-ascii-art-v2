@@ -27,7 +27,11 @@ version, entries, duplicate YAML keys and safe IDs are validated before generati
 Unknown IDs fail with instructions to edit the registry. All commands accept
 `--registry <path>` and `--output <directory>`; defaults are `books.yaml` and
 `output`, relative to the calling directory. The registry is never rewritten by
-pipeline commands. No command hardcodes a Codex model; `--model` is optional.
+pipeline commands. Ideas and images default to `gpt-6.1-sol` with fixed `high`
+reasoning effort. Their optional `--model` overrides the agent model while keeping
+high reasoning effort. Both stages record the selected model and reasoning effort
+in artifact provenance and run traces. Fetch inherits the configured Codex model
+unless `--model` is supplied.
 
 `ideas` also retains legacy title calls with `--author` and `--slug` when the
 argument is not ID-shaped. A valid registry is still required. Registered IDs
@@ -188,7 +192,15 @@ This is one text request per run, not a bulk crawler; bulk synchronization would
 need Gutenberg's harvesting/mirroring workflow.
 
 `--registry` and `--output` use the shared defaults. `--model` optionally overrides
-the cleanup agent model. `--timeout` defaults to 300 seconds (range 1–3600), covering
+the cleanup agent model. `--edition-context <text>` supplies known, accepted
+limitations in ancillary edition material. The agent evaluates them against the
+source and records accepted limitations in `edition_notes`; identity, narrative
+completeness, and uncertain removal boundaries still block publication. The exact
+context is recorded as `edition_context` in provenance and included in the hashed
+prompt. Completeness is assessed against the selected published translation:
+documented textual-critical omissions of isolated corrupt lines are edition notes;
+missing chapters, unexplained narrative gaps, and abridgments still block publication.
+`--timeout` defaults to 300 seconds (range 1–3600), covering
 download and agent work. The download rejects redirects, non-success HTTP status,
 non-plain-text content, sources over 20 MiB, invalid UTF-8, unsupported control
 characters, absent/mismatched ebook ID, non-English language metadata, and missing,

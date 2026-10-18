@@ -57,8 +57,8 @@ bun node_modules/@openai/codex/bin/codex.js login
 ```
 
 Alternatively, supply `CODEX_API_KEY` in the environment or an ignored `.env`
-file. The SDK inherits your Codex configuration and authentication; omit `--model`
-to use your configured default. Generation consumes your Codex usage or configured
+file. The SDK inherits your Codex authentication. Ideas and images default to
+`gpt-6.1-sol` with `high` reasoning effort; fetch uses your configured Codex model. Generation consumes your Codex usage or configured
 provider's API usage.
 
 Define reusable book identities in the root [books.yaml](books.yaml):
@@ -89,8 +89,10 @@ bookgen ideas --help
 bookgen images --help
 ```
 
-Ideas, images, and fetch use your Codex login and configured Codex model; `--model` overrides
-that model, not the native image backend. No separate Images API key is required.
+Ideas and images explicitly select `gpt-6.1-sol` with `high` reasoning effort.
+`--model` overrides the agent model while keeping high reasoning effort; it does
+not select the native image backend. Fetch uses your configured Codex model unless
+you pass `--model`. All three commands use your Codex login. No separate Images API key is required.
 Images requires a Codex CLI/account with native image generation available; it
 fails explicitly if that capability is unavailable. It creates a temporary
 workspace with write access so Codex can copy the generated PNG into it.
@@ -284,6 +286,9 @@ asset storage remains a later decision.
 `bookgen fetch <book-id>` works independently of ideas/images. Download and cleanup
 share a 300-second timeout (`--timeout`, 1–3600). `--model` selects the cleanup
 agent model; otherwise it uses the configured Codex model and existing login.
+`--edition-context <text>` supplies known, accepted edition limitations for the
+cleanup agent to evaluate and record. It does not bypass identity, narrative
+completeness, or removal-boundary checks.
 
 The command downloads UTF-8 plain text from the pinned Gutenberg ID and checks
 English metadata, ebook ID, and START/END markers. Codex inspects a numbered copy

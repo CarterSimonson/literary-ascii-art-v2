@@ -4,6 +4,10 @@ import { join, resolve } from "node:path";
 import type { Usage } from "@openai/codex-sdk";
 import { stringify } from "yaml";
 import packageJson from "../../package.json";
+import {
+  ART_GENERATION_MODEL,
+  ART_GENERATION_REASONING_EFFORT,
+} from "../generation-settings.ts";
 import { generateWithCodex, type IdeaGenerator } from "./codex.ts";
 import { buildIdeasPrompt, PROMPT_VERSION } from "./prompt.ts";
 import {
@@ -52,7 +56,8 @@ export async function runIdeas(
     prompt_sha256: createHash("sha256").update(prompt).digest("hex"),
     bookgen_version: packageJson.version,
     sdk_version: packageJson.dependencies["@openai/codex-sdk"],
-    requested_model: request.model ?? null,
+    requested_model: request.model ?? ART_GENERATION_MODEL,
+    reasoning_effort: ART_GENERATION_REASONING_EFFORT,
   };
   let threadId: string | null = null;
   let usage: Usage | null = null;
