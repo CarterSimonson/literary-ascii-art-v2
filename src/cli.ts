@@ -2,14 +2,24 @@
 import { Command, CommanderError, InvalidArgumentError } from "commander";
 import packageJson from "../package.json";
 import { errorMessage, runIdeas } from "./ideas/run.ts";
-import { requestSchema, titleToSlug } from "./ideas/schema.ts";
+import {
+  DEFAULT_IDEA_COUNT,
+  MAX_IDEA_COUNT,
+  requestSchema,
+  titleToSlug,
+} from "./ideas/schema.ts";
 import { findBook, resolveBook } from "./books.ts";
 import { runImages } from "./images/run.ts";
+import { runReclean } from "./images/reclean.ts";
 import { imagesRequestSchema } from "./images/schema.ts";
 import type { FetchRequest } from "./fetch/schema.ts";
 import { runFetch, type FetchOptions } from "./fetch/run.ts";
 import { runRender } from "./render/run.ts";
 import { renderRequestSchema } from "./render/input.ts";
+import {
+  DEFAULT_SEPARATION_RADIUS,
+  MAX_SEPARATION_RADIUS,
+} from "./render/convert.ts";
 
 interface GenerationFlags {
   registry: string;
@@ -21,6 +31,7 @@ interface GenerationFlags {
 interface IdeasFlags extends GenerationFlags {
   author?: string;
   slug?: string;
+  count: number;
 }
 
 interface FetchFlags extends GenerationFlags {
@@ -30,6 +41,7 @@ interface FetchFlags extends GenerationFlags {
 export interface CliOptions {
   run?: typeof runIdeas;
   images?: typeof runImages;
+  reclean?: typeof runReclean;
   fetchBook?: typeof runFetch;
   render?: typeof runRender;
   stdout?: (message: string) => void;
@@ -45,6 +57,34 @@ function parseTimeout(value: string): number {
     );
   }
   return seconds;
+}
+
+function parseSeparation(value: string): number {
+  const radius = Number(value);
+
+  if (
+    !Number.isInteger(radius) ||
+    radius < 0 ||
+    radius > MAX_SEPARATION_RADIUS
+  ) {
+    throw new InvalidArgumentError(
+      `Separation must be an integer from 0 to ${String(MAX_SEPARATION_RADIUS)}`,
+    );
+  }
+
+  return radius;
+}
+
+function parseIdeaCount(value: string): number {
+  const count = Number(value);
+
+  if (!Number.isInteger(count) || count < 1 || count > MAX_IDEA_COUNT) {
+    throw new InvalidArgumentError(
+      `Count must be an integer from 1 to ${String(MAX_IDEA_COUNT)}`,
+    );
+  }
+
+  return count;
 }
 
 export async function runCli(
@@ -122,7 +162,7 @@ export async function runCli(
 
   program
     .command("ideas")
-    .description("Generate ten original poster composition ideas through Codex")
+    .description("Generate original poster composition ideas through Codex")
     .argument("<book>", "Registered book ID or legacy book title")
     .option("--registry <path>", "Book registry YAML", "books.yaml")
     .option(
@@ -133,6 +173,12 @@ export async function runCli(
     .option("--output <directory>", "Output root", "output")
     .option("--model <model>", "Override gpt-6.1-sol (reasoning effort: high)")
     .option("--timeout <seconds>", "Codex request timeout", parseTimeout, 300)
+    .option(
+      "--count <number>",
+      `Number of ideas (1–${String(MAX_IDEA_COUNT)})`,
+      parseIdeaCount,
+      DEFAULT_IDEA_COUNT,
+    )
     .action(async (title: string, flags: IdeasFlags): Promise<void> => {
       const registered = await findBook(title, flags.registry);
       if (!registered && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(title)) {
@@ -157,8 +203,11 @@ export async function runCli(
         outputRoot: flags.output,
         ...(flags.model !== undefined ? { model: flags.model } : {}),
         timeoutSeconds: flags.timeout,
+        ideaCount: flags.count,
       });
-      stderr(`Generating ten composition ideas for ${request.title}…\n`);
+      stderr(
+        `Generating ${String(request.ideaCount)} composition ideas for ${request.title}…\n`,
+      );
       const run = options.run ?? runIdeas;
       const path = await run(
         request,
@@ -201,6 +250,10 @@ export async function runCli(
       },
       128,
     )
+    .option(
+      "--reclean",
+      "Reprocess the traced native images with current cleanup; no generation",
+    )
     .action(
       async (
         id: string,
@@ -211,6 +264,7 @@ export async function runCli(
           timeout: number;
           size: string;
           alphaThreshold: number;
+          reclean?: boolean;
         },
       ): Promise<void> => {
         const book = await resolveBook(id, flags.registry);
@@ -224,12 +278,21 @@ export async function runCli(
           size: flags.size,
           alphaThreshold: flags.alphaThreshold,
         });
-        const path = await (options.images ?? runImages)(request, {
+        const runOptions = {
           ...(options.signal ? { signal: options.signal } : {}),
-          onProgress: (message): void => {
+          onProgress: (message: string): void => {
             stderr(`${message}…\n`);
           },
-        });
+        };
+
+        let path: string;
+
+        if (flags.reclean === true) {
+          path = await (options.reclean ?? runReclean)(request, runOptions);
+        } else {
+          path = await (options.images ?? runImages)(request, runOptions);
+        }
+
         stdout(`${path}\n`);
       },
     );
@@ -257,6 +320,12 @@ export async function runCli(
       "Poster background color (#RRGGBB)",
       "#FFFFFF",
     )
+    .option(
+      "--separation <cells>",
+      `Empty cells left between differently colored regions (0–${String(MAX_SEPARATION_RADIUS)})`,
+      parseSeparation,
+      DEFAULT_SEPARATION_RADIUS,
+    )
     .action(
       async (
         id: string,
@@ -267,6 +336,7 @@ export async function runCli(
           targets: string;
           output: string;
           background: string;
+          separation: number;
         },
       ): Promise<void> => {
         const book = await resolveBook(id, flags.registry);
@@ -277,6 +347,7 @@ export async function runCli(
           targetRegistry: flags.targets,
           outputRoot: flags.output,
           background: flags.background,
+          separation: flags.separation,
         });
         const paths = await (options.render ?? runRender)(request, {
           ...(options.signal ? { signal: options.signal } : {}),

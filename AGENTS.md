@@ -39,8 +39,11 @@ Favor reproducible pipeline stages with explicit inputs, outputs, metadata, and 
 - Render with a 6.5 pt minimum font, rectangular cells, and nearest-neighbor working grids. Fit as much text as the grid allows; keep the original master unchanged.
 - Generate one reusable source master; poster rendering adapts it to other sizes
   by placing the art and filling the surrounding space. Keep image dimensions out
-  of composition ideas. Use a flexible palette with intended uses for colors;
-  silhouette, negative-space storytelling, and secondary motifs are optional.
+  of composition ideas. Palettes have at most three colors. Never clip glyphs;
+  separate differently colored regions with whole empty cells.
+- The current composition style (one text field, one iconic subject cut out as
+  negative space, one optional accent) is a baseline under evaluation, not a
+  settled rule. Change it when evaluated results favor something else.
 - Group local generated outputs under `output/<book-id>/`: `ideas.yaml`,
   `raw/<idea-id>.png` masters, and separate later-stage artifacts. Keep output tidy
   and ignored by Git.

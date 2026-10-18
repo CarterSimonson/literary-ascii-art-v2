@@ -51,10 +51,17 @@ async function readTrace(): Promise<z.infer<typeof traceSchema>> {
 }
 
 describe("concept validation", (): void => {
-  test("requires exactly ten complete concepts", (): void => {
+  test("requires exactly the requested number of concepts", (): void => {
     const response = ideasResponse();
     response.ideas.pop();
-    expect(() => parseIdeasResponse(JSON.stringify(response))).toThrow();
+    expect(() => parseIdeasResponse(JSON.stringify(response), 10)).toThrow();
+    expect(parseIdeasResponse(JSON.stringify(response), 9)).toEqual(response);
+  });
+
+  test("accepts a published set of any nonempty size", (): void => {
+    const response = ideasResponse("concept", 3);
+    expect(parseIdeasResponse(JSON.stringify(response))).toEqual(response);
+    expect(() => parseIdeasResponse(JSON.stringify({ ideas: [] }))).toThrow();
   });
 
   test("rejects duplicate IDs and names", (): void => {
@@ -126,6 +133,22 @@ describe("concept validation", (): void => {
     expect(() => parseIdeasResponse(JSON.stringify(response))).toThrow();
   });
 
+  test("new ideas use at most three colors, while saved larger palettes still load", (): void => {
+    const response = ideasResponse();
+    response.ideas = response.ideas.map((idea) => ({
+      ...idea,
+      palette: [
+        { color: "#183D49", use: "Primary text field" },
+        { color: "#80182A", use: "Accent" },
+        { color: "#354D31", use: "Second accent" },
+        { color: "#FAF4E8", use: "Suggested paper" },
+      ],
+    }));
+
+    expect(() => parseIdeasResponse(JSON.stringify(response), 10)).toThrow();
+    expect(parseIdeasResponse(JSON.stringify(response))).toEqual(response);
+  });
+
   test("requires at least one palette color", (): void => {
     const response = ideasResponse();
     response.ideas = response.ideas.map((idea) => ({ ...idea, palette: [] }));
@@ -185,6 +208,47 @@ describe("book-grouped outputs and retry behavior", (): void => {
       "ideas.yaml",
       "traces",
     ]);
+  });
+
+  test("when I request three ideas, Codex is asked for three and three are published", async (): Promise<void> => {
+    const requestedCounts: number[] = [];
+    const events = responseEvents(JSON.stringify(ideasResponse("concept", 3)));
+    const generate: IdeaGenerator = async function* (input) {
+      requestedCounts.push(input.ideaCount);
+      yield* fakeGenerator(events)();
+    };
+
+    const path = await runIdeas(
+      { ...request(outputRoot), ideaCount: 3 },
+      { generate },
+    );
+
+    const input: unknown = parse(await readFile(path, "utf8"));
+    const artifact = z
+      .object({
+        ideas: z.array(z.unknown()),
+        generation: z.object({ idea_count: z.literal(3) }),
+      })
+      .parse(input);
+    expect(artifact.ideas).toHaveLength(3);
+    expect(requestedCounts).toEqual([3]);
+    expect(
+      await readFile(
+        join(outputRoot, "dracula/traces/ideas/prompt.txt"),
+        "utf8",
+      ),
+    ).toContain("Generate exactly 3 distinct composition ideas");
+  });
+
+  test("rejects a response with a different number of ideas than requested", async (): Promise<void> => {
+    const generate = fakeGenerator(responseEvents());
+
+    const failure = await rejection(
+      runIdeas({ ...request(outputRoot), ideaCount: 3 }, { generate }),
+    );
+
+    expect(failure).toThrow("Ideas generation failed");
+    expect((await readTrace()).status).toBe("failed");
   });
 
   test("regenerates ideas and replaces traces while preserving later-stage artifacts", async (): Promise<void> => {

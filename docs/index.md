@@ -25,6 +25,8 @@
   direction correction, regenerated Dracula examples, and typography/margin proofs.
 - [Noto standardization](exec-plans/completed/noto-standardization.md): selected font,
   tighter spacing, and regenerated poster examples.
+- [Litographs direction](exec-plans/completed/litographs-direction.md): single-field
+  compositions, three-color palettes, whole-cell color separation, and haze cleanup.
 - [Project tracking](project-tracking.md): Linear project, initial queue, and
   verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,

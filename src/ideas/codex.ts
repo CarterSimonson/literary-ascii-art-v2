@@ -7,11 +7,12 @@ import {
   ART_GENERATION_MODEL,
   ART_GENERATION_REASONING_EFFORT,
 } from "../generation-settings.ts";
-import { ideasResponseSchema } from "./schema.ts";
+import { createIdeasResponseSchema } from "./schema.ts";
 
 export interface GenerationInput {
   prompt: string;
   model: string | undefined;
+  ideaCount: number;
   signal: AbortSignal;
 }
 
@@ -33,7 +34,7 @@ export const generateWithCodex: IdeaGenerator = async function* (input) {
       webSearchMode: "disabled",
     });
     const { events } = await thread.runStreamed(input.prompt, {
-      outputSchema: z.toJSONSchema(ideasResponseSchema),
+      outputSchema: z.toJSONSchema(createIdeasResponseSchema(input.ideaCount)),
       signal: input.signal,
     });
     yield* events;

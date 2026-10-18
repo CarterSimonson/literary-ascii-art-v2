@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { bookSchema } from "../books.ts";
+import type { ideasResponseSchema } from "../ideas/schema.ts";
 import {
-  ideasResponseSchema,
+  ideaListSchema,
   parseIdeasResponse,
   slugSchema,
 } from "../ideas/schema.ts";
@@ -25,7 +26,7 @@ const ideasArtifactSchema = z.object({
     slug: slugSchema,
   }),
   generation: z.looseObject({}),
-  ideas: ideasResponseSchema.shape.ideas,
+  ideas: ideaListSchema,
 });
 
 export function parseIdeasArtifact(

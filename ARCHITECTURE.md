@@ -76,8 +76,9 @@ all removal decisions. Semantic cleanup remains unapproved for human review.
   generation or depending on a store or dropshipping service.
 - Rendering consumes converted data without changing the master or character
   mapping. The underlying paper color is a render input; it is not painted into
-  the transparent master. Illustrated environments are opaque source artwork
-  carrying text; transparent openings can reveal subjects through missing text.
+  the transparent master. Opaque text fields carry text; transparent openings
+  reveal subjects through missing text. Rendering separates differently colored
+  regions with whole empty cells and never clips glyphs.
 - Product preparation consumes validated print files. Publishing and store
   reconciliation belong at the external-service boundary.
 - A downstream stage must not silently modify an upstream artifact. Changed
@@ -103,7 +104,7 @@ the corresponding integration exists.
 
 `bun run check` enforces strict TypeScript, type-aware lint, formatting, and Bun
 tests; CI runs the same checks as separately named steps after a frozen dependency install. Runtime
-validation enforces ten complete concepts with unique safe IDs and names, hex
+validation enforces the requested number of complete concepts with unique safe IDs and names, hex
 palettes, complete SDK turns, and safe book slugs. Tests cover ideas atomic
 publication, complete image-set replacement and recovery,
 failure preservation, trace replacement, locking, cancellation, upstream identity

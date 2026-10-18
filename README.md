@@ -8,13 +8,14 @@ print-ready poster and, eventually, a product in an online store.
 ## Current state
 
 `bookgen` is a Bun/TypeScript CLI. `bookgen ideas <book-id>` uses
-the Codex SDK to generate ten original poster composition ideas, validated and
+the Codex SDK to generate original poster composition ideas (ten by default;
+`--count` from 1 to 20), validated and
 saved as book-grouped YAML with a trace of the latest attempt. It follows the
 [source-art skill](.agents/skills/generate-book-art/SKILL.md) for bold, transparent
 compositions and coherent palettes, aiming for literary character-art posters
 in the spirit of [Litographs](https://www.litographs.com/).
 
-`bookgen images <book-id>` consumes all ten ideas, generates one native transparent
+`bookgen images <book-id>` consumes every saved idea, generates one native transparent
 PNG per idea through the same authenticated Codex CLI, and deterministically cleans
 alpha and artwork colors. Images remain unapproved candidates for human review.
 `bookgen fetch <book-id>` downloads the pinned Project Gutenberg English edition
@@ -81,6 +82,7 @@ required. Add a separate registry ID for a different edition or translation.
 
 ```sh
 bookgen ideas dracula
+bookgen ideas dracula --count 3
 bookgen images dracula
 bookgen images dracula --timeout 900
 bookgen fetch dracula
@@ -168,7 +170,9 @@ small details can disappear during downsampling.
 Each visible, non-background grid pixel gets one character in row-major order and
 its sampled sRGB ink color. Transparent pixels, opaque white (`#FFFFFF`), and
 pixels exactly matching `--background` consume no text and stay blank. Other
-light artwork colors remain eligible. A space from the book consumes one artwork
+light artwork colors remain eligible. Where two ink colors meet, one side leaves
+an empty cell (`--separation <cells>`, default 1; 0 disables) so regions print with
+a gap; glyphs are never clipped. A space from the book consumes one artwork
 cell and leaves it blank, preserving spaces between words. The renderer uses as
 much of the book's leading text as fits without shrinking the font. If the text
 is shorter than the grid requires, it repeats to fill the artwork. The manifest
@@ -223,15 +227,15 @@ output/dracula/
     run.json
 ```
 
-YAML contains book identity, generation provenance, and ten concepts with
+YAML contains book identity, generation provenance (including the requested
+`idea_count`), and the requested number of concepts with
 composition, literary basis, a list of hex colors with intended uses, and
 conversion rationale. Concepts describe text-filled regions and empty forms,
-including negative-space-led directions alongside positive silhouettes and mixed
-compositions. Colored illustrated environments carry text; transparent openings
-can reveal the principal subject. The environment spans the interior art area,
-continuing behind and around subjects to a narrow outer placement margin; avoid
-large unused transparent expanses around isolated objects. Only the underlying paper color belongs to
-rendering. Secondary motifs remain optional. Image dimensions belong to generation
+including mixed multi-color environments in earlier prompt versions. Version 6 uses one system: a single text
+field in one primary ink, one iconic subject cut out of it as transparent negative
+space, interior details drawn as transparent channels, and at most one accent color
+ringed by a gap. Palettes have at most three colors, including any suggested paper,
+which belongs to rendering. Image dimensions belong to generation
 settings: one reusable master will be placed within different poster sizes,
 with surrounding space filled at render time. The trace saves the exact prompt, SDK
 events, raw response when available, completion/failure status, and token usage.
@@ -252,9 +256,12 @@ latest trace. A failed candidate gets one replacement attempt before the batch f
 Cleanup keeps source geometry,
 sets alpha below the cutoff to zero and all remaining alpha to 255, maps opaque
 pixels to the nearest selected artwork palette color in sRGB, and adds a transparent
-margin of 2% of source width on each side. Underlying paper colors are excluded by the
-generation brief and selected artwork palette; illustrated sky, sea, walls, and
-foliage remain opaque artwork. Unintended opaque mattes and empty artwork
+margin of 2% of source width on each side. Cleanup version 2 also fills enclosed
+transparent haze (regions mostly made of semi-transparent native pixels) and
+removes specks and pinholes smaller than 1% of the width, keeping crisp designed
+cutouts. `bookgen images <id> --reclean` reapplies the current cleanup to the
+traced native images without generating; rerender afterwards. Underlying paper colors are excluded by the
+generation brief and selected artwork palette. Unintended opaque mattes and empty artwork
 are rejected; cleanup does not infer background removal, repair composition, or
 verify literary accuracy. Final masters are RGBA PNGs with binary alpha and flat
 palette colors, ready as inputs for the render stage.

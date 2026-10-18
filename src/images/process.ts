@@ -1,7 +1,9 @@
 import sharp from "sharp";
 import { z } from "zod";
 
-export const PROCESS_VERSION = 1;
+import { cleanIslands } from "./islands.ts";
+
+export const PROCESS_VERSION = 2;
 const colorsSchema = z.array(z.string().regex(/^#[0-9a-fA-F]{6}$/)).min(1);
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
@@ -20,6 +22,10 @@ export async function processImage(
     transparent_pixels: number;
     normalized_alpha_pixels: number;
     mapped_color_pixels: number;
+    haze_regions_filled: number;
+    small_holes_filled: number;
+    specks_removed: number;
+    island_pixels_changed: number;
     padding: number;
   };
 }> {
@@ -49,13 +55,13 @@ export async function processImage(
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
-  let transparent = 0;
-  let opaque = 0;
+  const sourceAlpha = new Uint8Array(info.width * info.height);
   let normalizedAlpha = 0;
   let mappedColors = 0;
   let sourceTransparent = 0;
   for (let offset = 0; offset < data.length; offset += 4) {
     const alpha = data[offset + 3] ?? 0;
+    sourceAlpha[offset / 4] = alpha;
     if (alpha === 0) {
       sourceTransparent++;
     }
@@ -65,13 +71,11 @@ export async function processImage(
     }
     data[offset + 3] = nextAlpha;
     if (nextAlpha === 0) {
-      transparent++;
       data[offset] = 0;
       data[offset + 1] = 0;
       data[offset + 2] = 0;
       continue;
     }
-    opaque++;
     const red = data[offset] ?? 0;
     const green = data[offset + 1] ?? 0;
     const blue = data[offset + 2] ?? 0;
@@ -102,6 +106,17 @@ export async function processImage(
       "Generated PNG has no fully transparent pixels; refusing to guess or erase an opaque background",
     );
   }
+  const islands = cleanIslands(
+    { rgba: data, width: info.width, height: info.height },
+    sourceAlpha,
+  );
+  let opaque = 0;
+  for (let offset = 3; offset < data.length; offset += 4) {
+    if (data[offset] === 255) {
+      opaque++;
+    }
+  }
+  const transparent = info.width * info.height - opaque;
   if (opaque === 0) {
     throw new Error(
       "Generated image has no opaque artwork after alpha cleanup",
@@ -134,6 +149,10 @@ export async function processImage(
         transparent + width * height - info.width * info.height,
       normalized_alpha_pixels: normalizedAlpha,
       mapped_color_pixels: mappedColors,
+      haze_regions_filled: islands.hazeRegionsFilled,
+      small_holes_filled: islands.smallHolesFilled,
+      specks_removed: islands.specksRemoved,
+      island_pixels_changed: islands.pixelsChanged,
       padding,
     },
   };

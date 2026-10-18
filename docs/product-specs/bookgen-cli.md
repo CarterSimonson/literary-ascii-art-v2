@@ -81,7 +81,8 @@ Render consumes this registry; provider-specific print settings remain future wo
 
 ## Ideas
 
-`bookgen ideas <book-id>` generates exactly ten original composition ideas,
+`bookgen ideas <book-id>` generates exactly `--count` original composition ideas
+(default 10, integer 1–20),
 grounded in the book's themes, objects, setting, and relationships. Aim for
 literary character-art posters inspired by the product category at
 [Litographs](https://www.litographs.com/), using the
@@ -93,24 +94,23 @@ workspace, without web search. This stage uses model knowledge rather than
 fetching the original text. Literary accuracy requires review.
 
 `ideas.yaml` uses schema version 2 and includes book identity, generation
-provenance, and ten concepts with unique safe IDs and distinct names. Each concept
+provenance (including `idea_count`), and that many concepts with unique safe IDs
+and distinct names. Downstream stages accept any nonempty set of saved ideas. Each concept
 contains `id`, `name`, `composition`, `literary_basis`, `palette`, and
-`conversion_resilience`. Palette is a nonempty list of `{ color, use }` entries,
-without fixed roles, count or coverage ratios. Underlying paper colors may be
-suggested with that intended use and remain outside the source master. Illustrated
-environments such as sky, sea, walls and foliage are opaque text-bearing artwork.
+`conversion_resilience`. Palette is a nonempty list of `{ color, use }` entries.
+Newly generated ideas have at most three: a primary text ink, an optional accent
+ink, and an optional suggested paper color, which stays outside the source master.
+Saved ideas with larger palettes remain readable downstream.
 
-Composition describes the picture, arrangement, text-filled regions and empty
-forms. Include negative-space-led directions among the ten concepts, alongside
-positive silhouettes and mixed compositions; no per-concept device or coverage
-quota is required. Favor broad connected opaque fields, deliberate transparent
-openings, a small outer placement margin and legible strokes/gaps. An empty subject
-may emerge from its colored surroundings. The environment spans the entire interior
-art area, continuing behind and around subjects to the narrow outer margin.
-Interior transparency represents intentional subjects, meaningful openings or
-separation channels; large unused transparent expanses around objects are a visual
-failure even when a negative-space motif elsewhere succeeds. Secondary motifs and two-stage reads
-remain optional. Dimensions and aspect ratio belong to image
+Ideas prompt version 6 follows the Litographs visual system: one rectangular text
+field in one primary ink fills the interior art area; one iconic subject is cut out
+of it as a crisp transparent silhouette; interior details are drawn as bold
+transparent channels rather than extra colors; an optional accent colors one
+element only, ringed by a transparent channel. The rest of the field stays plain,
+without secondary scenery. Contours are smooth vector shapes with no torn or
+ragged edges, and strokes and gaps stay at least about 1% of the canvas width.
+Earlier versions favored multi-color illustrated environments; rerun ideas and
+images to adopt version 6. Two-stage reads remain optional. Dimensions and aspect ratio belong to image
 settings, not idea compositions. Version 1 used fixed palette roles and separate
 visual-device fields; rerun ideas to replace it with version 2.
 
@@ -155,7 +155,9 @@ Settings:
 - `--model` overrides the Codex agent model, not a specific image model.
 
 The Codex response selects artwork colors from the idea palette, excluding entries
-used solely for underlying paper, while retaining illustrated environment colors.
+used solely for underlying paper. Image prompt version 4 asks for the same
+single-field, single-subject system, smooth contours, and a transparent channel
+around any accent element.
 Reject colors outside that palette. Deterministic
 post-processing with Sharp:
 
@@ -166,8 +168,24 @@ post-processing with Sharp:
    skipped pixels and reject a result with no opaque artwork.
 3. Map each opaque pixel to the nearest selected artwork palette color using
    squared sRGB distance; ties use palette order. No dithering or resampling.
-4. Add a transparent margin on each side equal to `ceil(source width * 0.02)`
-   pixels (at least one). Preserve all original artwork geometry. Encode RGBA PNG.
+4. Remove thresholding artifacts (processing version 2). The minimum feature is a
+   square of `max(1, round(source width * 0.01))` pixels per side. A 4-connected
+   transparent region that does not touch the image edge is filled with its most
+   common bordering artwork color when it is smaller than the minimum feature or
+   when fewer than half of its pixels had native alpha at or below 16; such haze
+   is what soft model shading leaves after thresholding. Crisp cutouts are kept.
+   Opaque regions smaller than the minimum feature are cleared. Record haze
+   regions filled, small holes filled, specks removed, and pixels changed.
+5. Add a transparent margin on each side equal to `ceil(source width * 0.02)`
+   pixels (at least one). Preserve remaining artwork geometry. Encode RGBA PNG.
+
+`bookgen images <book-id> --reclean` reapplies the current cleanup to the native
+images saved in the latest images trace, without invoking Codex. It requires the
+current `ideas.yaml` to match the published manifest, every idea to have a record,
+and each traced native PNG to match its recorded `generated_sha256`. It republishes
+the full `raw/` set atomically under the same lock, carries over prompts, attempts,
+review notes, and usage, updates processing metadata and hashes, and records
+`recleaned_at`. Otherwise the previous set is preserved. Rerender afterwards.
 
 Cleanup enforces alpha and colors, not literary accuracy, text absence, shape
 widths, silhouette quality or removal of an almost-opaque background. Codex records visual self-review concerns in `review_notes`, without judging the
@@ -177,8 +195,8 @@ in traces for diagnosis and future improvements.
 
 Source thumbnails do not establish final conversion quality. Before approval,
 review a rendered character preview at the target grid and font size for recognizable
-empty forms and sufficient visual weight in the text-bearing fields. A colored
-environment is valid artwork; only an unintended matte is a background failure.
+empty forms and sufficient visual weight in the text-bearing field. Only an
+unintended matte is a background failure.
 
 ## Fetch
 
@@ -298,6 +316,14 @@ it blank; it is never replaced with a fallback glyph. Use the leading text that 
 entire book. If text is exhausted, repeat from the beginning to fill the artwork.
 Record text used, omitted characters, and complete/partial cycles per target.
 
+Before assigning characters, separate differently colored ink regions with whole
+empty cells (`--separation <cells>`, default 1, range 0–4; 0 disables). A cell is
+left empty when an ink cell of another color within that Chebyshev radius sorts
+before it by RGB value, so only one side of each boundary yields and radius 1
+leaves exactly one empty cell. Separated cells do not consume text. Glyphs are
+never clipped: every printed character is whole. Record the radius and the number
+of separated cells in the manifest.
+
 For render only, parse Markdown to textual content with Marked, retaining link
 labels, image alt text, code contents, and table cell text. Discard markup, HTML
 comments, script/style contents, and tags; decode HTML entities, normalize NFC,
@@ -322,7 +348,8 @@ Use rectangular cells: width is `ceil(fontSizePixels * 0.60)`; height is
 text glyphs at that font size. Center the natural, unstretched font outlines within
 each cell using a shared baseline and monospaced advance. The bundled Black face
 is weight 900; at 300 PPI the 6.5 pt text uses 17×28 px cells for Dracula.
-Render version 3 records this font and spacing change; the font hash identifies
+Render version 3 recorded this font and spacing change, and version 4 adds
+color separation; the font hash identifies
 the pinned outlines. No synthetic bolding or platform font substitution is used.
 
 Fit the full source aspect ratio inside the content rectangle, divide fitted
@@ -439,7 +466,8 @@ without regenerating or modifying the source master.
 - Fresh frozen dependency install and `bun run check` pass.
 - Help/input errors do not invoke Codex. Unknown book IDs and malformed registries
   fail before generation; all stages resolve the same registered identity.
-- Ideas produces exactly ten validated concepts and preserves YAML on failure.
+- Ideas produces exactly the requested number of validated concepts and preserves
+  YAML on failure.
 - Images produces one PNG per idea with binary alpha, selected palette colors,
   transparent perimeter, manifest and latest-attempt traces.
 - Successful reruns remove obsolete image IDs. Partial failures, interruptions

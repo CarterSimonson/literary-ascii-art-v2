@@ -13,6 +13,7 @@ describe("bookgen command interface", (): void => {
         outputRoot: "custom-output",
         model: "chosen-model",
         timeoutSeconds: 60,
+        ideaCount: 3,
       });
       return Promise.resolve("/custom-output/hugo-les-miserables/ideas.yaml");
     };
@@ -30,6 +31,8 @@ describe("bookgen command interface", (): void => {
         "chosen-model",
         "--timeout",
         "60",
+        "--count",
+        "3",
       ],
       {
         run,
@@ -50,6 +53,7 @@ describe("bookgen command interface", (): void => {
         slug: "dracula",
         outputRoot: "output",
         timeoutSeconds: 300,
+        ideaCount: 10,
       });
       return Promise.resolve("/output/dracula/ideas.yaml");
     };
@@ -71,6 +75,9 @@ describe("bookgen command interface", (): void => {
     ["unsafe slug", ["ideas", "Dracula", "--slug", "../../outside"]],
     ["invalid timeout", ["ideas", "Dracula", "--timeout", "NaN"]],
     ["zero timeout", ["ideas", "Dracula", "--timeout", "0"]],
+    ["zero count", ["ideas", "Dracula", "--count", "0"]],
+    ["fractional count", ["ideas", "Dracula", "--count", "2.5"]],
+    ["excessive count", ["ideas", "Dracula", "--count", "21"]],
   ])("rejects %s without invoking Codex", async (_, args): Promise<void> => {
     let called = false;
     let stderr = "";

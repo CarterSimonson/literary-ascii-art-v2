@@ -20,6 +20,7 @@ import {
   convertToCharacters,
   decodeMaster,
   sampleGrid,
+  separateColorCells,
 } from "../src/render/convert.ts";
 import {
   fontMetrics,
@@ -57,6 +58,8 @@ function request(): RenderRequest {
     targetRegistry: join(root, "targets.yaml"),
     outputRoot: root,
     background: "#FFFFFF",
+    // Every fixture pixel differs from its neighbors, so gaps would erase it.
+    separation: 0,
   };
 }
 
@@ -208,6 +211,38 @@ describe("render text and character conversion", (): void => {
     expect(source.height).toBe(2);
     const reduced = sampleGrid(source, 1, 2);
     expect(Array.from(reduced.rgba)).toEqual([12, 34, 56, 0, 255, 0, 0, 255]);
+  });
+
+  test("differently colored regions are separated by whole empty cells", (): void => {
+    const red = [200, 0, 0, 255];
+    const blue = [0, 0, 200, 255];
+    const white = [255, 255, 255, 255];
+    const row = [red, red, blue, blue, white, blue];
+    const grid = {
+      width: row.length,
+      height: 1,
+      rgba: Buffer.from(row.flat()),
+    };
+
+    const { grid: separated, separatedCells } = separateColorCells(grid, 1);
+
+    const alpha = row.map((_, x) => separated.rgba[x * 4 + 3]);
+    expect(alpha).toEqual([255, 0, 255, 255, 255, 255]);
+    expect(separatedCells).toBe(1);
+    expect(grid.rgba[1 * 4 + 3]).toBe(255);
+  });
+
+  test("a separation of zero leaves touching color regions intact", (): void => {
+    const grid = {
+      width: 2,
+      height: 1,
+      rgba: Buffer.from([200, 0, 0, 255, 0, 0, 200, 255]),
+    };
+
+    const { grid: separated, separatedCells } = separateColorCells(grid, 0);
+
+    expect(separatedCells).toBe(0);
+    expect(separated.rgba).toEqual(grid.rgba);
   });
 
   test("uses only the leading text when the grid cannot fit the full content", async (): Promise<void> => {
@@ -403,7 +438,7 @@ describe("print layout and publication", (): void => {
       ),
     );
     expect(manifest).toMatchObject({
-      render_version: 3,
+      render_version: 4,
       font: { name: "Noto Sans Mono Latin Black 900" },
       idea_id: "concept-1",
       target: { id: "small" },

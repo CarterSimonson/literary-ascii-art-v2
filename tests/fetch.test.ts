@@ -227,7 +227,7 @@ describe("fetch publication and failures", (): void => {
       transport,
       generate: (input) => {
         expect(input.prompt).toContain(editionContext);
-        return cleanupGenerator()(input);
+        return cleanupGenerator()();
       },
     });
     const prior = await readFile(path, "utf8");

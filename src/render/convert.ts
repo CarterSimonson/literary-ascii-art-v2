@@ -79,6 +79,97 @@ export function sampleGrid(
   return { width, height, rgba };
 }
 
+// Gap width is counted in whole character cells; glyphs are never cut.
+export const DEFAULT_SEPARATION_RADIUS = 1;
+export const MAX_SEPARATION_RADIUS = 4;
+
+export interface SeparatedGrid {
+  grid: SourceImage;
+  separatedCells: number;
+}
+
+function isInk(rgba: Buffer, offset: number, background: Buffer): boolean {
+  if (rgba[offset + 3] === 0) {
+    return false;
+  }
+
+  const color = rgba.subarray(offset, offset + 3);
+  const white = Buffer.from([255, 255, 255]);
+
+  if (color.equals(white) || color.equals(background)) {
+    return false;
+  }
+
+  return true;
+}
+
+// Blanks the cells along each boundary between two ink colors so the regions
+// print with a gap of empty cells instead of changing color mid-line. Only one
+// side of a boundary yields (the color that sorts later), so a radius of one
+// leaves exactly one empty cell between regions.
+export function separateColorCells(
+  grid: SourceImage,
+  radius: number,
+  background = "#FFFFFF",
+): SeparatedGrid {
+  const backgroundColor = Buffer.from(background.slice(1), "hex");
+  const rgba = Buffer.from(grid.rgba);
+  let separatedCells = 0;
+
+  for (let y = 0; y < grid.height; y++) {
+    for (let x = 0; x < grid.width; x++) {
+      const offset = (y * grid.width + x) * 4;
+
+      if (!isInk(grid.rgba, offset, backgroundColor)) {
+        continue;
+      }
+
+      if (yieldsToNeighbor(grid, x, y, radius, backgroundColor)) {
+        rgba[offset + 3] = 0;
+        separatedCells++;
+      }
+    }
+  }
+
+  return {
+    grid: { width: grid.width, height: grid.height, rgba },
+    separatedCells,
+  };
+}
+
+function yieldsToNeighbor(
+  grid: SourceImage,
+  x: number,
+  y: number,
+  radius: number,
+  background: Buffer,
+): boolean {
+  const offset = (y * grid.width + x) * 4;
+  const color = grid.rgba.subarray(offset, offset + 3);
+  const top = Math.max(0, y - radius);
+  const bottom = Math.min(grid.height - 1, y + radius);
+  const left = Math.max(0, x - radius);
+  const right = Math.min(grid.width - 1, x + radius);
+
+  for (let neighborY = top; neighborY <= bottom; neighborY++) {
+    for (let neighborX = left; neighborX <= right; neighborX++) {
+      const neighbor = (neighborY * grid.width + neighborX) * 4;
+
+      if (!isInk(grid.rgba, neighbor, background)) {
+        continue;
+      }
+
+      const neighborColor = grid.rgba.subarray(neighbor, neighbor + 3);
+
+      if (Buffer.compare(color, neighborColor) > 0) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 export function assignCharacters(
   source: SourceImage,
   characters: string[],
