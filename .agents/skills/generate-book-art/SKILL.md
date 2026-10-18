@@ -7,7 +7,7 @@ description: Create bold, conversion-ready literary illustrations for classic bo
 
 Create purely pictorial literary art whose intent survives reduction to a character grid. Treat the image as a mask and color map: every opaque pixel becomes one book character; transparent pixels are skipped.
 
-Follow the Litographs-style system that the product competes with:
+The current baseline direction, modeled on the Litographs posters the product competes with, is under evaluation and may change. Until results favor something else, use this system:
 
 - **One text field.** A single rectangle of text in one primary ink fills the interior art area, up to a narrow transparent placement margin.
 - **One iconic subject.** A single figure, face, object, or tightly grouped pair, cut out of the field as a crisp transparent silhouette so the paper shows through. It must read instantly at thumbnail size.
