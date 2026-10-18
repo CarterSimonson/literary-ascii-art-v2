@@ -4,3 +4,7 @@ books:
     title: Dracula
     author: Bram Stoker
     gutenberg_id: 345
+  the-great-gatsby:
+    title: The Great Gatsby
+    author: F. Scott Fitzgerald
+    gutenberg_id: 64317

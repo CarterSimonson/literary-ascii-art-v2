@@ -16,6 +16,7 @@ import { findBook, resolveBook } from "../src/books.ts";
 import type { ImageGenerator } from "../src/images/codex.ts";
 import { buildImagePrompt } from "../src/images/prompt.ts";
 import { processImage } from "../src/images/process.ts";
+import { runReclean } from "../src/images/reclean.ts";
 import { runImages, sha256 } from "../src/images/run.ts";
 import type { ImagesRequest } from "../src/images/schema.ts";
 import { ideasResponse, rejection } from "./fixtures.ts";
@@ -122,7 +123,79 @@ describe("shared book registry", (): void => {
   });
 });
 
+interface PaintedRect {
+  left: number;
+  top: number;
+  size: number;
+  alpha: number;
+}
+
+// A 200 × 100 field of #80182A inside a 5 px transparent margin, with rects
+// painted over it at the given native alpha.
+async function fieldWithRects(rects: PaintedRect[]): Promise<Buffer> {
+  const width = 200;
+  const height = 100;
+  const data = Buffer.alloc(width * height * 4);
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const inField = x >= 5 && y >= 5 && x < width - 5 && y < height - 5;
+      const offset = (y * width + x) * 4;
+      data.set([0x80, 0x18, 0x2a, inField ? 255 : 0], offset);
+    }
+  }
+
+  for (const rect of rects) {
+    for (let y = rect.top; y < rect.top + rect.size; y++) {
+      for (let x = rect.left; x < rect.left + rect.size; x++) {
+        data[(y * width + x) * 4 + 3] = rect.alpha;
+      }
+    }
+  }
+
+  return sharp(data, { raw: { width, height, channels: 4 } })
+    .png()
+    .toBuffer();
+}
+
+async function alphaAt(image: Buffer, x: number, y: number): Promise<number> {
+  const { data, info } = await sharp(image)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  return data[(y * info.width + x) * 4 + 3] ?? -1;
+}
+
 describe("conversion-ready PNG cleanup", (): void => {
+  test("fills hazy holes in the field but keeps crisp designed cutouts", async (): Promise<void> => {
+    const native = await fieldWithRects([
+      { left: 20, top: 20, size: 30, alpha: 60 },
+      { left: 120, top: 20, size: 30, alpha: 0 },
+    ]);
+
+    const result = await processImage(native, ["#80182A"], 128);
+
+    const padding = result.metadata.padding;
+    expect(await alphaAt(result.png, padding + 35, padding + 35)).toBe(255);
+    expect(await alphaAt(result.png, padding + 135, padding + 35)).toBe(0);
+    expect(result.metadata.haze_regions_filled).toBe(1);
+  });
+
+  test("removes specks and pinholes smaller than the minimum feature width", async (): Promise<void> => {
+    const native = await fieldWithRects([
+      { left: 60, top: 60, size: 1, alpha: 0 },
+      { left: 1, top: 1, size: 1, alpha: 255 },
+    ]);
+
+    const result = await processImage(native, ["#80182A"], 128);
+
+    const padding = result.metadata.padding;
+    expect(await alphaAt(result.png, padding + 60, padding + 60)).toBe(255);
+    expect(await alphaAt(result.png, padding + 1, padding + 1)).toBe(0);
+    expect(result.metadata.small_holes_filled).toBe(1);
+    expect(result.metadata.specks_removed).toBe(1);
+  });
+
   test("normalizes a generated image whose artwork alpha never reaches 255", async (): Promise<void> => {
     const partial = await sharp(Buffer.from([0, 0, 0, 0, 128, 24, 42, 254]), {
       raw: { width: 2, height: 1, channels: 4 },
@@ -201,6 +274,45 @@ describe("conversion-ready PNG cleanup", (): void => {
 });
 
 describe("complete image sets and independent reruns", (): void => {
+  test("reclean reprocesses traced originals without generating, keeping provenance", async (): Promise<void> => {
+    await saveIdeas();
+    await runImages(request(), { generate: generator() });
+
+    const path = await runReclean(request());
+
+    const manifest = z
+      .object({
+        recleaned_at: z.string(),
+        processing: z.object({ version: z.literal(2) }),
+        images: z.array(
+          z.object({
+            thread_id: z.literal("image-thread"),
+            sha256: z.string(),
+          }),
+        ),
+      })
+      .parse(parse(await readFile(path, "utf8")));
+    expect(manifest.images).toHaveLength(10);
+    const first = await readFile(join(root, "dracula/raw/concept-1.png"));
+    expect(manifest.images[0]?.sha256).toBe(sha256(first));
+  });
+
+  test("reclean refuses a trace that no longer matches the published set", async (): Promise<void> => {
+    await saveIdeas();
+    await runImages(request(), { generate: generator() });
+    const manifestPath = join(root, "dracula/raw/manifest.yaml");
+    const before = await readFile(manifestPath, "utf8");
+    await writeFile(
+      join(root, "dracula/traces/images/concept-1/attempt-1/generated.png"),
+      "replaced",
+    );
+
+    const failure = await rejection(runReclean(request()));
+
+    expect(failure).toThrow("differs from raw/manifest.yaml");
+    expect(await readFile(manifestPath, "utf8")).toBe(before);
+  });
+
   test("replaces one failed candidate and retains its original and failure for diagnosis", async (): Promise<void> => {
     await saveIdeas();
     let calls = 0;

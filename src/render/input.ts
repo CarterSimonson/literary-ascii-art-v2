@@ -6,11 +6,12 @@ import { parse } from "yaml";
 import { z } from "zod";
 
 import { bookSchema, registeredBookSchema } from "../books.ts";
-import { ideasResponseSchema, slugSchema } from "../ideas/schema.ts";
+import { ideaListSchema, slugSchema } from "../ideas/schema.ts";
 import {
   outputTargetRegistrySchema,
   type OutputTarget,
 } from "../output-targets.ts";
+import { DEFAULT_SEPARATION_RADIUS, MAX_SEPARATION_RADIUS } from "./convert.ts";
 
 export const renderRequestSchema = registeredBookSchema.extend({
   slug: slugSchema,
@@ -22,6 +23,12 @@ export const renderRequestSchema = registeredBookSchema.extend({
     .string()
     .regex(/^#[0-9a-fA-F]{6}$/)
     .default("#FFFFFF"),
+  separation: z
+    .number()
+    .int()
+    .min(0)
+    .max(MAX_SEPARATION_RADIUS)
+    .default(DEFAULT_SEPARATION_RADIUS),
 });
 export type RenderRequest = z.infer<typeof renderRequestSchema>;
 
@@ -52,7 +59,7 @@ const textManifestSchema = z.object({
 const ideasSchema = z.object({
   schema_version: z.literal(2),
   book: identitySchema,
-  ideas: ideasResponseSchema.shape.ideas,
+  ideas: ideaListSchema,
 });
 
 export function sha256(input: Buffer | string): string {

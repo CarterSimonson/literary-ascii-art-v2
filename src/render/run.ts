@@ -4,7 +4,12 @@ import { join, relative, resolve } from "node:path";
 import { stringify } from "yaml";
 
 import packageJson from "../../package.json";
-import { assignCharacters, decodeMaster, sampleGrid } from "./convert.ts";
+import {
+  assignCharacters,
+  decodeMaster,
+  sampleGrid,
+  separateColorCells,
+} from "./convert.ts";
 import { fontMetrics, loadRenderFont, supportedCharacters } from "./font.ts";
 import {
   loadRenderInputs,
@@ -77,7 +82,12 @@ export async function runRender(
       options.signal?.throwIfAborted();
       options.onProgress?.(`Rendering ${request.idea} for ${target.id}`);
       const layout = targetLayout(source, target, metrics);
-      const grid = sampleGrid(source, layout.gridWidth, layout.gridHeight);
+      const sampled = sampleGrid(source, layout.gridWidth, layout.gridHeight);
+      const { grid, separatedCells } = separateColorCells(
+        sampled,
+        request.separation,
+        request.background,
+      );
       const art = assignCharacters(
         grid,
         supported.characters,
@@ -99,7 +109,7 @@ export async function runRender(
         join(directory, "manifest.yaml"),
         stringify({
           schema_version: 1,
-          render_version: 3,
+          render_version: 4,
           bookgen_version: packageJson.version,
           dependencies: packageJson.dependencies,
           generated_at: new Date().toISOString(),
@@ -141,6 +151,8 @@ export async function runRender(
               0,
               supported.characters.length - art.characterCount,
             ),
+            color_separation_radius_cells: request.separation,
+            color_separation_cells_skipped: separatedCells,
             character_count: art.characterCount,
             background_pixels_skipped: art.backgroundPixels,
             transparent_pixels_skipped: art.transparentPixels,

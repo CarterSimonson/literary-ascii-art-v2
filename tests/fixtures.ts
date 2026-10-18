@@ -1,10 +1,9 @@
 import type { ThreadEvent, Usage } from "@openai/codex-sdk";
-import type { IdeaGenerator } from "../src/ideas/codex.ts";
 import type { IdeasRequest, IdeasResponse } from "../src/ideas/schema.ts";
 
-export function ideasResponse(prefix = "concept"): IdeasResponse {
+export function ideasResponse(prefix = "concept", count = 10): IdeasResponse {
   return {
-    ideas: Array.from({ length: 10 }, (_, index) => ({
+    ideas: Array.from({ length: count }, (_, index) => ({
       id: `${prefix}-${String(index + 1)}`,
       name: `${prefix} ${String(index + 1)}`,
       composition:
@@ -43,7 +42,10 @@ export function responseEvents(
   ];
 }
 
-export function fakeGenerator(events = responseEvents()): IdeaGenerator {
+// Ignores its input so it can stand in for any Codex-backed generator.
+export function fakeGenerator(
+  events = responseEvents(),
+): () => AsyncGenerator<ThreadEvent> {
   return async function* (): AsyncGenerator<ThreadEvent> {
     for (const event of events) {
       yield await Promise.resolve(event);
@@ -71,5 +73,6 @@ export function request(outputRoot: string): IdeasRequest {
     slug: "dracula",
     outputRoot,
     timeoutSeconds: 5,
+    ideaCount: 10,
   };
 }

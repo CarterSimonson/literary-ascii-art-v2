@@ -53,6 +53,7 @@ export async function runIdeas(
     bookgen_version: packageJson.version,
     sdk_version: packageJson.dependencies["@openai/codex-sdk"],
     requested_model: request.model ?? null,
+    idea_count: request.ideaCount,
   };
   let threadId: string | null = null;
   let usage: Usage | null = null;
@@ -102,6 +103,7 @@ export async function runIdeas(
     for await (const event of generate({
       prompt,
       model: request.model,
+      ideaCount: request.ideaCount,
       signal,
     })) {
       signal.throwIfAborted();
@@ -137,7 +139,7 @@ export async function runIdeas(
     if (!completed) {
       throw new Error("Codex stream ended without a completed turn");
     }
-    const response = parseIdeasResponse(finalResponse);
+    const response = parseIdeasResponse(finalResponse, request.ideaCount);
     const artifact = {
       schema_version: IDEAS_SCHEMA_VERSION,
       book: {

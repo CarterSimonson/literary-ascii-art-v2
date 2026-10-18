@@ -1,7 +1,7 @@
 # Bootstrap the literary-art pipeline
 
 The Bun/TypeScript `bookgen ideas <book-id>` and `bookgen images <book-id>` commands
-generate ten concepts and one cleaned PNG per concept through the Codex SDK/CLI. Its
+generate concepts (ten by default) and one cleaned PNG per concept through the Codex SDK/CLI. Its
 [CLI contract](product-specs/bookgen-cli.md)
 defines book-grouped outputs and independent stage retries; the README documents
 setup and checks. Use this guide for the remaining artwork-to-poster journey.
