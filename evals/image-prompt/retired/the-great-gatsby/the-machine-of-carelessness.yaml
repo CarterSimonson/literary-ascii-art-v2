@@ -19,8 +19,7 @@ idea:
     important bands, channels, and gaps are at least about 1% of canvas width.
     No display lettering, logos, gradients, shading, texture, distress, isolated
     fragments, photorealism, frame, or mockup.
-  literary_basis:
-    Gatsby's conspicuous yellow automobile becomes the vehicle Daisy
+  literary_basis: Gatsby's conspicuous yellow automobile becomes the vehicle Daisy
     drives when she kills Myrtle. Its luxurious scale connects conspicuous
     consumption to lethal carelessness, while the empty cabin evokes the way
     responsibility is displaced and abandoned. The ochre text field recalls the
@@ -34,3 +33,7 @@ idea:
     create an immediately readable vehicle profile. Broad structural bands
     preserve its anatomy when rendered with small characters, while omitting
     trim and mechanical detail prevents visual breakup.
+retired:
+  on: 2026-10-20
+  reason: The car isn't a very interesting subject. Maybe we could do the car
+    racing down the road, with some other things in the scene?

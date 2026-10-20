@@ -5,8 +5,7 @@ source: output/the-great-gatsby/ideas.yaml, ideas prompt v6, generated 2026-10-1
 idea:
   id: the-weight-of-shirts
   name: The Weight of Shirts
-  composition:
-    A single oversized dress shirt hangs diagonally through the center
+  composition: A single oversized dress shirt hangs diagonally through the center
     of one rectangular primary-ink text field, surrounded by generous
     uninterrupted text and a narrow transparent placement margin. Its
     transparent silhouette has one extended sleeve, one sleeve folded inward, a
@@ -19,8 +18,7 @@ idea:
     collar edges; all important strokes, channels, and gaps must be at least
     about 1% of canvas width. No display lettering, logos, gradients, shading,
     texture, distress, tiny decoration, photorealism, frame, or mockup.
-  literary_basis:
-    During Gatsby's tour of his mansion, he displays his shirts and
+  literary_basis: During Gatsby's tour of his mansion, he displays his shirts and
     Daisy cries over their beauty. A single enlarged shirt concentrates that
     scene into an intimate emblem of wealth offered as proof of worth. Its
     collapsed, unoccupied shape suggests how material abundance carries the
@@ -34,3 +32,6 @@ idea:
     recognizable garment outline without buttons or fabric texture. Only a few
     wide channels interrupt the large shapes, so character spacing cannot erase
     the shirt's structure.
+retired:
+  on: 2026-10-20
+  reason: Rejected by the user

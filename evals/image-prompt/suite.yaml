@@ -2,23 +2,23 @@
 # the suite: bump suite_version so results from different versions are not
 # compared case by case. See docs/exec-plans/active/image-prompt-evals.md.
 schema_version: 2
-suite_version: 2
+suite_version: 7
 cases:
   - book: the-great-gatsby
-    idea: the-weight-of-shirts
+    idea: the-unsteady-hour
   - book: the-great-gatsby
-    idea: the-distance-of-desire
+    idea: the-foxtrot-illusion
   - book: the-great-gatsby
-    idea: the-machine-of-carelessness
+    idea: a-reach-across-the-bay
   - book: odyssey
     idea: the-waiting-shroud
   - book: odyssey
     idea: the-bow-recognizes
   - book: odyssey
-    idea: the-rooted-bed
+    idea: against-the-breaker
   - book: war-of-the-worlds
     idea: the-measured-stride
   - book: war-of-the-worlds
-    idea: the-open-cylinder
+    idea: the-fallen-intellect
   - book: war-of-the-worlds
     idea: the-last-charge

@@ -35,3 +35,8 @@ idea:
     visible. The simplified hand and substantial limb widths survive replacement
     of solid ink with small characters; the isolated green rectangle remains a
     clear destination.
+retired:
+  on: 2026-10-20
+  reason: the thing gatsby is throwing always renders poorly. it's not a very
+    interesting image. maybe we could do something more "glamorous" like the
+    great gatsby represents?

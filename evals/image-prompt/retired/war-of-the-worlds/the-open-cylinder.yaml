@@ -16,8 +16,7 @@ idea:
     field calm and uninterrupted. No accent element, detached lid, crater,
     smoke, or spectators. The pictorial source mask contains no lettering or
     logos.
-  literary_basis:
-    The cylinder on Horsell Common is the invasion’s first tangible
+  literary_basis: The cylinder on Horsell Common is the invasion’s first tangible
     object. Its slowly unscrewing end turns scientific curiosity into dread
     before the fighting machines appear. Concentrating on the open vessel
     captures the moment when an apparently inert astronomical curiosity becomes
@@ -27,11 +26,13 @@ idea:
       use: Primary text ink across the complete rectangular field.
     - color: "#F4EEDF"
       use: Suggested warm paper color, visible through all transparent shapes.
-  conversion_resilience:
-    The diagonal capsule body and oversized elliptical mouth
+  conversion_resilience: The diagonal capsule body and oversized elliptical mouth
     remain recognizable when the text becomes visually dense. The opening
     connects to the surrounding text through a substantial bridge, avoiding
     floating ink islands. Keep the rim, thread channels, bridges, and gaps at
     least about 1% of the canvas width. Use smooth vector contours and flat,
     opaque ink with transparent cuts; exclude gradients, shading, texture,
     ragged edges, isolated fragments, and miniature decoration.
+retired:
+  on: 2026-10-20
+  reason: it's boring
