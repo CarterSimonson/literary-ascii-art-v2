@@ -27,9 +27,8 @@
   tighter spacing, and regenerated poster examples.
 - [Litographs direction](exec-plans/completed/litographs-direction.md): single-field
   compositions, three-color palettes, whole-cell color separation, and haze cleanup.
-- [Image-prompt evals](exec-plans/active/image-prompt-evals.md) (active): Gatsby
-  suite, prompt-variant rounds, deterministic metrics, and a local review interface
-  for iterating on the image prompt.
+- [Image-prompt evals](exec-plans/active/image-prompt-evals.md) (active): nine-idea
+  suite, prompt rounds, the rating page, and where rounds and feedback are recorded.
 - [Project tracking](project-tracking.md): Linear project, initial queue, and
   verification and review conventions.
 - [Starter alignment](exec-plans/completed/starter-alignment.md): adopted baseline,

@@ -320,6 +320,21 @@ concurrent runs. After a forced kill, confirm no run is active before removing
 the lock; the next run recovers `.text.previous` if publication was interrupted.
 Readers should wait for CLI success before consuming the manifest and text.
 
+## Improving the image prompt
+
+Eval rounds compare image prompt templates on nine frozen ideas
+(`evals/image-prompt/`). Fetch text for each suite book first, then:
+
+```sh
+bookgen eval run round-1 --prompts <directory-of-*.prompt.md>
+bookgen eval serve
+```
+
+`eval run` generates one image per template × idea, three at a time, and renders
+a 24 × 36 preview of each. Rerun it to retry failures. `eval serve` opens a local
+page for 1–5 star ratings, tags, and notes, saved to the round's
+`feedback.jsonl`. See the [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
+
 ## Development and verification
 
 ```sh

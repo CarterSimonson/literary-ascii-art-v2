@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prompt Rounds</title>
+    <style>
+      :root {
+        --bg: #f6f5f2;
+        --surface: #ffffff;
+        --text: #1d1d1b;
+        --muted: #6b6a66;
+        --line: #dedcd6;
+        --accent: #2b5d8a;
+        --good: #2f7a4b;
+        --good-bg: #e3f1e8;
+        --bad: #a3392f;
+        --bad-bg: #f7e4e1;
+        --star: #c98a12;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #161615;
+          --surface: #212120;
+          --text: #ecebe7;
+          --muted: #9b9a95;
+          --line: #3a3936;
+          --accent: #7fb0dc;
+          --good: #7fcf9b;
+          --good-bg: #1f3427;
+          --bad: #f09a8f;
+          --bad-bg: #3b2320;
+          --star: #f0b84a;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.4 system-ui,
+          sans-serif;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 16px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        margin: 0;
+        font-size: 16px;
+      }
+      select,
+      textarea,
+      button {
+        font: inherit;
+        color: inherit;
+      }
+      select {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 6px;
+      }
+      .summary {
+        color: var(--muted);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+      main {
+        padding: 16px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      details.prompts {
+        margin-bottom: 16px;
+      }
+      details.prompts pre {
+        white-space: pre-wrap;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 12px;
+        max-height: 320px;
+        overflow: auto;
+      }
+      h2 {
+        font-size: 15px;
+        margin: 22px 0 8px;
+      }
+      h2 small {
+        color: var(--muted);
+        font-weight: normal;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .card .label {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .card .label b {
+        color: var(--text);
+      }
+      .poster {
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        object-fit: contain;
+        background: #fff;
+        border-radius: 4px;
+        cursor: zoom-in;
+        border: 1px solid var(--line);
+      }
+      .placeholder {
+        aspect-ratio: 2 / 3;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 12px;
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 4px;
+      }
+      .placeholder.failed {
+        color: var(--bad);
+      }
+      .stars button {
+        background: none;
+        border: none;
+        font-size: 22px;
+        padding: 0 2px;
+        cursor: pointer;
+        color: var(--line);
+      }
+      .stars button.on {
+        color: var(--star);
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .tag {
+        border: 1px solid var(--line);
+        background: none;
+        border-radius: 999px;
+        padding: 1px 8px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .tag.good.on {
+        background: var(--good-bg);
+        border-color: var(--good);
+        color: var(--good);
+      }
+      .tag.bad.on {
+        background: var(--bad-bg);
+        border-color: var(--bad);
+        color: var(--bad);
+      }
+      textarea {
+        width: 100%;
+        min-height: 52px;
+        resize: vertical;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 6px;
+      }
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+        min-height: 16px;
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        background: rgb(0 0 0 / 0.85);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+      }
+      .overlay.open {
+        display: flex;
+      }
+      .overlay .bar {
+        display: flex;
+        gap: 6px;
+      }
+      .overlay .bar button {
+        background: #333;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 6px;
+        padding: 4px 10px;
+        cursor: pointer;
+      }
+      .overlay .bar button.on {
+        background: #fff;
+        color: #000;
+      }
+      .overlay .view {
+        flex: 1;
+        overflow: auto;
+        width: 100%;
+        text-align: center;
+      }
+      .overlay img {
+        max-width: 100%;
+        background: #fff;
+      }
+      .overlay img.full {
+        max-width: none;
+      }
+      .empty {
+        color: var(--muted);
+        padding: 40px 0;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Prompt rounds</h1>
+      <select id="round" aria-label="Round"></select>
+      <div class="summary" id="summary"></div>
+    </header>
+    <main id="main"><p class="empty">Loading…</p></main>
+    <div class="overlay" id="overlay">
+      <div class="bar" id="overlay-bar"></div>
+      <div class="view" id="overlay-view"></div>
+    </div>
+    <script>
+      const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const state = { rounds: [], round: null, data: null, timer: null };
+      const main = document.getElementById("main");
+      const roundSelect = document.getElementById("round");
+
+      function el(tag, attributes = {}, children = []) {
+        const node = document.createElement(tag);
+        for (const [key, value] of Object.entries(attributes)) {
+          if (key === "text") {
+            node.textContent = value;
+          } else if (key.startsWith("on")) {
+            node.addEventListener(key.slice(2), value);
+          } else {
+            node.setAttribute(key, value);
+          }
+        }
+        for (const child of children) {
+          node.append(child);
+        }
+        return node;
+      }
+
+      async function loadRounds() {
+        state.rounds = await (await fetch("/api/rounds")).json();
+        roundSelect.replaceChildren(
+          ...state.rounds.map((id) => el("option", { value: id, text: id })),
+        );
+        const fromHash = decodeURIComponent(location.hash.slice(1));
+        state.round = state.rounds.includes(fromHash)
+          ? fromHash
+          : state.rounds[0];
+        if (!state.round) {
+          main.replaceChildren(
+            el("p", {
+              class: "empty",
+              text: "No rounds yet. Start one with bookgen eval run.",
+            }),
+          );
+          return;
+        }
+        roundSelect.value = state.round;
+        await loadRound();
+      }
+
+      async function loadRound() {
+        location.hash = state.round;
+        const response = await fetch(`/api/rounds/${state.round}`);
+        state.data = await response.json();
+        render();
+        clearTimeout(state.timer);
+        const pending = state.data.images.some(
+          (image) => image.result === null,
+        );
+        if (pending) {
+          state.timer = setTimeout(refresh, 15000);
+        }
+      }
+
+      // Refreshes results without discarding unsaved notes on screen.
+      async function refresh() {
+        const focused = document.activeElement;
+        if (focused && focused.tagName === "TEXTAREA") {
+          state.timer = setTimeout(refresh, 15000);
+          return;
+        }
+        await loadRound();
+      }
+
+      function letterFor(promptId) {
+        const index = state.data.round.prompts.findIndex(
+          (prompt) => prompt.id === promptId,
+        );
+        return LETTERS[index] ?? promptId;
+      }
+
+      function fileUrl(image, file) {
+        return `/files/${state.round}/${image.directory}/${file}`;
+      }
+
+      function render() {
+        const { round, images, prompts, notes } = state.data;
+        renderSummary();
+
+        const promptList = el("details", { class: "prompts" }, [
+          el("summary", {
+            text: `Prompts (${prompts.length}) — labels are shown as letters to keep review blind`,
+          }),
+          ...(notes ? [el("pre", { text: notes })] : []),
+          ...prompts.map((prompt) =>
+            el("details", {}, [
+              el("summary", {
+                text: `${letterFor(prompt.id)} · ${prompt.id}`,
+              }),
+              el("pre", { text: prompt.text }),
+            ]),
+          ),
+        ]);
+
+        const rows = round.cases.map((entry) => {
+          const cards = images
+            .filter(
+              (image) => image.book === entry.book && image.idea === entry.idea,
+            )
+            .map(card);
+          return el("section", {}, [
+            el("h2", {}, [
+              document.createTextNode(`${entry.name} `),
+              el("small", { text: entry.book_title }),
+            ]),
+            el("div", { class: "row" }, cards),
+          ]);
+        });
+
+        main.replaceChildren(promptList, ...rows);
+      }
+
+      function renderSummary() {
+        const { round, images } = state.data;
+        const done = images.filter(
+          (image) => image.result?.status === "done",
+        ).length;
+        const failed = images.filter(
+          (image) => image.result?.status === "failed",
+        ).length;
+        const rated = images.filter((image) => image.feedback?.stars).length;
+        const parts = [
+          `${done}/${images.length} done`,
+          ...(failed ? [`${failed} failed`] : []),
+          `${rated} rated`,
+        ];
+        for (const prompt of round.prompts) {
+          const stars = images
+            .filter((image) => image.prompt === prompt.id)
+            .map((image) => image.feedback?.stars)
+            .filter(Boolean);
+          if (stars.length > 0) {
+            const average = stars.reduce((a, b) => a + b, 0) / stars.length;
+            parts.push(`${letterFor(prompt.id)} ★${average.toFixed(1)}`);
+          }
+        }
+        document
+          .getElementById("summary")
+          .replaceChildren(...parts.map((text) => el("span", { text })));
+      }
+
+      function card(image) {
+        const result = image.result;
+        const label = el("div", { class: "label" }, [
+          el("b", { text: letterFor(image.prompt) }),
+          el("span", { text: hints(result) }),
+        ]);
+
+        if (!result) {
+          return el("div", { class: "card" }, [
+            label,
+            el("div", { class: "placeholder", text: "Generating…" }),
+          ]);
+        }
+
+        if (result.status === "failed") {
+          return el("div", { class: "card" }, [
+            label,
+            el("div", {
+              class: "placeholder failed",
+              text: `Failed: ${result.error}`,
+            }),
+          ]);
+        }
+
+        const current = {
+          stars: image.feedback?.stars ?? null,
+          tags: new Set(image.feedback?.tags ?? []),
+          note: image.feedback?.note ?? "",
+        };
+        const status = el("div", { class: "status" });
+        if (image.feedback && image.feedback.attempt !== result.attempt) {
+          status.textContent = "Rated an earlier attempt";
+        }
+
+        const save = async () => {
+          status.textContent = "Saving…";
+          const response = await fetch(`/api/rounds/${state.round}/feedback`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              prompt: image.prompt,
+              book: image.book,
+              idea: image.idea,
+              stars: current.stars,
+              tags: [...current.tags],
+              note: current.note,
+            }),
+          });
+          if (!response.ok) {
+            status.textContent = `Not saved: ${(await response.json()).error}`;
+            return;
+          }
+          status.textContent = "Saved";
+          image.feedback = {
+            ...current,
+            tags: [...current.tags],
+            attempt: result.attempt,
+          };
+          renderSummary();
+        };
+
+        const starButtons = [1, 2, 3, 4, 5].map((value) =>
+          el("button", {
+            type: "button",
+            "aria-label": `${value} stars`,
+            text: "★",
+            onclick: () => {
+              current.stars = value;
+              paintStars();
+              save();
+            },
+          }),
+        );
+        const paintStars = () => {
+          starButtons.forEach((button, index) =>
+            button.classList.toggle("on", index < (current.stars ?? 0)),
+          );
+        };
+        paintStars();
+
+        const tagButtons = [
+          ...state.data.tags.good.map((tag) => [tag, "good"]),
+          ...state.data.tags.bad.map((tag) => [tag, "bad"]),
+        ].map(([tag, kind]) => {
+          const button = el("button", {
+            type: "button",
+            class: `tag ${kind}`,
+            text: tag,
+            onclick: () => {
+              if (current.tags.has(tag)) {
+                current.tags.delete(tag);
+              } else {
+                current.tags.add(tag);
+              }
+              button.classList.toggle("on", current.tags.has(tag));
+              save();
+            },
+          });
+          button.classList.toggle("on", current.tags.has(tag));
+          return button;
+        });
+
+        const note = el("textarea", {
+          placeholder: "What's good / bad?",
+          "aria-label": "Note",
+          onchange: (event) => {
+            current.note = event.target.value;
+            save();
+          },
+        });
+        note.value = current.note;
+
+        return el("div", { class: "card" }, [
+          label,
+          el("img", {
+            class: "poster",
+            loading: "lazy",
+            alt: `Prompt ${letterFor(image.prompt)} poster`,
+            src: fileUrl(image, result.files.preview),
+            onclick: () => openOverlay(image),
+          }),
+          el("div", { class: "stars" }, starButtons),
+          el("div", { class: "tags" }, tagButtons),
+          note,
+          status,
+        ]);
+      }
+
+      function hints(result) {
+        if (!result || result.status !== "done") {
+          return "";
+        }
+        const parts = [`haze ${result.metrics.native_haze.toFixed(2)}`];
+        if (result.metrics.accent_contact !== null) {
+          parts.push(`accent ${result.metrics.accent_contact.toFixed(2)}`);
+        }
+        return parts.join(" · ");
+      }
+
+      function openOverlay(image) {
+        const overlay = document.getElementById("overlay");
+        const bar = document.getElementById("overlay-bar");
+        const view = document.getElementById("overlay-view");
+        const views = [
+          ["Poster", image.result.files.preview, false],
+          ["Poster 100%", image.result.files.preview, true],
+          ["Master", image.result.files.master, false],
+          ["Native", image.result.files.native, false],
+        ];
+        const show = (index) => {
+          const [, file, full] = views[index];
+          view.replaceChildren(
+            el("img", { src: fileUrl(image, file), class: full ? "full" : "" }),
+          );
+          [...bar.children].forEach((button, buttonIndex) =>
+            button.classList.toggle("on", buttonIndex === index),
+          );
+        };
+        bar.replaceChildren(
+          ...views.map(([name], index) =>
+            el("button", {
+              type: "button",
+              text: name,
+              onclick: () => show(index),
+            }),
+          ),
+          el("button", {
+            type: "button",
+            text: "Close (Esc)",
+            onclick: () => overlay.classList.remove("open"),
+          }),
+        );
+        show(0);
+        overlay.classList.add("open");
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.getElementById("overlay").classList.remove("open");
+        }
+      });
+      roundSelect.addEventListener("change", () => {
+        state.round = roundSelect.value;
+        loadRound();
+      });
+      loadRounds();
+    </script>
+  </body>
+</html>

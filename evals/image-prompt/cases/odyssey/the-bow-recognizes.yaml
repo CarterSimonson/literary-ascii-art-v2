@@ -1,0 +1,33 @@
+schema_version: 1
+purpose: Thin, long object (bow and string); tests whether narrow strokes stay
+  crisp and survive the grid.
+source: output/odyssey/ideas.yaml, ideas prompt v6, generated 2026-10-20
+idea:
+  id: the-bow-recognizes
+  name: The Bow Recognizes
+  composition: One strung bow cuts diagonally across the center as a transparent
+    object silhouette, spanning roughly two-thirds of the field’s height. Its
+    substantial curved body has restrained recurved ends; a straight transparent
+    string connects the tips and encloses a broad region of uninterrupted text.
+    The entire bow uses confident curves and clean junctions, with no arrow,
+    hands, ornament, or additional objects. A single rectangle of primary-color
+    book text fills the interior up to a narrow transparent placement margin.
+    Keep most of the field undisturbed. No accent ink. The bow, string, and all
+    essential gaps must be at least about 1% of canvas width. Include no display
+    lettering, gradients, shading, texture, distressed edges, tiny decoration,
+    isolated fragments, frame, or mockup.
+  literary_basis:
+    "Penelope’s bow contest becomes the decisive test through which
+    the disguised Odysseus reasserts his identity: he alone strings his bow and
+    completes the challenge. Depicting the bow already under tension
+    concentrates the story’s recognition, withheld power, and approaching
+    reckoning into one recurring possession."
+  palette:
+    - color: "#354D59"
+      use: "Primary text ink: muted deep blue."
+    - color: "#F6F0E5"
+      use: Suggested paper color, revealed by the bow and string.
+  conversion_resilience: The curved stave and straight string create an
+    unmistakable bow outline with a strong diagonal gesture. Their deliberately
+    exaggerated thickness preserves continuity through character spacing, while
+    the large enclosed text area avoids dependence on fine detail.

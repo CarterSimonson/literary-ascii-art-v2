@@ -20,6 +20,8 @@ import {
   DEFAULT_SEPARATION_RADIUS,
   MAX_SEPARATION_RADIUS,
 } from "./render/convert.ts";
+import { runRound } from "./evals/round.ts";
+import { startPortal } from "./evals/serve.ts";
 
 interface GenerationFlags {
   registry: string;
@@ -44,6 +46,7 @@ export interface CliOptions {
   reclean?: typeof runReclean;
   fetchBook?: typeof runFetch;
   render?: typeof runRender;
+  round?: typeof runRound;
   stdout?: (message: string) => void;
   stderr?: (message: string) => void;
   signal?: AbortSignal;
@@ -73,6 +76,18 @@ function parseSeparation(value: string): number {
   }
 
   return radius;
+}
+
+function parsePositiveInteger(value: string, maximum: number): number {
+  const number = Number(value);
+
+  if (!Number.isInteger(number) || number < 1 || number > maximum) {
+    throw new InvalidArgumentError(
+      `Must be an integer from 1 to ${String(maximum)}`,
+    );
+  }
+
+  return number;
 }
 
 function parseIdeaCount(value: string): number {
@@ -361,6 +376,100 @@ export async function runCli(
         }
       },
     );
+
+  const evals = program
+    .command("eval")
+    .description("Run and review image-prompt evaluation rounds");
+
+  evals
+    .command("run")
+    .description(
+      "Generate, render, and score every prompt × suite idea; reruns fill in missing or failed images",
+    )
+    .argument("<round-id>", "Round ID, e.g. round-1")
+    .option(
+      "--prompts <directory>",
+      "Create the round from *.prompt.md templates (and notes.md) in this directory",
+    )
+    .option("--retry <image...>", "Regenerate <prompt>/<book>/<idea> images")
+    .option(
+      "--concurrency <count>",
+      "Images generated at once",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option(
+      "--timeout <seconds>",
+      "Timeout per image attempt",
+      parseTimeout,
+      600,
+    )
+    .option("--registry <path>", "Book registry YAML", "books.yaml")
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (
+        roundId: string,
+        flags: {
+          prompts?: string;
+          retry?: string[];
+          concurrency: number;
+          timeout: number;
+          registry: string;
+          output: string;
+        },
+      ): Promise<void> => {
+        const summary = await (options.round ?? runRound)({
+          roundId,
+          outputRoot: flags.output,
+          registryPath: flags.registry,
+          concurrency: flags.concurrency,
+          timeoutSeconds: flags.timeout,
+          ...(flags.prompts ? { promptsDirectory: flags.prompts } : {}),
+          ...(flags.retry ? { retry: flags.retry } : {}),
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message: string): void => {
+            stderr(`${message}\n`);
+          },
+        });
+
+        stderr(
+          `${String(summary.done)} done, ${String(summary.failed)} failed, ${String(summary.skipped)} already done\n`,
+        );
+        stdout(`${summary.directory}\n`);
+
+        if (summary.failed > 0) {
+          throw new Error(
+            "Some images failed; rerun the same command to retry them",
+          );
+        }
+      },
+    );
+
+  evals
+    .command("serve")
+    .description("Open the local rating page for eval rounds")
+    .option(
+      "--port <port>",
+      "Port on 127.0.0.1",
+      (value: string): number => parsePositiveInteger(value, 65535),
+      4317,
+    )
+    .option("--output <directory>", "Output root", "output")
+    .action(async (flags: { port: number; output: string }): Promise<void> => {
+      const server = startPortal({
+        outputRoot: flags.output,
+        port: flags.port,
+      });
+      stdout(`Rating page: http://127.0.0.1:${String(server.port)}/\n`);
+
+      // Serve until interrupted.
+      await new Promise<void>((resolveStop) => {
+        options.signal?.addEventListener("abort", () => {
+          void server.stop();
+          resolveStop();
+        });
+      });
+    });
 
   try {
     await program.parseAsync(argv, { from: "user" });

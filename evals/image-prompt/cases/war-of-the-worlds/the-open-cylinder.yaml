@@ -1,0 +1,37 @@
+schema_version: 1
+purpose: Simple bold object with an interior opening; tests a strong minimal silhouette.
+source: output/war-of-the-worlds/ideas.yaml, ideas prompt v6, generated 2026-10-20
+idea:
+  id: the-open-cylinder
+  name: The Open Cylinder
+  composition: A single rectangle of muted umber text fills the interior up to a
+    narrow transparent placement margin. A large, open Martian cylinder forms
+    one transparent silhouette in the lower-right portion of the field,
+    occupying approximately half its height. Its axis leans diagonally upward
+    toward the center, with a blunt rounded base and a strongly elliptical open
+    mouth. A broad text-filled tongue connected to the surrounding field defines
+    the dark opening; a transparent elliptical channel articulates the thick
+    rim. Two widely spaced transparent arcs extend across the adjacent text to
+    suggest the screw-threaded lip without fine grooves. Leave the upper-left
+    field calm and uninterrupted. No accent element, detached lid, crater,
+    smoke, or spectators. The pictorial source mask contains no lettering or
+    logos.
+  literary_basis:
+    The cylinder on Horsell Common is the invasion’s first tangible
+    object. Its slowly unscrewing end turns scientific curiosity into dread
+    before the fighting machines appear. Concentrating on the open vessel
+    captures the moment when an apparently inert astronomical curiosity becomes
+    an entrance for hostile life.
+  palette:
+    - color: "#59483D"
+      use: Primary text ink across the complete rectangular field.
+    - color: "#F4EEDF"
+      use: Suggested warm paper color, visible through all transparent shapes.
+  conversion_resilience:
+    The diagonal capsule body and oversized elliptical mouth
+    remain recognizable when the text becomes visually dense. The opening
+    connects to the surrounding text through a substantial bridge, avoiding
+    floating ink islands. Keep the rim, thread channels, bridges, and gaps at
+    least about 1% of the canvas width. Use smooth vector contours and flat,
+    opaque ink with transparent cuts; exclude gradients, shading, texture,
+    ragged edges, isolated fragments, and miniature decoration.

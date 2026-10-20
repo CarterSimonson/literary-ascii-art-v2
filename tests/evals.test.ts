@@ -1,18 +1,27 @@
 import { describe, expect, test } from "bun:test";
-import { cp, mkdtemp, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import sharp from "sharp";
+import { parse } from "yaml";
+
 import { measureImage } from "../src/evals/metrics.ts";
+import { runRound, type RunRoundArgs } from "../src/evals/round.ts";
+import { startPortal } from "../src/evals/serve.ts";
 import { loadSuite } from "../src/evals/suite.ts";
+import type { ImageGenerator } from "../src/images/codex.ts";
 import type { SourceImage } from "../src/render/convert.ts";
-import { rejection } from "./fixtures.ts";
+import { fixtureUsage, rejection } from "./fixtures.ts";
 
 type Rgba = [number, number, number, number];
 
 const INK: Rgba = [0x26, 0x3d, 0x48, 255];
 const ACCENT: Rgba = [0x52, 0x74, 0x5d, 255];
 const CLEAR: Rgba = [0, 0, 0, 0];
+
+// The shirts idea's primary ink.
+const SHIRTS_INK: Rgba = [0x56, 0x3e, 0x4b, 255];
 
 function paint(
   width: number,
@@ -35,7 +44,7 @@ function between(value: number, from: number, to: number): boolean {
 }
 
 // A 40 × 40 ink field with a 10 × 10 opening in the middle.
-function field(x: number, y: number): Rgba {
+function field(x: number, y: number, ink = INK): Rgba {
   if (!between(x, 0, 39) || !between(y, 0, 39)) {
     return CLEAR;
   }
@@ -44,19 +53,133 @@ function field(x: number, y: number): Rgba {
     return CLEAR;
   }
 
-  return INK;
+  return ink;
+}
+
+async function fieldPng(): Promise<Buffer> {
+  const image = paint(48, 48, (x, y) => field(x - 4, y - 4, SHIRTS_INK));
+
+  return sharp(image.rgba, {
+    raw: { width: image.width, height: image.height, channels: 4 },
+  })
+    .png()
+    .toBuffer();
+}
+
+interface RoundFixture {
+  root: string;
+  prompts: string;
+  args: (generate: ImageGenerator) => RunRoundArgs;
+}
+
+// A one-idea suite, two prompt templates, fetched text, and a tiny 24 × 36
+// target, so a whole round renders in milliseconds.
+async function roundFixture(): Promise<RoundFixture> {
+  const root = await mkdtemp(join(tmpdir(), "bookgen-round-"));
+  const suite = join(root, "suite");
+  const prompts = join(root, "prompts");
+
+  await mkdir(join(suite, "cases", "the-great-gatsby"), { recursive: true });
+  await cp(
+    "evals/image-prompt/cases/the-great-gatsby/the-weight-of-shirts.yaml",
+    join(suite, "cases", "the-great-gatsby", "the-weight-of-shirts.yaml"),
+  );
+  await writeFile(
+    join(suite, "suite.yaml"),
+    "schema_version: 2\nsuite_version: 1\ncases:\n  - book: the-great-gatsby\n    idea: the-weight-of-shirts\n",
+  );
+
+  await mkdir(prompts);
+  await writeFile(
+    join(prompts, "control.prompt.md"),
+    "Draw {{name}} from {{title}} in {{palette}}.",
+  );
+  await writeFile(
+    join(prompts, "flat.prompt.md"),
+    "Draw {{name}} as a flat screen print.",
+  );
+  await writeFile(join(prompts, "notes.md"), "flat: tests a flatter look.");
+
+  const text = join(root, "output", "the-great-gatsby", "text");
+  await mkdir(text, { recursive: true });
+  await writeFile(
+    join(text, "book.txt"),
+    "In my younger and more vulnerable years.\n",
+  );
+
+  const targets = join(root, "targets.yaml");
+  await writeFile(
+    targets,
+    [
+      "schema_version: 1",
+      "targets:",
+      "  poster-24x36:",
+      "    name: Tiny 24 x 36",
+      "    size_inches: { width: 0.6, height: 0.9 }",
+      "    canvas_px: { width: 180, height: 270 }",
+      "    bleed_px: { top: 0, right: 0, bottom: 0, left: 0 }",
+      "    gutter_px: { top: 5, right: 5, bottom: 5, left: 5 }",
+      "",
+    ].join("\n"),
+  );
+
+  return {
+    root,
+    prompts,
+    args: (generate) => ({
+      roundId: "round-1",
+      outputRoot: join(root, "output"),
+      suiteDirectory: suite,
+      targetRegistry: targets,
+      concurrency: 2,
+      timeoutSeconds: 60,
+      generate,
+    }),
+  };
+}
+
+function fakeGenerator(prompts: string[]): ImageGenerator {
+  return async (input) => {
+    prompts.push(input.prompt);
+
+    return {
+      png: await fieldPng(),
+      artworkColors: ["#563E4B"],
+      threadId: "fixture-thread",
+      usage: fixtureUsage,
+      reviewNotes: [],
+    };
+  };
+}
+
+async function readResult(
+  root: string,
+  prompt: string,
+): Promise<Record<string, unknown>> {
+  const path = join(
+    root,
+    "output",
+    "evals",
+    "rounds",
+    "round-1",
+    "images",
+    prompt,
+    "the-great-gatsby",
+    "the-weight-of-shirts",
+    "result.yaml",
+  );
+
+  return parse(await readFile(path, "utf8")) as Record<string, unknown>;
 }
 
 describe("image-prompt suite", () => {
-  test("the committed suite freezes three Great Gatsby ideas", async () => {
+  test("the committed suite freezes three ideas from each of three books", async () => {
     const suite = await loadSuite();
 
-    expect(suite.book.slug).toBe("the-great-gatsby");
-    expect(suite.cases.map((entry) => entry.id)).toEqual([
-      "the-weight-of-shirts",
-      "the-distance-of-desire",
-      "the-machine-of-carelessness",
-    ]);
+    expect(suite.cases).toHaveLength(9);
+    expect(new Set(suite.cases.map((entry) => entry.book.slug))).toEqual(
+      new Set(["the-great-gatsby", "odyssey", "war-of-the-worlds"]),
+    );
     expect(suite.sha256).toMatch(/^[a-f0-9]{64}$/);
   });
 
@@ -64,32 +187,173 @@ describe("image-prompt suite", () => {
     const directory = await mkdtemp(join(tmpdir(), "bookgen-suite-"));
     await cp("evals/image-prompt", directory, { recursive: true });
     await cp(
-      join(directory, "cases", "the-weight-of-shirts.yaml"),
-      join(directory, "cases", "the-distance-of-desire.yaml"),
+      join(directory, "cases", "the-great-gatsby", "the-weight-of-shirts.yaml"),
+      join(
+        directory,
+        "cases",
+        "the-great-gatsby",
+        "the-distance-of-desire.yaml",
+      ),
     );
 
     const failure = await rejection(loadSuite({ directory }));
 
     expect(failure).toThrow("its file name requires 'the-distance-of-desire'");
   });
+});
 
-  test("a suite for an unregistered book is rejected", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "bookgen-suite-"));
-    await cp("evals/image-prompt", directory, { recursive: true });
-    await writeFile(
-      join(directory, "suite.yaml"),
-      "schema_version: 1\nsuite_version: 1\nbook: unknown-book\ncases: [the-weight-of-shirts]\n",
+describe("eval rounds", () => {
+  test("a round renders and records every prompt × idea, and a rerun skips finished images", async () => {
+    const fixture = await roundFixture();
+    const prompts: string[] = [];
+
+    const first = await runRound({
+      ...fixture.args(fakeGenerator(prompts)),
+      promptsDirectory: fixture.prompts,
+    });
+
+    expect(first).toMatchObject({ done: 2, failed: 0, skipped: 0 });
+    expect(prompts).toContain(
+      "Draw The Weight of Shirts as a flat screen print.",
     );
 
-    const failure = await rejection(loadSuite({ directory }));
+    const result = await readResult(fixture.root, "control");
+    expect(result).toMatchObject({ status: "done", attempt: 1 });
+    expect(result.metrics).toEqual({ native_haze: 0, accent_contact: null });
 
-    expect(failure).toThrow("Unknown book ID 'unknown-book'");
+    const preview = await sharp(
+      join(
+        first.directory,
+        "images",
+        "control",
+        "the-great-gatsby",
+        "the-weight-of-shirts",
+        "attempt-1",
+        "preview.png",
+      ),
+    ).metadata();
+    expect(preview.width).toBe(60);
+
+    const second = await runRound(fixture.args(fakeGenerator(prompts)));
+
+    expect(second).toMatchObject({ done: 0, skipped: 2 });
+    expect(prompts).toHaveLength(2);
+  });
+
+  test("a failed image is recorded, and the next run retries it as a new attempt", async () => {
+    const fixture = await roundFixture();
+    const working = fakeGenerator([]);
+    let calls = 0;
+    const failingOnce: ImageGenerator = async (input) => {
+      calls++;
+
+      if (calls === 1) {
+        throw new Error("Native image tool unavailable");
+      }
+
+      return working(input);
+    };
+
+    const first = await runRound({
+      ...fixture.args(failingOnce),
+      promptsDirectory: fixture.prompts,
+      concurrency: 1,
+    });
+
+    expect(first).toMatchObject({ done: 1, failed: 1 });
+    expect(await readResult(fixture.root, "control")).toMatchObject({
+      status: "failed",
+      error: "Native image tool unavailable",
+    });
+
+    await runRound(fixture.args(failingOnce));
+
+    expect(await readResult(fixture.root, "control")).toMatchObject({
+      status: "done",
+      attempt: 2,
+    });
+  });
+
+  test("a template with an unknown placeholder is rejected before generating", async () => {
+    const fixture = await roundFixture();
+    await writeFile(join(fixture.prompts, "typo.prompt.md"), "Draw {{nmae}}.");
+    const prompts: string[] = [];
+
+    const failure = await rejection(
+      runRound({
+        ...fixture.args(fakeGenerator(prompts)),
+        promptsDirectory: fixture.prompts,
+      }),
+    );
+
+    expect(failure).toThrow("Unknown image prompt placeholder {{nmae}}");
+    expect(prompts).toHaveLength(0);
+  });
+
+  test("a rating saved from the page is stored with the image it judged", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    const server = startPortal({
+      outputRoot: join(fixture.root, "output"),
+      port: 0,
+    });
+    const base = `http://127.0.0.1:${String(server.port)}`;
+
+    try {
+      const saved = await fetch(`${base}/api/rounds/round-1/feedback`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          prompt: "flat",
+          book: "the-great-gatsby",
+          idea: "the-weight-of-shirts",
+          stars: 4,
+          tags: ["clean-edges", "haze"],
+          note: "Edges are crisp; a little haze at the collar.",
+        }),
+      });
+      expect(saved.status).toBe(200);
+
+      const view = (await (
+        await fetch(`${base}/api/rounds/round-1`)
+      ).json()) as { images: { key: string; feedback: unknown }[] };
+      const rated = view.images.find(
+        (image) => image.key === "flat/the-great-gatsby/the-weight-of-shirts",
+      );
+      expect(rated?.feedback).toMatchObject({ stars: 4, attempt: 1 });
+
+      const log = await readFile(
+        join(
+          fixture.root,
+          "output",
+          "evals",
+          "rounds",
+          "round-1",
+          "feedback.jsonl",
+        ),
+        "utf8",
+      );
+      expect(JSON.parse(log.trim())).toMatchObject({
+        prompt: "flat",
+        stars: 4,
+        tags: ["clean-edges", "haze"],
+        master_sha256: expect.stringMatching(/^[a-f0-9]{64}$/) as string,
+      });
+
+      const page = await fetch(`${base}/`);
+      expect(await page.text()).toContain("<title>Prompt Rounds</title>");
+    } finally {
+      await server.stop();
+    }
   });
 });
 
 describe("image metrics", () => {
   test("haze in the native image is scored, crisp art is not", () => {
-    const crisp = paint(40, 40, field);
+    const crisp = paint(40, 40, (x, y) => field(x, y));
     // The top half of the field is half-transparent haze.
     const hazy = paint(40, 40, (x, y) => {
       const color = field(x, y);
@@ -123,7 +387,7 @@ describe("image metrics", () => {
 
       return field(x, y);
     });
-    const plain = paint(40, 40, field);
+    const plain = paint(40, 40, (x, y) => field(x, y));
 
     expect(measureImage(ringed, ringed).accent_contact).toBe(0);
     expect(measureImage(touching, touching).accent_contact).toBe(1);

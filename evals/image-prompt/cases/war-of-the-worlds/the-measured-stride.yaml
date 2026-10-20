@@ -1,0 +1,39 @@
+schema_version: 1
+purpose: Tall machine with long jointed legs; tests a large mechanical
+  silhouette and thin limbs.
+source: output/war-of-the-worlds/ideas.yaml, ideas prompt v6, generated 2026-10-20
+idea:
+  id: the-measured-stride
+  name: The Measured Stride
+  composition:
+    "A single rectangle of charcoal text fills the interior, leaving a
+    narrow transparent placement margin. One towering Martian fighting machine
+    appears as a transparent silhouette slightly left of center, occupying
+    roughly three quarters of the field’s height. Its compact hood sits above
+    three long, articulated legs: two planted widely and one bending forward in
+    a deliberate step. Give the hood an original, shallow asymmetrical profile.
+    Broad transparent channels extending from the silhouette describe the leg
+    hinges and hood rim; generous text-filled spaces separate the limbs. No
+    accent element, landscape, weapons discharge, or secondary figures. The
+    pictorial source mask has no lettering or logos."
+  literary_basis:
+    Wells repeatedly contrasts the fighting machines’ extraordinary
+    mobility with the helplessness of people and conventional defenses. The
+    measured walking pose makes technological supremacy feel deliberate and
+    indifferent. Three clearly articulated legs and an elevated hood derive from
+    the novel’s machines without borrowing an adaptation’s design.
+  palette:
+    - color: "#303C3D"
+      use: Primary text ink throughout the rectangular field.
+    - color: "#F3EEE3"
+      use:
+        Suggested paper color, revealed through the silhouette and transparent
+        channels.
+  conversion_resilience:
+    The compact hood and three widely separated legs provide
+    an immediate thumbnail identity. Keep every limb, hinge channel, and
+    separating gap at least about 1% of the canvas width, widening the legs
+    beyond mechanically realistic proportions where necessary. Use smooth vector
+    curves and decisive straight segments, solid ink, and fully transparent
+    cutouts only; omit shading, gradients, texture, distress, specks, and tiny
+    details.

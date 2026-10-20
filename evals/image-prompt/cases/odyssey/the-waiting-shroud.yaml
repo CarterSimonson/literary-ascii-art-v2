@@ -1,0 +1,34 @@
+schema_version: 1
+purpose: Seated human figure with cloth folds drawn as channels; tests figure
+  silhouettes and interior detail.
+source: output/odyssey/ideas.yaml, ideas prompt v6, generated 2026-10-20
+idea:
+  id: the-waiting-shroud
+  name: The Waiting Shroud
+  composition: A single seated Penelope forms a compact transparent silhouette
+    slightly below center, occupying roughly half the field’s height. Her bowed
+    head, rounded back, folded legs, and shroud gathered across her lap make one
+    continuous contour. The cloth flows into her garment without loose threads
+    or separate props. Broad transparent channels articulate her bent forearms
+    and the cloth’s descending folds through areas of retained text. One
+    rectangular field of primary-color book text fills the interior to a narrow
+    transparent placement margin; generous uninterrupted text surrounds her. No
+    accent ink. Use smooth vector contours, with every important channel and gap
+    at least about 1% of canvas width. Include no display lettering, scenery,
+    gradients, shading, texture, distressed edges, tiny decoration, isolated
+    fragments, frame, or mockup.
+  literary_basis: Penelope delays remarriage by weaving a funeral shroud for
+    Laertes during the day and secretly undoing her work at night. The gathered
+    cloth and inward pose translate that strategy into an image of intelligence,
+    sustained resistance, and time deliberately withheld. Her stillness gives
+    the homeward journey its emotional counterpart.
+  palette:
+    - color: "#54445E"
+      use: "Primary text ink: muted aubergine."
+    - color: "#F4EEDF"
+      use: Suggested paper color, visible through the silhouette and transparent
+        channels.
+  conversion_resilience: The bowed head, curved back, and broad lap establish a
+    recognizable human gesture without fingers, facial features, or thread.
+    Large uninterrupted cutouts and wide fold channels remain clear when the
+    surrounding field is rebuilt from small book characters.

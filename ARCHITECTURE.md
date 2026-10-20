@@ -45,8 +45,13 @@ retry semantics. Modules have these responsibilities:
   layout, source-color glyph rendering, and exact print-size PNG encoding.
 - `src/render/run.ts` and `src/render/publication.ts`: rendering orchestration,
   manifests, locking, staged batch replacement, and publication recovery.
-- `src/evals/suite.ts` and `evals/image-prompt/`: frozen Gatsby ideas for
-  [image-prompt evals](docs/exec-plans/active/image-prompt-evals.md).
+- `src/evals/suite.ts` and `evals/image-prompt/`: nine frozen ideas from three
+  books for [image-prompt evals](docs/exec-plans/active/image-prompt-evals.md).
+- `src/evals/round.ts` and `src/evals/render.ts`: `eval run`; parallel generation
+  of prompt templates × suite ideas, cleanup, 24 × 36 previews, and per-image
+  results under `output/evals/rounds/`.
+- `src/evals/serve.ts`, `src/evals/portal.html`, and `src/evals/feedback.ts`:
+  `eval serve`; local rating page and append-only feedback.
 - `src/evals/metrics.ts`: native haze and accent contact hints for eval review.
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.

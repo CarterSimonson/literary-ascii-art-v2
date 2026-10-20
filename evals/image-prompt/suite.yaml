@@ -1,10 +1,24 @@
 # Frozen ideas for image-prompt evaluation rounds. Changing a case's idea changes
 # the suite: bump suite_version so results from different versions are not
 # compared case by case. See docs/exec-plans/active/image-prompt-evals.md.
-schema_version: 1
-suite_version: 1
-book: the-great-gatsby
+schema_version: 2
+suite_version: 2
 cases:
-  - the-weight-of-shirts
-  - the-distance-of-desire
-  - the-machine-of-carelessness
+  - book: the-great-gatsby
+    idea: the-weight-of-shirts
+  - book: the-great-gatsby
+    idea: the-distance-of-desire
+  - book: the-great-gatsby
+    idea: the-machine-of-carelessness
+  - book: odyssey
+    idea: the-waiting-shroud
+  - book: odyssey
+    idea: the-bow-recognizes
+  - book: odyssey
+    idea: the-rooted-bed
+  - book: war-of-the-worlds
+    idea: the-measured-stride
+  - book: war-of-the-worlds
+    idea: the-open-cylinder
+  - book: war-of-the-worlds
+    idea: the-last-charge
