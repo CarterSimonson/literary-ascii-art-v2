@@ -333,10 +333,10 @@ bookgen eval serve
 `eval run` generates one image per template × idea, three at a time, and renders
 a 24 × 36 preview of each. Rerun it to retry failures. `eval serve` opens a local
 page for 1–5 star ratings, tags, and notes, saved to the round's
-`feedback.jsonl`. From the page, **Write & run next round** has a Codex prompt
-agent read all ratings and write new templates, keeping the best prompt as the
-control, then generates that round. **Replace idea** swaps a weak suite idea
-for a new one from the same book. See the [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
+`feedback.jsonl`. From the page, **Next round** has a Codex prompt agent read all
+ratings and write new image or ideas prompt templates, keeping the best so far
+as the control, then generates that round. **Regenerate** and **Replace idea**
+run in parallel. See the [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
 
 ## Development and verification
 

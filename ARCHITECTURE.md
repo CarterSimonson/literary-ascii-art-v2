@@ -47,8 +47,9 @@ retry semantics. Modules have these responsibilities:
   manifests, locking, staged batch replacement, and publication recovery.
 - `src/evals/suite.ts` and `evals/image-prompt/`: nine frozen ideas from three
   books for [image-prompt evals](docs/exec-plans/active/image-prompt-evals.md).
-- `src/evals/round.ts` and `src/evals/render.ts`: `eval run`; parallel generation
-  of prompt templates × suite ideas, cleanup, 24 × 36 previews, and per-image
+- `src/evals/round.ts` and `src/evals/render.ts`: `eval run`; image rounds (image
+  templates × suite ideas) and idea rounds (ideas templates write fresh ideas,
+  drawn with one image prompt); parallel generation with per-image locks, cleanup, 24 × 36 previews, and per-image
   results under `output/evals/rounds/`.
 - `src/evals/serve.ts`, `src/evals/portal.html`, and `src/evals/feedback.ts`:
   `eval serve`; local rating page and append-only feedback.
@@ -56,7 +57,8 @@ retry semantics. Modules have these responsibilities:
 - `src/evals/improve.ts`: prompt agent that reads all rounds and ratings and
   writes the next round's templates; the best-rated prompt carries forward.
 - `src/evals/ideas.ts`: replaces a suite idea with a new one and retires the old.
-- `src/evals/jobs.ts`: one background job at a time for the rating page.
+- `src/evals/tasks.ts`: parallel background tasks for the rating page, with
+  duplicate and conflict checks.
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.
 

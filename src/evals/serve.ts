@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
-import { join, resolve, sep } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
 
+import sharp from "sharp";
 import { parse } from "yaml";
 import { z } from "zod";
 
@@ -16,15 +17,17 @@ import {
 } from "./feedback.ts";
 import { replaceSuiteIdea } from "./ideas.ts";
 import { planNextRound, type PromptWriter } from "./improve.ts";
-import { createJobRunner, type JobRunner } from "./jobs.ts";
 import {
   listRoundIds,
+  loadRoundItems,
   readRoundFile,
+  readVerified,
   roundDirectory,
   runRound,
   type RunRoundArgs,
 } from "./round.ts";
 import { loadSuite } from "./suite.ts";
+import { createTaskRunner, type TaskReport, type TaskRunner } from "./tasks.ts";
 
 export interface StartPortalArgs {
   outputRoot: string;
@@ -42,12 +45,13 @@ export interface StartPortalArgs {
 
 export interface Portal {
   server: ReturnType<typeof Bun.serve>;
-  jobs: JobRunner;
+  tasks: TaskRunner;
 }
 
 const portalPage = new URL("./portal.html", import.meta.url);
 
 const nextRoundSchema = z.strictObject({
+  kind: z.enum(["image", "idea"]),
   direction: z.string().max(4000),
   newPrompts: z.number().int().min(1).max(4),
 });
@@ -58,17 +62,21 @@ const replaceIdeaSchema = z.strictObject({
   reason: z.string().max(2000),
 });
 
-// Serves the rating page on localhost. Besides feedback, it can run one
-// background job at a time: the next round, retrying failures, or replacing an
-// idea in the suite.
+const regenerateSchema = z.strictObject({
+  key: z.string().min(1).max(300),
+});
+
+// Serves the rating page on localhost. Besides feedback, it runs background
+// tasks in parallel: next rounds, image regeneration, retries, and idea
+// replacement.
 export function startPortal(args: StartPortalArgs): Portal {
-  const jobs = createJobRunner();
+  const tasks = createTaskRunner();
   const server = Bun.serve({
     hostname: "127.0.0.1",
     port: args.port,
     fetch: async (request): Promise<Response> => {
       try {
-        return await route(request, args, jobs);
+        return await route(request, args, tasks);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
 
@@ -77,13 +85,13 @@ export function startPortal(args: StartPortalArgs): Portal {
     },
   });
 
-  return { server, jobs };
+  return { server, tasks };
 }
 
 async function route(
   request: Request,
   args: StartPortalArgs,
-  jobs: JobRunner,
+  tasks: TaskRunner,
 ): Promise<Response> {
   const url = new URL(request.url);
   const parts = url.pathname.split("/").filter((part) => part !== "");
@@ -96,51 +104,15 @@ async function route(
   }
 
   if (parts[0] === "files" && parts.length >= 3) {
-    return serveRoundFile(args.outputRoot, parts);
+    return serveRoundFile(args.outputRoot, parts, url.searchParams.get("w"));
   }
 
   if (parts[0] !== "api") {
     return new Response("Not found", { status: 404 });
   }
 
-  if (parts[1] === "status") {
-    return Response.json(jobs.status());
-  }
-
-  if (parts[1] === "next" && post) {
-    const body = nextRoundSchema.parse(await request.json());
-    jobs.start("next-round", async (report) => {
-      report({
-        message: "Prompt agent is reading feedback and writing prompts",
-      });
-      const planned = await planNextRound({
-        outputRoot: args.outputRoot,
-        direction: body.direction,
-        newPrompts: body.newPrompts,
-        ...suiteArgs(args),
-        ...(args.writer ? { writer: args.writer } : {}),
-      });
-
-      return generate(args, planned.roundId, planned.promptsDirectory, report);
-    });
-
-    return Response.json(jobs.status());
-  }
-
-  if (parts[1] === "ideas" && parts[2] === "replace" && post) {
-    const body = replaceIdeaSchema.parse(await request.json());
-    jobs.start("replace-idea", async (report) => {
-      report({ message: `Writing a new idea to replace ${body.idea}` });
-      const idea = await replaceSuiteIdea({
-        ...body,
-        ...suiteArgs(args),
-        ...(args.ideaGenerator ? { generate: args.ideaGenerator } : {}),
-      });
-
-      return `Replaced ${body.idea} with "${idea.name}"; it is used from the next round`;
-    });
-
-    return Response.json(jobs.status());
+  if (parts[1] === "tasks") {
+    return Response.json(tasks.list());
   }
 
   if (parts[1] === "suite") {
@@ -152,6 +124,58 @@ async function route(
         idea: entry.idea.id,
       })),
     );
+  }
+
+  if (parts[1] === "next" && post) {
+    const body = nextRoundSchema.parse(await request.json());
+    const task = tasks.start({
+      kind: "next-round",
+      key: "next-round",
+      label: `Next ${body.kind} round`,
+      run: async (report) => {
+        report({ message: "Prompt agent is reading feedback" });
+        const planned = await planNextRound({
+          outputRoot: args.outputRoot,
+          kind: body.kind,
+          direction: body.direction,
+          newPrompts: body.newPrompts,
+          ...suiteArgs(args),
+          ...(args.writer ? { writer: args.writer } : {}),
+        });
+
+        return generate(
+          args,
+          {
+            roundId: planned.roundId,
+            promptsDirectory: planned.promptsDirectory,
+          },
+          report,
+        );
+      },
+    });
+
+    return Response.json(task);
+  }
+
+  if (parts[1] === "ideas" && parts[2] === "replace" && post) {
+    const body = replaceIdeaSchema.parse(await request.json());
+    const task = tasks.start({
+      kind: "replace-idea",
+      key: `idea:${body.book}/${body.idea}`,
+      label: `Replace ${body.idea}`,
+      run: async (report) => {
+        report({ message: "Writing a new idea" });
+        const idea = await replaceSuiteIdea({
+          ...body,
+          ...suiteArgs(args),
+          ...(args.ideaGenerator ? { generate: args.ideaGenerator } : {}),
+        });
+
+        return `Replaced with "${idea.name}" from the next round on`;
+      },
+    });
+
+    return Response.json(task);
   }
 
   if (parts[1] !== "rounds") {
@@ -166,21 +190,41 @@ async function route(
   const round = roundDirectory(args.outputRoot, roundId);
 
   if (parts.length === 3 && request.method === "GET") {
-    return Response.json(await roundView(round));
+    return Response.json(await roundView(round, args));
   }
 
   if (parts[3] === "feedback" && post) {
-    await saveFeedback(round, await request.json());
+    await saveFeedback(round, args, await request.json());
 
     return Response.json({ ok: true });
   }
 
-  if (parts[3] === "resume" && post) {
-    jobs.start("retry-failed", async (report) =>
-      generate(args, roundId, undefined, report),
-    );
+  if (parts[3] === "regenerate" && post) {
+    const body = regenerateSchema.parse(await request.json());
+    const task = tasks.start({
+      kind: "regenerate",
+      key: `image:${roundId}/${body.key}`,
+      label: `Regenerate ${body.key}`,
+      run: async (report) =>
+        generate(
+          args,
+          { roundId, only: [body.key], retry: [body.key] },
+          report,
+        ),
+    });
 
-    return Response.json(jobs.status());
+    return Response.json(task);
+  }
+
+  if (parts[3] === "resume" && post) {
+    const task = tasks.start({
+      kind: "resume",
+      key: `resume:${roundId}`,
+      label: `Retry failed images in ${roundId}`,
+      run: async (report) => generate(args, { roundId }, report),
+    });
+
+    return Response.json(task);
   }
 
   return new Response("Not found", { status: 404 });
@@ -195,34 +239,50 @@ function suiteArgs(
   };
 }
 
+interface GenerateTarget {
+  roundId: string;
+  promptsDirectory?: string;
+  only?: string[];
+  retry?: string[];
+}
+
 async function generate(
   args: StartPortalArgs,
-  roundId: string,
-  promptsDirectory: string | undefined,
-  report: (update: { message: string; round?: string }) => void,
+  target: GenerateTarget,
+  report: (update: TaskReport) => void,
 ): Promise<string> {
-  report({ message: `Generating ${roundId}`, round: roundId });
+  report({ message: `Generating ${target.roundId}`, round: target.roundId });
 
   const summary = await runRound({
-    roundId,
+    roundId: target.roundId,
     outputRoot: args.outputRoot,
     concurrency: args.concurrency ?? 3,
     timeoutSeconds: args.timeoutSeconds ?? 900,
     ...suiteArgs(args),
     ...(args.targetRegistry ? { targetRegistry: args.targetRegistry } : {}),
-    ...(promptsDirectory ? { promptsDirectory } : {}),
+    ...(target.promptsDirectory
+      ? { promptsDirectory: target.promptsDirectory }
+      : {}),
+    ...(target.only ? { only: target.only } : {}),
+    ...(target.retry ? { retry: target.retry } : {}),
     ...(args.generate ? { generate: args.generate } : {}),
+    ...(args.ideaGenerator ? { generateIdeas: args.ideaGenerator } : {}),
     onProgress: (message) => {
-      report({ message: `${roundId}: ${message}`, round: roundId });
+      report({ message, round: target.roundId });
     },
   });
 
-  return `${roundId} finished: ${String(summary.done)} generated, ${String(summary.failed)} failed`;
+  return `${target.roundId}: ${String(summary.done)} generated, ${String(summary.failed)} failed`;
 }
+
+// Resized copies for the page, keyed by path, size, and modification time.
+const thumbnails = new Map<string, Uint8Array<ArrayBuffer>>();
+const MAXIMUM_THUMBNAILS = 400;
 
 async function serveRoundFile(
   outputRoot: string,
   parts: string[],
+  width: string | null,
 ): Promise<Response> {
   const round = roundDirectory(outputRoot, parts[1] ?? "");
   const path = resolve(round, ...parts.slice(2).map(decodeURIComponent));
@@ -238,56 +298,104 @@ async function serveRoundFile(
     return new Response("Not found", { status: 404 });
   }
 
-  return new Response(file);
+  if (width === null) {
+    return new Response(file);
+  }
+
+  const pixels = z.coerce.number().int().min(64).max(1600).parse(width);
+  const key = `${path}:${String(pixels)}:${String(file.lastModified)}`;
+  let thumbnail = thumbnails.get(key);
+
+  if (!thumbnail) {
+    thumbnail = Uint8Array.from(
+      await sharp(path)
+        .resize({ width: pixels, withoutEnlargement: true })
+        .png()
+        .toBuffer(),
+    );
+
+    if (thumbnails.size >= MAXIMUM_THUMBNAILS) {
+      thumbnails.clear();
+    }
+
+    thumbnails.set(key, thumbnail);
+  }
+
+  return new Response(thumbnail, {
+    headers: { "content-type": "image/png", "cache-control": "max-age=3600" },
+  });
 }
 
-// Everything the page needs for one round, keyed the same way as on disk.
-async function roundView(round: string): Promise<Record<string, unknown>> {
+// Everything the page needs for one round: rows of cells, each with its idea,
+// result, and latest rating.
+async function roundView(
+  round: string,
+  args: StartPortalArgs,
+): Promise<Record<string, unknown>> {
   const roundFile = await readRoundFile(round);
   const feedback = await readLatestFeedback(round);
+  const items = await loadRoundItems(round, roundFile, args.suiteDirectory);
 
   const prompts = [];
 
   for (const prompt of roundFile.prompts) {
-    prompts.push({
-      id: prompt.id,
-      text: await readFile(join(round, prompt.file), "utf8"),
+    prompts.push({ id: prompt.id, text: await readVerified(round, prompt) });
+  }
+
+  let imagePrompt: { id: string; text: string } | null = null;
+
+  if (roundFile.image_prompt) {
+    imagePrompt = {
+      id: roundFile.image_prompt.id,
+      text: await readVerified(round, roundFile.image_prompt),
+    };
+  }
+
+  const cells = [];
+
+  for (const item of items) {
+    cells.push({
+      key: item.key,
+      prompt: item.promptId,
+      row: item.rowKey,
+      book: item.book,
+      idea: item.idea,
+      ideas_error: item.ideasError,
+      directory: relative(round, item.directory),
+      result: await readResult(item.directory),
+      feedback: feedback.get(item.key) ?? null,
     });
   }
 
-  const images = [];
-
-  for (const prompt of roundFile.prompts) {
-    for (const entry of roundFile.cases) {
-      const key = feedbackKey({ prompt: prompt.id, ...entry });
-      const directory = join("images", prompt.id, entry.book, entry.idea);
-      const result = await readResult(join(round, directory));
-
-      images.push({
-        key,
-        prompt: prompt.id,
-        book: entry.book,
-        idea: entry.idea,
-        directory,
-        result,
-        feedback: feedback.get(key) ?? null,
-      });
-    }
-  }
-
   return {
-    round: roundFile,
+    round: {
+      id: roundFile.round_id,
+      kind: roundFile.kind,
+      created_at: roundFile.created_at,
+    },
     notes: await readOptional(join(round, "prompts", "notes.md")),
     prompts,
-    images,
+    image_prompt: imagePrompt,
+    cells,
     tags: FEEDBACK_TAGS,
   };
 }
 
-async function saveFeedback(round: string, body: unknown): Promise<void> {
+async function saveFeedback(
+  round: string,
+  args: StartPortalArgs,
+  body: unknown,
+): Promise<void> {
   const input = feedbackInputSchema.parse(body);
-  const directory = join(round, "images", input.prompt, input.book, input.idea);
-  const result = await readResult(directory);
+  const roundFile = await readRoundFile(round);
+  const items = await loadRoundItems(round, roundFile, args.suiteDirectory);
+  const item = items.find((entry) => entry.key === feedbackKey(input));
+
+  if (!item) {
+    throw new Error(`Unknown image ${feedbackKey(input)}`);
+  }
+
+  const result = await readResult(item.directory);
 
   if (result?.status !== "done") {
     throw new Error("Only finished images can be rated");

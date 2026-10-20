@@ -113,3 +113,51 @@ export async function loadSuite(args: LoadSuiteArgs = {}): Promise<Suite> {
     cases,
   };
 }
+
+export interface FindCaseIdeaArgs {
+  book: string;
+  idea: string;
+  directory?: string;
+  registryPath?: string;
+}
+
+export interface FoundCaseIdea {
+  book: { slug: string; title: string; author: string };
+  idea: Idea;
+}
+
+// Finds an idea among the suite's cases or its retired cases, for rounds that
+// were created before they kept their own copy of each idea.
+export async function findCaseIdea(
+  args: FindCaseIdeaArgs,
+): Promise<FoundCaseIdea> {
+  const directory = resolve(args.directory ?? DEFAULT_SUITE_DIRECTORY);
+  const book = await resolveBook(args.book, args.registryPath);
+  const paths = [
+    join(directory, "cases", args.book, `${args.idea}.yaml`),
+    join(directory, "retired", args.book, `${args.idea}.yaml`),
+  ];
+
+  for (const path of paths) {
+    let text: string;
+
+    try {
+      text = await readFile(path, "utf8");
+    } catch {
+      continue;
+    }
+
+    const record = z
+      .looseObject({ idea: ideaSchema })
+      .parse(parse(text) as unknown);
+
+    return {
+      book: { slug: book.slug, title: book.title, author: book.author },
+      idea: record.idea,
+    };
+  }
+
+  throw new Error(
+    `Idea ${args.book}/${args.idea} is not in the suite or retired`,
+  );
+}

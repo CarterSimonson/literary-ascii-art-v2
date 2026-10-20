@@ -478,7 +478,7 @@ export async function runCli(
         registry: string;
         output: string;
       }): Promise<void> => {
-        const { server, jobs } = startPortal({
+        const { server, tasks } = startPortal({
           outputRoot: flags.output,
           port: flags.port,
           registryPath: flags.registry,
@@ -495,8 +495,10 @@ export async function runCli(
           });
         });
 
-        if (jobs.status().busy) {
-          stderr("Stopped while a job was running; resume it from the page\n");
+        if (tasks.list().some((task) => task.state === "running")) {
+          stderr(
+            "Stopped while tasks were running; retry them from the page\n",
+          );
         }
       },
     );

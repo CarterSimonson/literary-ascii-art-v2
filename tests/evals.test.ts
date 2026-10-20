@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { cp, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import sharp from "sharp";
-import { parse } from "yaml";
+import { parse, stringify } from "yaml";
 
 import { replaceSuiteIdea } from "../src/evals/ideas.ts";
 import { planNextRound, type PromptWriter } from "../src/evals/improve.ts";
@@ -89,7 +89,7 @@ async function roundFixture(): Promise<RoundFixture> {
 
   await mkdir(join(suite, "cases", "the-great-gatsby"), { recursive: true });
   await cp(
-    "evals/image-prompt/cases/the-great-gatsby/the-weight-of-shirts.yaml",
+    "tests/fixtures/eval-suite/the-great-gatsby/the-weight-of-shirts.yaml",
     join(suite, "cases", "the-great-gatsby", "the-weight-of-shirts.yaml"),
   );
   await writeFile(
@@ -146,13 +146,18 @@ async function roundFixture(): Promise<RoundFixture> {
   };
 }
 
-function fakeGenerator(prompts: string[]): ImageGenerator {
+function fakeGenerator(
+  prompts: string[],
+  colors = ["#563E4B"],
+  gate: Promise<void> = Promise.resolve(),
+): ImageGenerator {
   return async (input) => {
     prompts.push(input.prompt);
+    await gate;
 
     return {
       png: await fieldPng(),
-      artworkColors: ["#563E4B"],
+      artworkColors: colors,
       threadId: "fixture-thread",
       usage: fixtureUsage,
       reviewNotes: [],
@@ -194,19 +199,21 @@ describe("image-prompt suite", () => {
   test("a case file holding a different idea is rejected", async () => {
     const directory = await mkdtemp(join(tmpdir(), "bookgen-suite-"));
     await cp("evals/image-prompt", directory, { recursive: true });
+    const suite = await loadSuite({ directory });
+    const [first, second] = suite.cases;
+
+    if (!first || !second) {
+      throw new Error("The suite needs at least two cases");
+    }
+
     await cp(
-      join(directory, "cases", "the-great-gatsby", "the-weight-of-shirts.yaml"),
-      join(
-        directory,
-        "cases",
-        "the-great-gatsby",
-        "the-distance-of-desire.yaml",
-      ),
+      join(directory, "cases", first.book.slug, `${first.idea.id}.yaml`),
+      join(directory, "cases", second.book.slug, `${second.idea.id}.yaml`),
     );
 
     const failure = await rejection(loadSuite({ directory }));
 
-    expect(failure).toThrow("its file name requires 'the-distance-of-desire'");
+    expect(failure).toThrow(`its file name requires '${second.idea.id}'`);
   });
 });
 
@@ -319,7 +326,7 @@ describe("eval rounds", () => {
           book: "the-great-gatsby",
           idea: "the-weight-of-shirts",
           stars: 4,
-          tags: ["clean-edges", "haze"],
+          tags: ["ragged", "haze"],
           note: "Edges are crisp; a little haze at the collar.",
         }),
       });
@@ -327,8 +334,8 @@ describe("eval rounds", () => {
 
       const view = (await (
         await fetch(`${base}/api/rounds/round-1`)
-      ).json()) as { images: { key: string; feedback: unknown }[] };
-      const rated = view.images.find(
+      ).json()) as { cells: { key: string; feedback: unknown }[] };
+      const rated = view.cells.find(
         (image) => image.key === "flat/the-great-gatsby/the-weight-of-shirts",
       );
       expect(rated?.feedback).toMatchObject({ stars: 4, attempt: 1 });
@@ -347,7 +354,7 @@ describe("eval rounds", () => {
       expect(JSON.parse(log.trim())).toMatchObject({
         prompt: "flat",
         stars: 4,
-        tags: ["clean-edges", "haze"],
+        tags: ["ragged", "haze"],
         master_sha256: expect.stringMatching(/^[a-f0-9]{64}$/) as string,
       });
 
@@ -439,6 +446,7 @@ describe("next rounds", () => {
 
     const planned = await planNextRound({
       outputRoot: join(fixture.root, "output"),
+      kind: "image",
       direction: "Keep the edges crisp",
       newPrompts: 1,
       suiteDirectory: join(fixture.root, "suite"),
@@ -470,6 +478,7 @@ describe("next rounds", () => {
     const failure = await rejection(
       planNextRound({
         outputRoot: join(fixture.root, "output"),
+        kind: "image",
         direction: "",
         newPrompts: 1,
         suiteDirectory: join(fixture.root, "suite"),
@@ -496,7 +505,7 @@ describe("next rounds", () => {
     });
     await rate(fixture.root, [{ prompt: "flat", stars: 4, note: "Good" }]);
     const generated: string[] = [];
-    const { server, jobs } = startPortal({
+    const { server, tasks } = startPortal({
       outputRoot: join(fixture.root, "output"),
       port: 0,
       suiteDirectory: join(fixture.root, "suite"),
@@ -510,18 +519,18 @@ describe("next rounds", () => {
       const started = await fetch(`${base}/api/next`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ direction: "", newPrompts: 1 }),
+        body: JSON.stringify({ kind: "image", direction: "", newPrompts: 1 }),
       });
       expect(started.status).toBe(200);
-      await jobs.idle();
+      await tasks.idle();
 
-      const status = (await (await fetch(`${base}/api/status`)).json()) as {
-        busy: boolean;
+      const [task] = (await (await fetch(`${base}/api/tasks`)).json()) as {
+        state: string;
         message: string;
         error: string | null;
-      };
-      expect(status).toMatchObject({ busy: false, error: null });
-      expect(status.message).toContain("round-2 finished: 2 generated");
+      }[];
+      expect(task).toMatchObject({ state: "done", error: null });
+      expect(task?.message).toContain("round-2: 2 generated");
       expect(await (await fetch(`${base}/api/rounds`)).json()).toEqual([
         "round-2",
         "round-1",
@@ -564,6 +573,150 @@ describe("next rounds", () => {
         ),
       ),
     ).toMatchObject({ retired: { reason: "Too literal" } });
+  });
+
+  test("two images regenerate in parallel, and the same image twice is refused", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    let open = (): void => {};
+    const gate = new Promise<void>((resolveGate) => {
+      open = resolveGate;
+    });
+    const generated: string[] = [];
+    const { server, tasks } = startPortal({
+      outputRoot: join(fixture.root, "output"),
+      port: 0,
+      suiteDirectory: join(fixture.root, "suite"),
+      targetRegistry: join(fixture.root, "targets.yaml"),
+      generate: fakeGenerator(generated, ["#563E4B"], gate),
+    });
+    const regenerate = async (key: string): Promise<Response> =>
+      fetch(
+        `http://127.0.0.1:${String(server.port)}/api/rounds/round-1/regenerate`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ key }),
+        },
+      );
+
+    try {
+      const control = "control/the-great-gatsby/the-weight-of-shirts";
+      const flat = "flat/the-great-gatsby/the-weight-of-shirts";
+
+      expect((await regenerate(control)).status).toBe(200);
+      expect((await regenerate(flat)).status).toBe(200);
+      const duplicate = await regenerate(control);
+      expect(duplicate.status).toBe(400);
+      expect(await duplicate.text()).toContain("Already running");
+
+      open();
+      await tasks.idle();
+
+      expect(generated).toHaveLength(2);
+      expect(await readResult(fixture.root, "control")).toMatchObject({
+        attempt: 2,
+      });
+      expect(await readResult(fixture.root, "flat")).toMatchObject({
+        attempt: 2,
+      });
+    } finally {
+      await server.stop();
+    }
+  });
+
+  test("an ideas round writes fresh ideas per prompt and draws them with the best image prompt", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    await rate(fixture.root, [{ prompt: "flat", stars: 4, note: "Good" }]);
+    const generated: string[] = [];
+    const { server, tasks } = startPortal({
+      outputRoot: join(fixture.root, "output"),
+      port: 0,
+      suiteDirectory: join(fixture.root, "suite"),
+      targetRegistry: join(fixture.root, "targets.yaml"),
+      writer: fakeWriter(
+        [],
+        [
+          {
+            id: "bold-symbols",
+            template: "Ideas for {{book}}; give {{count}}.",
+          },
+        ],
+      ),
+      generate: fakeGenerator(generated, ["#80182A"]),
+      ideaGenerator: fakeIdeaGenerator(
+        responseEvents(JSON.stringify(ideasResponse("fresh", 3))),
+      ),
+    });
+    const base = `http://127.0.0.1:${String(server.port)}`;
+
+    try {
+      await fetch(`${base}/api/next`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ kind: "idea", direction: "", newPrompts: 1 }),
+      });
+      await tasks.idle();
+
+      const view = (await (
+        await fetch(`${base}/api/rounds/round-2`)
+      ).json()) as {
+        round: { kind: string };
+        image_prompt: { id: string };
+        cells: { result: { status: string } | null }[];
+      };
+      expect(view.round.kind).toBe("idea");
+      expect(view.image_prompt.id).toBe("flat");
+      expect(view.cells).toHaveLength(6);
+      expect(view.cells.every((cell) => cell.result?.status === "done")).toBe(
+        true,
+      );
+      expect(generated).toContain("Draw fresh 1 as a flat screen print.");
+    } finally {
+      await server.stop();
+    }
+  });
+
+  test("a round from before idea snapshots still loads its ideas from the suite", async () => {
+    const fixture = await roundFixture();
+    const summary = await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    const roundPath = join(summary.directory, "round.yaml");
+    const legacy = parse(await readFile(roundPath, "utf8")) as Record<
+      string,
+      unknown
+    >;
+    await writeFile(
+      roundPath,
+      stringify({
+        ...legacy,
+        cases: [
+          {
+            book: "the-great-gatsby",
+            book_title: "The Great Gatsby",
+            idea: "the-weight-of-shirts",
+            name: "The Weight of Shirts",
+          },
+        ],
+      }),
+    );
+    await rm(join(summary.directory, "cases.yaml"));
+
+    const second = await runRound(fixture.args(fakeGenerator([])));
+
+    expect(second).toMatchObject({ done: 0, skipped: 2 });
+    expect(await Bun.file(join(summary.directory, "cases.yaml")).exists()).toBe(
+      true,
+    );
   });
 });
 

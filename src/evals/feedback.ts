@@ -5,23 +5,17 @@ import { z } from "zod";
 
 import { slugSchema } from "../ideas/schema.ts";
 
-// Fixed vocabulary so feedback can be counted across rounds; notes carry the rest.
-export const FEEDBACK_TAGS = {
-  good: ["clean-field", "strong-subject", "clean-edges", "apt", "good-detail"],
-  bad: [
-    "haze",
-    "stray-islands",
-    "ragged-edges",
-    "accent-touches",
-    "subject-unclear",
-    "detail-lost",
-    "busy",
-    "off-concept",
-    "text-in-image",
-  ],
-} as const;
+// A short fixed list of common problems, so feedback can be counted across
+// rounds; stars carry quality and notes carry the rest.
+export const FEEDBACK_TAGS = [
+  "haze",
+  "ragged",
+  "busy",
+  "unclear",
+  "off-idea",
+] as const;
 
-const allTags: string[] = [...FEEDBACK_TAGS.good, ...FEEDBACK_TAGS.bad];
+const allTags: string[] = [...FEEDBACK_TAGS];
 
 export const feedbackInputSchema = z.strictObject({
   prompt: slugSchema,

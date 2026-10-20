@@ -15,26 +15,42 @@ import { parse, stringify } from "yaml";
 import { z } from "zod";
 
 import packageJson from "../../package.json";
-import { slugSchema } from "../ideas/schema.ts";
+import type { IdeaGenerator } from "../ideas/codex.ts";
+import { fillIdeasPrompt } from "../ideas/prompt.ts";
+import { ideaSchema, slugSchema } from "../ideas/schema.ts";
 import { generateCandidate } from "../images/candidate.ts";
 import type { ImageGenerator } from "../images/codex.ts";
-import { fillImagePrompt, type ImagePromptBook } from "../images/prompt.ts";
-import { imagesRequestSchema, type ImagesRequest } from "../images/schema.ts";
-import { resolveOutputTarget } from "../output-targets.ts";
+import { fillImagePrompt } from "../images/prompt.ts";
+import {
+  imagesRequestSchema,
+  type Idea,
+  type ImagesRequest,
+} from "../images/schema.ts";
+import { resolveOutputTarget, type OutputTarget } from "../output-targets.ts";
 import type { SourceImage } from "../render/convert.ts";
+import { generateIdeas } from "./ideas.ts";
 import { measureImage } from "./metrics.ts";
 import { prepareBookGlyphs, renderPreview, type BookGlyphs } from "./render.ts";
-import { loadSuite, type Suite, type SuiteCase } from "./suite.ts";
+import { findCaseIdea, loadSuite, type Suite } from "./suite.ts";
 
 export const PRIMARY_TARGET_ID = "poster-24x36";
 const IMAGE_SIZE = "1024x1536";
 const ALPHA_THRESHOLD = 128;
-const PROMPT_SUFFIX = ".prompt.md";
+const IMAGE_PROMPT_SUFFIX = ".prompt.md";
+const IDEAS_PROMPT_SUFFIX = ".ideas.md";
+export const IDEAS_PER_BOOK = 3;
+
+// Image rounds vary the image prompt over the frozen suite ideas. Idea rounds
+// vary the ideas prompt: each variant writes fresh ideas per suite book, and
+// every idea is drawn with one fixed image prompt.
+export type RoundKind = "image" | "idea";
 
 export interface RunRoundArgs {
   roundId: string;
   outputRoot: string;
   // Required when creating a round; a round's prompts never change afterwards.
+  // Image rounds: *.prompt.md templates. Idea rounds: *.ideas.md templates
+  // plus exactly one *.prompt.md, the fixed image prompt.
   promptsDirectory?: string;
   suiteDirectory?: string;
   registryPath?: string;
@@ -43,7 +59,10 @@ export interface RunRoundArgs {
   timeoutSeconds: number;
   // Image keys (`<prompt>/<book>/<idea>`) to regenerate even if done.
   retry?: string[];
+  // Limit the run to these image keys.
+  only?: string[];
   generate?: ImageGenerator;
+  generateIdeas?: IdeaGenerator;
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
 }
@@ -55,27 +74,39 @@ export interface RoundSummary {
   skipped: number;
 }
 
-export interface RoundPrompt {
-  id: string;
-  file: string;
-  sha256: string;
-}
+const bookIdentitySchema = z.strictObject({
+  slug: slugSchema,
+  title: z.string(),
+  author: z.string(),
+});
+
+export type BookIdentity = z.infer<typeof bookIdentitySchema>;
+
+const roundCaseSchema = z.strictObject({
+  book: bookIdentitySchema,
+  idea: ideaSchema,
+});
+
+export type RoundCase = z.infer<typeof roundCaseSchema>;
+
+const promptEntrySchema = z.strictObject({
+  id: slugSchema,
+  file: z.string(),
+  sha256: z.string(),
+});
+
+export type RoundPrompt = z.infer<typeof promptEntrySchema>;
 
 const roundFileSchema = z.looseObject({
   schema_version: z.literal(1),
   round_id: slugSchema,
-  suite: z.looseObject({ sha256: z.string() }),
-  prompts: z.array(
-    z.strictObject({ id: slugSchema, file: z.string(), sha256: z.string() }),
-  ),
-  cases: z.array(
-    z.strictObject({
-      book: slugSchema,
-      book_title: z.string(),
-      idea: slugSchema,
-      name: z.string(),
-    }),
-  ),
+  kind: z.enum(["image", "idea"]).default("image"),
+  // Image rounds: image templates. Idea rounds: ideas templates.
+  prompts: z.array(promptEntrySchema),
+  // Idea rounds only: the image template every idea is drawn with.
+  image_prompt: promptEntrySchema.optional(),
+  // Idea rounds only: the books each ideas template writes for.
+  books: z.array(bookIdentitySchema).optional(),
 });
 
 export type RoundFile = z.infer<typeof roundFileSchema>;
@@ -86,6 +117,19 @@ export const imageResultSchema = z.looseObject({
 });
 
 export type ImageResult = z.infer<typeof imageResultSchema>;
+
+// One cell on the rating page: a prompt (column) applied to one row.
+export interface RoundItem {
+  key: string;
+  promptId: string;
+  // Image rounds: `<book>/<idea>`. Idea rounds: `<book>#<n>`.
+  rowKey: string;
+  book: BookIdentity;
+  // Null while an idea round's ideas are being written, or if that failed.
+  idea: Idea | null;
+  ideasError: string | null;
+  directory: string;
+}
 
 export function roundDirectory(outputRoot: string, roundId: string): string {
   return resolve(outputRoot, "evals", "rounds", slugSchema.parse(roundId));
@@ -118,20 +162,6 @@ export async function listRoundIds(outputRoot: string): Promise<string[]> {
   }
 }
 
-export function imageDirectory(
-  round: string,
-  promptId: string,
-  suiteCase: SuiteCase,
-): string {
-  return join(
-    round,
-    "images",
-    promptId,
-    suiteCase.book.slug,
-    suiteCase.idea.id,
-  );
-}
-
 export async function readRoundFile(round: string): Promise<RoundFile> {
   const text = await readFile(join(round, "round.yaml"), "utf8");
 
@@ -154,107 +184,121 @@ export async function readImageResult(
   }
 }
 
+// Every cell of the round, in row-major order, from the round's own records.
+// Old image rounds without a case snapshot get one from the suite.
+export async function loadRoundItems(
+  round: string,
+  roundFile: RoundFile,
+  suiteDirectory?: string,
+): Promise<RoundItem[]> {
+  if (roundFile.kind === "idea") {
+    return loadIdeaRoundItems(round, roundFile);
+  }
+
+  const cases = await loadCaseSnapshot(round, roundFile, suiteDirectory);
+  const items: RoundItem[] = [];
+
+  for (const roundCase of cases) {
+    for (const prompt of roundFile.prompts) {
+      const rowKey = `${roundCase.book.slug}/${roundCase.idea.id}`;
+
+      items.push({
+        key: `${prompt.id}/${rowKey}`,
+        promptId: prompt.id,
+        rowKey,
+        book: roundCase.book,
+        idea: roundCase.idea,
+        ideasError: null,
+        directory: join(
+          round,
+          "images",
+          prompt.id,
+          roundCase.book.slug,
+          roundCase.idea.id,
+        ),
+      });
+    }
+  }
+
+  return items;
+}
+
 export async function runRound(args: RunRoundArgs): Promise<RoundSummary> {
-  const suite = await loadSuite({
-    ...(args.suiteDirectory ? { directory: args.suiteDirectory } : {}),
-    ...(args.registryPath ? { registryPath: args.registryPath } : {}),
-  });
   const target = await resolveOutputTarget(
     PRIMARY_TARGET_ID,
     args.targetRegistry,
   );
   const round = roundDirectory(args.outputRoot, args.roundId);
+  const roundFile = await openRound(round, args);
+
+  if (roundFile.kind === "idea") {
+    await writeMissingIdeas(round, roundFile, args);
+  }
+
+  const items = await loadRoundItems(round, roundFile, args.suiteDirectory);
+  const books = new Map(items.map((item) => [item.book.slug, item.book]));
 
   // Fail before any generation if a book has no fetched text to render with.
-  const glyphs = await loadBookGlyphs(args.outputRoot, suite);
+  const glyphs = await loadBookGlyphs(args.outputRoot, [...books.values()]);
+  const templates = await loadImageTemplates(round, roundFile);
+  const jobs = await pendingJobs(items, args);
 
-  const lock = join(round, ".lock");
-  await mkdir(round, { recursive: true });
+  const summary: RoundSummary = {
+    directory: round,
+    done: 0,
+    failed: 0,
+    skipped: items.length - jobs.length,
+  };
 
-  try {
-    await mkdir(lock);
-  } catch (error) {
-    throw new Error(
-      `Round ${args.roundId} is already running. After a forced kill, remove ${lock}`,
-      { cause: error },
-    );
-  }
+  args.onProgress?.(
+    `Generating ${String(jobs.length)} images (${String(summary.skipped)} skipped)`,
+  );
 
-  try {
-    const roundFile = await openRound(round, args, suite);
-    const prompts = await loadPromptTemplates(round, roundFile);
-    const jobs = await pendingJobs(round, roundFile, suite, args.retry ?? []);
-
-    const summary: RoundSummary = {
-      directory: round,
-      done: 0,
-      failed: 0,
-      skipped: roundFile.prompts.length * suite.cases.length - jobs.length,
-    };
-
-    args.onProgress?.(
-      `Generating ${String(jobs.length)} images (${String(summary.skipped)} already done)`,
-    );
-
-    await runPool(jobs, args.concurrency, async (job) => {
-      const template = prompts.get(job.promptId) ?? "";
-      const bookGlyphs = glyphs.get(job.suiteCase.book.slug);
-
-      if (!bookGlyphs) {
-        throw new Error(`No text loaded for ${job.suiteCase.book.slug}`);
-      }
-
-      const result = await runImage({
-        args,
-        round,
-        job,
-        template,
-        glyphs: bookGlyphs,
-        target,
-      });
-
-      if (result.status === "done") {
-        summary.done++;
-      } else {
-        summary.failed++;
-      }
-
-      args.onProgress?.(
-        `${job.promptId}/${job.suiteCase.id}: ${result.status}`,
-      );
+  await runPool(jobs, args.concurrency, async (item) => {
+    const result = await runImage({
+      args,
+      item,
+      template: templates.get(item.promptId) ?? "",
+      glyphs: glyphs.get(item.book.slug),
+      target,
     });
 
-    return summary;
-  } finally {
-    await rm(lock, { recursive: true, force: true });
-  }
+    if (result === null) {
+      summary.skipped++;
+      return;
+    }
+
+    if (result.status === "done") {
+      summary.done++;
+    } else {
+      summary.failed++;
+    }
+
+    args.onProgress?.(`${item.key}: ${result.status}`);
+  });
+
+  return summary;
 }
 
 async function loadBookGlyphs(
   outputRoot: string,
-  suite: Suite,
+  books: BookIdentity[],
 ): Promise<Map<string, BookGlyphs>> {
   const glyphs = new Map<string, BookGlyphs>();
 
-  for (const suiteCase of suite.cases) {
-    const slug = suiteCase.book.slug;
-
-    if (glyphs.has(slug)) {
-      continue;
-    }
-
-    const path = resolve(outputRoot, slug, "text", "book.txt");
+  for (const book of books) {
+    const path = resolve(outputRoot, book.slug, "text", "book.txt");
     let text: string;
 
     try {
       text = await readFile(path, "utf8");
     } catch (error) {
-      throw new Error(`Missing ${path}; run bookgen fetch ${slug} first`, {
+      throw new Error(`Missing ${path}; run bookgen fetch ${book.slug} first`, {
         cause: error,
       });
     }
 
-    glyphs.set(slug, await prepareBookGlyphs(text));
+    glyphs.set(book.slug, await prepareBookGlyphs(text));
   }
 
   return glyphs;
@@ -264,7 +308,6 @@ async function loadBookGlyphs(
 async function openRound(
   round: string,
   args: RunRoundArgs,
-  suite: Suite,
 ): Promise<RoundFile> {
   let existing: RoundFile | null = null;
 
@@ -283,12 +326,6 @@ async function openRound(
       );
     }
 
-    if (existing.suite.sha256 !== suite.sha256) {
-      throw new Error(
-        `The suite changed since round ${args.roundId} started; start a new round`,
-      );
-    }
-
     return existing;
   }
 
@@ -298,21 +335,43 @@ async function openRound(
     );
   }
 
-  const prompts = await copyPrompts(args.promptsDirectory, round, suite);
+  const suite = await loadSuite({
+    ...(args.suiteDirectory ? { directory: args.suiteDirectory } : {}),
+    ...(args.registryPath ? { registryPath: args.registryPath } : {}),
+  });
 
-  const roundFile = {
-    schema_version: 1 as const,
+  await mkdir(join(round, "prompts"), { recursive: true });
+
+  const files = (await readdir(args.promptsDirectory))
+    .filter((file) => file.endsWith(".md"))
+    .sort();
+
+  for (const file of files) {
+    await copyFile(
+      join(args.promptsDirectory, file),
+      join(round, "prompts", file),
+    );
+  }
+
+  const ideaTemplates = files.filter((file) =>
+    file.endsWith(IDEAS_PROMPT_SUFFIX),
+  );
+
+  let roundFile: Record<string, unknown>;
+
+  if (ideaTemplates.length > 0) {
+    roundFile = await describeIdeaRound(round, files, suite);
+  } else {
+    roundFile = await describeImageRound(round, files, suite);
+  }
+
+  const complete = {
+    schema_version: 1,
     round_id: args.roundId,
     created_at: new Date().toISOString(),
     bookgen_version: packageJson.version,
     suite: { version: suite.suiteVersion, sha256: suite.sha256 },
-    prompts,
-    cases: suite.cases.map((suiteCase) => ({
-      book: suiteCase.book.slug,
-      book_title: suiteCase.book.title,
-      idea: suiteCase.idea.id,
-      name: suiteCase.idea.name,
-    })),
+    ...roundFile,
     image: {
       size: IMAGE_SIZE,
       alpha_threshold: ALPHA_THRESHOLD,
@@ -321,104 +380,378 @@ async function openRound(
     target: PRIMARY_TARGET_ID,
   };
 
-  await writeFile(join(round, "round.yaml"), stringify(roundFile));
+  await writeFile(join(round, "round.yaml"), stringify(complete));
 
-  return roundFile;
+  return roundFileSchema.parse(complete);
 }
 
-// Copies every Markdown file (templates and any notes) into the round, and
-// checks each template fills cleanly before anything is generated.
-async function copyPrompts(
-  source: string,
+async function describeImageRound(
   round: string,
+  files: string[],
   suite: Suite,
-): Promise<RoundPrompt[]> {
-  const destination = join(round, "prompts");
-  await mkdir(destination, { recursive: true });
-
-  const files = (await readdir(source))
-    .filter((file) => file.endsWith(".md"))
-    .sort();
+): Promise<Record<string, unknown>> {
+  const cases = suite.cases.map((suiteCase) => ({
+    book: bookIdentity(suiteCase.book),
+    idea: suiteCase.idea,
+  }));
   const prompts: RoundPrompt[] = [];
 
-  for (const file of files) {
-    await copyFile(join(source, file), join(destination, file));
+  for (const file of files.filter((name) =>
+    name.endsWith(IMAGE_PROMPT_SUFFIX),
+  )) {
+    const template = await readFile(join(round, "prompts", file), "utf8");
 
-    if (!file.endsWith(PROMPT_SUFFIX)) {
-      continue;
+    for (const roundCase of cases) {
+      fillImagePrompt(template, promptBook(roundCase.book), roundCase.idea);
     }
 
-    const id = slugSchema.parse(file.slice(0, -PROMPT_SUFFIX.length));
-    const template = await readFile(join(source, file), "utf8");
-
-    for (const suiteCase of suite.cases) {
-      fillImagePrompt(template, promptBook(suiteCase), suiteCase.idea);
-    }
-
-    prompts.push({ id, file: `prompts/${file}`, sha256: sha256(template) });
+    prompts.push(promptEntry(file, IMAGE_PROMPT_SUFFIX, template));
   }
 
   if (prompts.length === 0) {
-    throw new Error(`${source} has no *${PROMPT_SUFFIX} prompt templates`);
+    throw new Error(`No *${IMAGE_PROMPT_SUFFIX} prompt templates were given`);
   }
 
-  return prompts;
+  await writeFile(join(round, "cases.yaml"), stringify({ cases }));
+
+  return { kind: "image", prompts };
 }
 
-async function loadPromptTemplates(
+async function describeIdeaRound(
+  round: string,
+  files: string[],
+  suite: Suite,
+): Promise<Record<string, unknown>> {
+  const imageFiles = files.filter((name) => name.endsWith(IMAGE_PROMPT_SUFFIX));
+
+  if (imageFiles.length !== 1 || !imageFiles[0]) {
+    throw new Error(
+      `An idea round needs exactly one *${IMAGE_PROMPT_SUFFIX} image prompt`,
+    );
+  }
+
+  const books = [
+    ...new Map(
+      suite.cases.map((suiteCase) => [
+        suiteCase.book.slug,
+        bookIdentity(suiteCase.book),
+      ]),
+    ).values(),
+  ];
+  const imageTemplate = await readFile(
+    join(round, "prompts", imageFiles[0]),
+    "utf8",
+  );
+  // New ideas have the same fields as suite ideas, so suite ideas check it.
+  for (const suiteCase of suite.cases) {
+    fillImagePrompt(imageTemplate, promptBook(suiteCase.book), suiteCase.idea);
+  }
+
+  const prompts: RoundPrompt[] = [];
+
+  for (const file of files.filter((name) =>
+    name.endsWith(IDEAS_PROMPT_SUFFIX),
+  )) {
+    const template = await readFile(join(round, "prompts", file), "utf8");
+
+    for (const book of books) {
+      fillIdeasPrompt(template, { ...book, count: IDEAS_PER_BOOK });
+    }
+
+    prompts.push(promptEntry(file, IDEAS_PROMPT_SUFFIX, template));
+  }
+
+  return {
+    kind: "idea",
+    prompts,
+    image_prompt: promptEntry(
+      imageFiles[0],
+      IMAGE_PROMPT_SUFFIX,
+      imageTemplate,
+    ),
+    books,
+    ideas_per_book: IDEAS_PER_BOOK,
+  };
+}
+
+function promptEntry(
+  file: string,
+  suffix: string,
+  template: string,
+): RoundPrompt {
+  return {
+    id: slugSchema.parse(file.slice(0, -suffix.length)),
+    file: `prompts/${file}`,
+    sha256: sha256(template),
+  };
+}
+
+function bookIdentity(book: BookIdentity): BookIdentity {
+  return { slug: book.slug, title: book.title, author: book.author };
+}
+
+const caseSnapshotSchema = z.strictObject({
+  cases: z.array(roundCaseSchema),
+});
+
+async function loadCaseSnapshot(
+  round: string,
+  roundFile: RoundFile,
+  suiteDirectory: string | undefined,
+): Promise<RoundCase[]> {
+  const path = join(round, "cases.yaml");
+
+  try {
+    return caseSnapshotSchema.parse(parse(await readFile(path, "utf8"))).cases;
+  } catch (error) {
+    if (!isMissing(error)) {
+      throw error;
+    }
+  }
+
+  // Rounds created before snapshots listed cases by ID only; recover each
+  // idea from the suite (or its retired cases) and save the snapshot.
+  const legacy = z
+    .array(
+      z.looseObject({
+        book: slugSchema,
+        book_title: z.string(),
+        idea: slugSchema,
+      }),
+    )
+    .parse(roundFile.cases);
+  const cases: RoundCase[] = [];
+
+  for (const entry of legacy) {
+    const found = await findCaseIdea({
+      book: entry.book,
+      idea: entry.idea,
+      ...(suiteDirectory ? { directory: suiteDirectory } : {}),
+    });
+    cases.push({ book: found.book, idea: found.idea });
+  }
+
+  await writeFile(path, stringify({ cases }));
+
+  return cases;
+}
+
+async function loadImageTemplates(
   round: string,
   roundFile: RoundFile,
 ): Promise<Map<string, string>> {
   const templates = new Map<string, string>();
 
-  for (const prompt of roundFile.prompts) {
-    const template = await readFile(join(round, prompt.file), "utf8");
+  if (roundFile.kind === "idea") {
+    const entry = roundFile.image_prompt;
 
-    if (sha256(template) !== prompt.sha256) {
-      throw new Error(`${prompt.file} changed after the round was created`);
+    if (!entry) {
+      throw new Error("Idea round is missing its image prompt");
     }
 
-    templates.set(prompt.id, template);
+    const template = await readVerified(round, entry);
+
+    for (const prompt of roundFile.prompts) {
+      templates.set(prompt.id, template);
+    }
+
+    return templates;
+  }
+
+  for (const prompt of roundFile.prompts) {
+    templates.set(prompt.id, await readVerified(round, prompt));
   }
 
   return templates;
 }
 
-interface ImageJob {
-  promptId: string;
-  suiteCase: SuiteCase;
-  directory: string;
+export async function readVerified(
+  round: string,
+  entry: RoundPrompt,
+): Promise<string> {
+  const template = await readFile(join(round, entry.file), "utf8");
+
+  if (sha256(template) !== entry.sha256) {
+    throw new Error(`${entry.file} changed after the round was created`);
+  }
+
+  return template;
 }
 
-// Everything not yet done, plus explicit retries.
-async function pendingJobs(
+const ideasFileSchema = z.looseObject({
+  status: z.enum(["done", "failed"]),
+  ideas: z.array(ideaSchema).optional(),
+  error: z.string().optional(),
+});
+
+function ideasFilePath(round: string, promptId: string, book: string): string {
+  return join(round, "ideas", promptId, `${book}.yaml`);
+}
+
+async function readIdeasFile(
+  path: string,
+): Promise<z.infer<typeof ideasFileSchema> | null> {
+  try {
+    return ideasFileSchema.parse(parse(await readFile(path, "utf8")));
+  } catch (error) {
+    if (isMissing(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+// Idea rounds: each ideas template writes ideas for each book, in parallel.
+// Failed or missing sets are written again on the next run.
+async function writeMissingIdeas(
   round: string,
   roundFile: RoundFile,
-  suite: Suite,
-  retry: string[],
-): Promise<ImageJob[]> {
-  const jobs: ImageJob[] = [];
-  const known = new Set<string>();
+  args: RunRoundArgs,
+): Promise<void> {
+  const tasks: { prompt: RoundPrompt; book: BookIdentity }[] = [];
 
   for (const prompt of roundFile.prompts) {
-    for (const suiteCase of suite.cases) {
-      const key = `${prompt.id}/${suiteCase.id}`;
-      const directory = imageDirectory(round, prompt.id, suiteCase);
-      const result = await readImageResult(directory);
-      known.add(key);
+    for (const book of roundFile.books ?? []) {
+      const existing = await readIdeasFile(
+        ideasFilePath(round, prompt.id, book.slug),
+      );
 
-      if (result?.status === "done" && !retry.includes(key)) {
-        continue;
+      if (existing?.status !== "done") {
+        tasks.push({ prompt, book });
       }
-
-      jobs.push({ promptId: prompt.id, suiteCase, directory });
     }
   }
 
-  for (const key of retry) {
+  if (tasks.length > 0) {
+    args.onProgress?.(`Writing ${String(tasks.length)} idea sets`);
+  }
+
+  await runPool(tasks, args.concurrency, async ({ prompt, book }) => {
+    const path = ideasFilePath(round, prompt.id, book.slug);
+    const template = await readVerified(round, prompt);
+    let record: Record<string, unknown>;
+
+    try {
+      const ideas = await generateIdeas({
+        prompt: fillIdeasPrompt(template, { ...book, count: IDEAS_PER_BOOK }),
+        count: IDEAS_PER_BOOK,
+        ...(args.generateIdeas ? { generate: args.generateIdeas } : {}),
+        ...(args.signal ? { signal: args.signal } : {}),
+      });
+      record = {
+        status: "done",
+        generated_at: new Date().toISOString(),
+        ideas,
+      };
+    } catch (error) {
+      if (args.signal?.aborted) {
+        throw error;
+      }
+
+      record = {
+        status: "failed",
+        generated_at: new Date().toISOString(),
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+
+    await mkdir(join(round, "ideas", prompt.id), { recursive: true });
+    await writeFile(path, stringify(record));
+    args.onProgress?.(
+      `${prompt.id}/${book.slug} ideas: ${String(record.status)}`,
+    );
+  });
+}
+
+async function loadIdeaRoundItems(
+  round: string,
+  roundFile: RoundFile,
+): Promise<RoundItem[]> {
+  const items: RoundItem[] = [];
+
+  for (const book of roundFile.books ?? []) {
+    for (let slot = 0; slot < IDEAS_PER_BOOK; slot++) {
+      for (const prompt of roundFile.prompts) {
+        const record = await readIdeasFile(
+          ideasFilePath(round, prompt.id, book.slug),
+        );
+        const idea = record?.ideas?.[slot] ?? null;
+        const rowKey = `${book.slug}#${String(slot + 1)}`;
+        let ideasError: string | null = null;
+
+        if (record?.status === "failed") {
+          ideasError = record.error ?? "Idea writing failed";
+        }
+
+        if (!idea) {
+          items.push({
+            key: `${prompt.id}/${rowKey}`,
+            promptId: prompt.id,
+            rowKey,
+            book,
+            idea: null,
+            ideasError,
+            directory: join(
+              round,
+              "images",
+              prompt.id,
+              book.slug,
+              `slot-${String(slot + 1)}`,
+            ),
+          });
+          continue;
+        }
+
+        items.push({
+          key: `${prompt.id}/${book.slug}/${idea.id}`,
+          promptId: prompt.id,
+          rowKey,
+          book,
+          idea,
+          ideasError: null,
+          directory: join(round, "images", prompt.id, book.slug, idea.id),
+        });
+      }
+    }
+  }
+
+  return items;
+}
+
+// Everything not yet done, plus explicit retries, limited by `only`.
+async function pendingJobs(
+  items: RoundItem[],
+  args: RunRoundArgs,
+): Promise<RoundItem[]> {
+  const retry = args.retry ?? [];
+  const only = args.only;
+  const known = new Set(items.map((item) => item.key));
+
+  for (const key of [...retry, ...(only ?? [])]) {
     if (!known.has(key)) {
       throw new Error(`Unknown image ${key}; use <prompt>/<book>/<idea>`);
     }
+  }
+
+  const jobs: RoundItem[] = [];
+
+  for (const item of items) {
+    if (!item.idea) {
+      continue;
+    }
+
+    if (only && !only.includes(item.key)) {
+      continue;
+    }
+
+    const result = await readImageResult(item.directory);
+
+    if (result?.status === "done" && !retry.includes(item.key)) {
+      continue;
+    }
+
+    jobs.push(item);
   }
 
   return jobs;
@@ -426,40 +759,66 @@ async function pendingJobs(
 
 interface RunImageArgs {
   args: RunRoundArgs;
-  round: string;
-  job: ImageJob;
+  item: RoundItem;
   template: string;
-  glyphs: BookGlyphs;
-  target: Awaited<ReturnType<typeof resolveOutputTarget>>;
+  glyphs: BookGlyphs | undefined;
+  target: OutputTarget;
 }
 
-async function runImage(input: RunImageArgs): Promise<ImageResult> {
-  const { args, job } = input;
-  const attempt = (await countAttempts(job.directory)) + 1;
+// Generates one image under its own lock, so several retries of different
+// images can run at once. Returns null if the image is already being made.
+async function runImage(input: RunImageArgs): Promise<ImageResult | null> {
+  const { item } = input;
+  const idea = item.idea;
+
+  if (!idea || !input.glyphs) {
+    throw new Error(`Image ${item.key} has no idea or book text`);
+  }
+
+  const lock = join(item.directory, ".lock");
+  await mkdir(item.directory, { recursive: true });
+
+  try {
+    await mkdir(lock);
+  } catch {
+    return null;
+  }
+
+  try {
+    return await generateImage({ ...input, idea, glyphs: input.glyphs });
+  } finally {
+    await rm(lock, { recursive: true, force: true });
+  }
+}
+
+interface GenerateImageArgs extends RunImageArgs {
+  idea: Idea;
+  glyphs: BookGlyphs;
+}
+
+async function generateImage(input: GenerateImageArgs): Promise<ImageResult> {
+  const { args, item, idea } = input;
+  const attempt = (await countAttempts(item.directory)) + 1;
   const attemptName = `attempt-${String(attempt)}`;
-  const attemptDirectory = join(job.directory, attemptName);
+  const attemptDirectory = join(item.directory, attemptName);
   const startedAt = new Date();
 
   const request: ImagesRequest = imagesRequestSchema.parse({
-    title: job.suiteCase.book.title,
-    author: job.suiteCase.book.author,
-    slug: job.suiteCase.book.slug,
+    title: item.book.title,
+    author: item.book.author,
+    slug: item.book.slug,
     outputRoot: args.outputRoot,
     timeoutSeconds: args.timeoutSeconds,
     size: IMAGE_SIZE,
     alphaThreshold: ALPHA_THRESHOLD,
   });
-  const prompt = fillImagePrompt(
-    input.template,
-    promptBook(job.suiteCase),
-    job.suiteCase.idea,
-  );
+  const prompt = fillImagePrompt(input.template, promptBook(item.book), idea);
 
   const base = {
     schema_version: 1,
-    prompt_id: job.promptId,
-    book: job.suiteCase.book.slug,
-    idea: job.suiteCase.idea.id,
+    prompt_id: item.promptId,
+    book: item.book.slug,
+    idea: idea.id,
     attempt,
     started_at: startedAt.toISOString(),
   };
@@ -467,16 +826,11 @@ async function runImage(input: RunImageArgs): Promise<ImageResult> {
   let result: Record<string, unknown>;
 
   try {
-    const candidate = await generateCandidate(
-      request,
-      job.suiteCase.idea,
-      attemptDirectory,
-      {
-        prompt,
-        ...(args.generate ? { generate: args.generate } : {}),
-        ...(args.signal ? { signal: args.signal } : {}),
-      },
-    );
+    const candidate = await generateCandidate(request, idea, attemptDirectory, {
+      prompt,
+      ...(args.generate ? { generate: args.generate } : {}),
+      ...(args.signal ? { signal: args.signal } : {}),
+    });
     const master = candidate.processed.png;
     await writeFile(join(attemptDirectory, "master.png"), master);
 
@@ -528,20 +882,19 @@ async function runImage(input: RunImageArgs): Promise<ImageResult> {
   }
 
   // Write then rename, so readers never see a partial result.
-  const temporary = join(job.directory, "result.yaml.tmp");
-  await mkdir(job.directory, { recursive: true });
+  const temporary = join(item.directory, "result.yaml.tmp");
   await writeFile(temporary, stringify(result));
-  await rename(temporary, join(job.directory, "result.yaml"));
+  await rename(temporary, join(item.directory, "result.yaml"));
 
   return imageResultSchema.parse(result);
 }
 
-function promptBook(suiteCase: SuiteCase): ImagePromptBook {
-  return {
-    title: suiteCase.book.title,
-    author: suiteCase.book.author,
-    size: IMAGE_SIZE,
-  };
+function promptBook(book: BookIdentity): {
+  title: string;
+  author: string;
+  size: typeof IMAGE_SIZE;
+} {
+  return { title: book.title, author: book.author, size: IMAGE_SIZE };
 }
 
 async function countAttempts(directory: string): Promise<number> {
@@ -568,7 +921,7 @@ async function decodeRgba(png: Buffer): Promise<SourceImage> {
   return { width: info.width, height: info.height, rgba: data };
 }
 
-async function runPool<T>(
+export async function runPool<T>(
   items: T[],
   concurrency: number,
   worker: (item: T) => Promise<void>,
@@ -598,7 +951,7 @@ function secondsSince(start: Date): number {
   return Math.round((Date.now() - start.getTime()) / 1000);
 }
 
-function sha256(input: string | Buffer): string {
+export function sha256(input: string | Buffer): string {
   return createHash("sha256").update(input).digest("hex");
 }
 

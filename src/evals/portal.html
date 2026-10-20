@@ -6,31 +6,31 @@
     <title>Prompt Rounds</title>
     <style>
       :root {
-        --bg: #f6f5f2;
+        --bg: #f4f3ef;
         --surface: #ffffff;
         --text: #1d1d1b;
         --muted: #6b6a66;
-        --line: #dedcd6;
+        --line: #dcdad3;
         --accent: #2b5d8a;
-        --good: #2f7a4b;
-        --good-bg: #e3f1e8;
+        --accent-text: #ffffff;
         --bad: #a3392f;
         --bad-bg: #f7e4e1;
         --star: #c98a12;
+        --select: #2b5d8a;
       }
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #161615;
-          --surface: #212120;
+          --bg: #141413;
+          --surface: #1f1f1e;
           --text: #ecebe7;
           --muted: #9b9a95;
-          --line: #3a3936;
+          --line: #363532;
           --accent: #7fb0dc;
-          --good: #7fcf9b;
-          --good-bg: #1f3427;
+          --accent-text: #10202e;
           --bad: #f09a8f;
           --bad-bg: #3b2320;
           --star: #f0b84a;
+          --select: #7fb0dc;
         }
       }
       * {
@@ -44,164 +44,335 @@
           14px/1.4 system-ui,
           sans-serif;
       }
+      button,
+      select,
+      textarea,
+      input {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .primary {
+        background: var(--accent);
+        color: var(--accent-text);
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        padding: 5px 12px;
+      }
+      .quiet {
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 10px;
+      }
       header {
         position: sticky;
         top: 0;
-        z-index: 2;
+        z-index: 3;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 15px;
+      }
+      header select {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 3px 6px;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .stats b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .keys {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .wrap {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 12px 16px 48px;
+      }
+      .tasks {
+        display: grid;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+      .task {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .task.running {
+        border-color: var(--accent);
+      }
+      .task.failed {
+        border-color: var(--bad);
+        background: var(--bad-bg);
+      }
+      .task .what {
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .task .detail {
+        color: var(--muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+      }
+      .task.failed .detail {
+        color: var(--bad);
+        white-space: normal;
+      }
+      .panel {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .panel[hidden] {
+        display: none;
+      }
+      .panel .options {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
         align-items: center;
-        padding: 10px 16px;
-        background: var(--surface);
-        border-bottom: 1px solid var(--line);
       }
-      h1 {
-        margin: 0;
-        font-size: 16px;
-      }
-      select,
-      textarea,
-      button {
-        font: inherit;
-        color: inherit;
-      }
-      select {
-        background: var(--surface);
+      .panel textarea {
+        width: 100%;
+        min-height: 54px;
+        resize: vertical;
+        background: var(--bg);
         border: 1px solid var(--line);
         border-radius: 6px;
-        padding: 4px 6px;
+        padding: 6px 8px;
       }
-      .summary {
+      details.notes {
+        margin-bottom: 12px;
+      }
+      details.notes summary {
+        cursor: pointer;
         color: var(--muted);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
       }
-      main {
-        padding: 16px;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      details.prompts {
-        margin-bottom: 16px;
-      }
-      details.prompts pre {
+      details.notes pre {
         white-space: pre-wrap;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 10px;
         font-size: 12px;
-        max-height: 320px;
+        max-height: 360px;
         overflow: auto;
-      }
-      h2 {
-        font-size: 15px;
-        margin: 22px 0 8px;
-      }
-      h2 small {
-        color: var(--muted);
-        font-weight: normal;
       }
       .row {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        grid-template-columns: 240px 1fr;
         gap: 12px;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
       }
-      .card {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      .row-info h2 {
+        font-size: 15px;
+        margin: 0 0 2px;
       }
-      .card .label {
-        display: flex;
-        justify-content: space-between;
+      .row-info .book {
         color: var(--muted);
         font-size: 12px;
+        margin-bottom: 6px;
       }
-      .card .label b {
+      .composition {
+        font-size: 12px;
+        color: var(--muted);
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        cursor: pointer;
+        margin: 0 0 8px;
+      }
+      .composition.open {
+        display: block;
+      }
+      .row-info .retired {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .cells {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+      }
+      .cell {
+        background: var(--surface);
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+        display: grid;
+        gap: 6px;
+        align-content: start;
+        outline: none;
+      }
+      .cell.selected {
+        border-color: var(--select);
+      }
+      .cell-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .cell-head .letter {
+        font-weight: 700;
         color: var(--text);
+        font-size: 14px;
       }
-      .poster {
+      .cell-head .regen {
+        margin-left: auto;
+        padding: 1px 8px;
+        font-size: 12px;
+      }
+      .cell .idea-name {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .pair figure {
+        margin: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .pair figcaption {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+      }
+      .pair img {
         width: 100%;
         aspect-ratio: 2 / 3;
         object-fit: contain;
-        background: #fff;
         border-radius: 4px;
         cursor: zoom-in;
-        border: 1px solid var(--line);
+        background: #fff;
+      }
+      .pair img.source {
+        /* Checkerboard so transparent areas read as empty. */
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, #e6e6e6 25%, transparent 25%),
+          linear-gradient(-45deg, #e6e6e6 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #e6e6e6 75%),
+          linear-gradient(-45deg, transparent 75%, #e6e6e6 75%);
+        background-size: 12px 12px;
+        background-position:
+          0 0,
+          0 6px,
+          6px -6px,
+          -6px 0;
       }
       .placeholder {
-        aspect-ratio: 2 / 3;
+        aspect-ratio: 4 / 3;
         display: grid;
         place-items: center;
         text-align: center;
-        padding: 12px;
+        padding: 10px;
         color: var(--muted);
         border: 1px dashed var(--line);
-        border-radius: 4px;
+        border-radius: 6px;
+        font-size: 13px;
       }
       .placeholder.failed {
         color: var(--bad);
       }
+      .rate {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 6px;
+      }
+      .stars {
+        margin-right: 4px;
+      }
       .stars button {
         background: none;
         border: none;
-        font-size: 22px;
-        padding: 0 2px;
-        cursor: pointer;
+        font-size: 20px;
+        line-height: 1;
+        padding: 0 1px;
         color: var(--line);
       }
       .stars button.on {
         color: var(--star);
       }
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
       .tag {
         border: 1px solid var(--line);
         background: none;
         border-radius: 999px;
-        padding: 1px 8px;
+        padding: 0 8px;
         font-size: 12px;
-        cursor: pointer;
       }
-      .tag.good.on {
-        background: var(--good-bg);
-        border-color: var(--good);
-        color: var(--good);
-      }
-      .tag.bad.on {
+      .tag.on {
         background: var(--bad-bg);
         border-color: var(--bad);
         color: var(--bad);
       }
-      textarea {
+      .note {
         width: 100%;
-        min-height: 52px;
-        resize: vertical;
         background: var(--bg);
         border: 1px solid var(--line);
         border-radius: 6px;
-        padding: 6px;
+        padding: 4px 8px;
+        resize: vertical;
+        min-height: 30px;
+        height: 30px;
       }
-      .status {
-        font-size: 12px;
+      .saved {
+        font-size: 11px;
         color: var(--muted);
-        min-height: 16px;
+        min-height: 14px;
       }
       .overlay {
         position: fixed;
         inset: 0;
         z-index: 5;
-        background: rgb(0 0 0 / 0.85);
+        background: rgb(0 0 0 / 0.88);
         display: none;
         flex-direction: column;
         align-items: center;
@@ -213,6 +384,7 @@
       }
       .overlay .bar {
         display: flex;
+        flex-wrap: wrap;
         gap: 6px;
       }
       .overlay .bar button {
@@ -221,7 +393,6 @@
         border: 1px solid #555;
         border-radius: 6px;
         padding: 4px 10px;
-        cursor: pointer;
       }
       .overlay .bar button.on {
         background: #fff;
@@ -242,74 +413,19 @@
         max-width: none;
         max-height: none;
       }
-      .panel {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 12px 16px 0;
-        display: grid;
-        gap: 8px;
-      }
-      .job {
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px solid var(--line);
-        background: var(--surface);
-      }
-      .job.busy {
-        border-color: var(--accent);
-      }
-      .job.failed {
-        border-color: var(--bad);
-        color: var(--bad);
-      }
-      .next {
-        display: grid;
-        gap: 8px;
-        padding: 10px 12px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--surface);
-      }
-      .next .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-      }
-      .primary,
-      .secondary {
-        border-radius: 6px;
-        padding: 6px 12px;
-        cursor: pointer;
-        border: 1px solid var(--accent);
-      }
-      .primary {
-        background: var(--accent);
-        color: var(--surface);
-      }
-      .secondary {
-        background: none;
-        color: var(--accent);
-      }
-      button:disabled {
-        opacity: 0.5;
-        cursor: default;
-      }
-      h2 .replace {
-        margin-left: 8px;
-        font-size: 12px;
-        padding: 2px 8px;
-      }
-      h2 .retired {
-        margin-left: 8px;
-        font-size: 12px;
-        color: var(--muted);
-        font-weight: normal;
-      }
       .empty {
         color: var(--muted);
         padding: 40px 0;
         text-align: center;
+      }
+      @media (max-width: 720px) {
+        .row,
+        .cells {
+          grid-template-columns: 1fr;
+        }
+        .keys {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -317,10 +433,52 @@
     <header>
       <h1>Prompt rounds</h1>
       <select id="round" aria-label="Round"></select>
-      <div class="summary" id="summary"></div>
+      <div class="stats" id="stats"></div>
+      <div class="spacer"></div>
+      <span class="keys">Click a card · 1–5 stars · arrows move</span>
+      <button type="button" class="quiet" id="retry" hidden>
+        Retry failed
+      </button>
+      <button type="button" class="primary" id="next-toggle">
+        Next round…
+      </button>
     </header>
-    <div class="panel" id="panel"></div>
-    <main id="main"><p class="empty">Loading…</p></main>
+    <div class="wrap">
+      <div class="tasks" id="tasks"></div>
+      <section class="panel" id="next" hidden>
+        <div class="options">
+          <label>
+            <input type="radio" name="kind" value="image" checked />
+            Improve the image prompt
+          </label>
+          <label>
+            <input type="radio" name="kind" value="idea" />
+            Improve the ideas prompt
+          </label>
+          <label>
+            <select id="count" aria-label="New prompts">
+              <option value="1">1 new prompt</option>
+              <option value="2" selected>2 new prompts</option>
+              <option value="3">3 new prompts</option>
+              <option value="4">4 new prompts</option>
+            </select>
+            + the best so far
+          </label>
+        </div>
+        <textarea
+          id="direction"
+          aria-label="Direction for the prompt agent"
+          placeholder="Optional direction for the prompt agent, e.g. focus on clean edges; stop adding detail"
+        ></textarea>
+        <div>
+          <button type="button" class="primary" id="start">
+            Write &amp; run next round
+          </button>
+        </div>
+      </section>
+      <details class="notes" id="notes"></details>
+      <main id="main"><p class="empty">Loading…</p></main>
+    </div>
     <div class="overlay" id="overlay">
       <div class="bar" id="overlay-bar"></div>
       <div class="view" id="overlay-view"></div>
@@ -332,19 +490,15 @@
         round: null,
         data: null,
         suite: [],
-        job: null,
-        timer: null,
-        jobTimer: null,
-        direction: "",
-        newPrompts: 2,
+        tasks: [],
+        selected: null,
       };
-      const main = document.getElementById("main");
-      const roundSelect = document.getElementById("round");
+      const $ = (id) => document.getElementById(id);
 
       function el(tag, attributes = {}, children = []) {
         const node = document.createElement(tag);
         for (const [key, value] of Object.entries(attributes)) {
-          if (value === null || value === undefined) {
+          if (value === null || value === undefined || value === false) {
             continue;
           }
           if (key === "text") {
@@ -352,26 +506,39 @@
           } else if (key.startsWith("on")) {
             node.addEventListener(key.slice(2), value);
           } else {
-            node.setAttribute(key, value);
+            node.setAttribute(key, value === true ? "" : value);
           }
         }
-        for (const child of children) {
-          node.append(child);
-        }
+        node.append(...children.filter(Boolean));
         return node;
       }
 
-      async function loadRounds() {
-        state.rounds = await (await fetch("/api/rounds")).json();
-        roundSelect.replaceChildren(
+      async function api(path, body) {
+        const options = {};
+        if (body) {
+          options.method = "POST";
+          options.headers = { "content-type": "application/json" };
+          options.body = JSON.stringify(body);
+        }
+        const response = await fetch(path, options);
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error);
+        }
+        return result;
+      }
+
+      // ---- Loading ----
+
+      async function loadRounds(preferred) {
+        state.rounds = await api("/api/rounds");
+        $("round").replaceChildren(
           ...state.rounds.map((id) => el("option", { value: id, text: id })),
         );
-        const fromHash = decodeURIComponent(location.hash.slice(1));
-        state.round = state.rounds.includes(fromHash)
-          ? fromHash
-          : state.rounds[0];
+        const wanted = preferred ?? decodeURIComponent(location.hash.slice(1));
+        state.round = state.rounds.includes(wanted) ? wanted : state.rounds[0];
         if (!state.round) {
-          main.replaceChildren(
+          $("main").replaceChildren(
             el("p", {
               class: "empty",
               text: "No rounds yet. Start one with bookgen eval run.",
@@ -379,173 +546,402 @@
           );
           return;
         }
-        roundSelect.value = state.round;
+        $("round").value = state.round;
         await loadRound();
       }
 
       async function loadRound() {
         location.hash = state.round;
-        const response = await fetch(`/api/rounds/${state.round}`);
-        state.data = await response.json();
-        state.suite = await (await fetch("/api/suite")).json();
+        const [data, suite] = await Promise.all([
+          api(`/api/rounds/${state.round}`),
+          api("/api/suite"),
+        ]);
+        state.data = data;
+        state.suite = suite;
         render();
-        renderPanel();
-        clearTimeout(state.timer);
-        const pending = state.data.images.some(
-          (image) => image.result === null,
-        );
-        if (pending) {
-          state.timer = setTimeout(refresh, 15000);
+      }
+
+      // Reloads results while anything is generating, without disturbing a
+      // note being typed.
+      async function refresh() {
+        const typing = document.activeElement?.classList.contains("note");
+        if (!typing && state.round) {
+          await loadRound();
         }
       }
 
-      // Refreshes results without discarding unsaved notes on screen.
-      async function refresh() {
-        const focused = document.activeElement;
-        if (focused && focused.tagName === "TEXTAREA") {
-          state.timer = setTimeout(refresh, 15000);
+      async function pollTasks() {
+        const wasRunning = state.tasks.some((t) => t.state === "running");
+        try {
+          state.tasks = await api("/api/tasks");
+        } catch {
+          setTimeout(pollTasks, 15000);
           return;
         }
-        await loadRound();
+        renderTasks();
+
+        const running = state.tasks.filter((t) => t.state === "running");
+        const newRound = running.find(
+          (t) => t.round && !state.rounds.includes(t.round),
+        );
+        if (newRound) {
+          await loadRounds(newRound.round);
+        } else if (running.length > 0 || wasRunning) {
+          await refresh();
+        }
+        setTimeout(pollTasks, running.length > 0 ? 4000 : 15000);
       }
 
+      async function startTask(path, body) {
+        try {
+          await api(path, body);
+        } catch (error) {
+          alert(error.message);
+          return;
+        }
+        state.tasks = await api("/api/tasks");
+        renderTasks();
+        render();
+      }
+
+      // ---- Rendering ----
+
       function letterFor(promptId) {
-        const index = state.data.round.prompts.findIndex(
-          (prompt) => prompt.id === promptId,
-        );
+        const index = state.data.prompts.findIndex((p) => p.id === promptId);
         return LETTERS[index] ?? promptId;
       }
 
-      function fileUrl(image, file) {
-        return `/files/${state.round}/${image.directory}/${file}`;
+      function fileUrl(cell, file, width) {
+        const url = `/files/${state.round}/${cell.directory}/${file}`;
+        return width ? `${url}?w=${width}` : url;
       }
 
       function render() {
-        const { round, images, prompts, notes } = state.data;
-        renderSummary();
+        if (!state.data) {
+          return;
+        }
+        renderStats();
+        renderNotes();
+        renderTasks();
+        const rows = new Map();
+        for (const cell of state.data.cells) {
+          if (!rows.has(cell.row)) {
+            rows.set(cell.row, []);
+          }
+          rows.get(cell.row).push(cell);
+        }
+        $("main").replaceChildren(...[...rows.values()].map(renderRow));
+        if (state.selected) {
+          select(state.selected, false);
+        }
+      }
 
-        const promptList = el("details", { class: "prompts" }, [
+      function renderStats() {
+        const cells = state.data.cells;
+        const done = cells.filter((c) => c.result?.status === "done").length;
+        const failed = cells.filter(
+          (c) => c.result?.status === "failed" || c.ideas_error,
+        ).length;
+        const rated = cells.filter((c) => c.feedback?.stars).length;
+        const kind = state.data.round.kind === "idea" ? "Ideas" : "Image";
+        const parts = [
+          el("span", {}, [el("b", { text: kind }), " round"]),
+          el("span", { text: `${done}/${cells.length} done` }),
+          el("span", { text: `${rated} rated` }),
+        ];
+        if (failed) {
+          parts.push(el("span", { text: `${failed} failed` }));
+        }
+        for (const prompt of state.data.prompts) {
+          const stars = cells
+            .filter((c) => c.prompt === prompt.id && c.feedback?.stars)
+            .map((c) => c.feedback.stars);
+          let average = "–";
+          if (stars.length > 0) {
+            average = (stars.reduce((a, b) => a + b, 0) / stars.length).toFixed(
+              1,
+            );
+          }
+          parts.push(
+            el("span", {}, [
+              el("b", { text: letterFor(prompt.id) }),
+              ` ★${average}`,
+            ]),
+          );
+        }
+        $("stats").replaceChildren(...parts);
+        $("retry").hidden = failed === 0;
+      }
+
+      function renderNotes() {
+        const { notes, prompts, image_prompt: imagePrompt } = state.data;
+        const blocks = [
           el("summary", {
-            text: `Prompts (${prompts.length}) — labels are shown as letters to keep review blind`,
+            text: "Agent notes and prompts (cards show letters to keep rating blind)",
           }),
-          ...(notes ? [el("pre", { text: notes })] : []),
-          ...prompts.map((prompt) =>
+        ];
+        if (notes) {
+          blocks.push(el("pre", { text: notes }));
+        }
+        for (const prompt of prompts) {
+          blocks.push(
             el("details", {}, [
-              el("summary", {
-                text: `${letterFor(prompt.id)} · ${prompt.id}`,
-              }),
+              el("summary", { text: `${letterFor(prompt.id)} · ${prompt.id}` }),
               el("pre", { text: prompt.text }),
             ]),
-          ),
-        ]);
-
-        const rows = round.cases.map((entry) => {
-          const cards = images
-            .filter(
-              (image) => image.book === entry.book && image.idea === entry.idea,
-            )
-            .map(card);
-          return el("section", {}, [
-            el("h2", {}, [
-              document.createTextNode(`${entry.name} `),
-              el("small", { text: entry.book_title }),
-              ideaControl(entry),
+          );
+        }
+        if (imagePrompt) {
+          blocks.push(
+            el("details", {}, [
+              el("summary", {
+                text: `Image prompt used for every idea · ${imagePrompt.id}`,
+              }),
+              el("pre", { text: imagePrompt.text }),
             ]),
-            el("div", { class: "row" }, cards),
-          ]);
-        });
-
-        main.replaceChildren(promptList, ...rows);
+          );
+        }
+        const open = $("notes").open;
+        $("notes").replaceChildren(...blocks);
+        $("notes").open = open;
       }
 
-      function renderSummary() {
-        const { round, images } = state.data;
-        const done = images.filter(
-          (image) => image.result?.status === "done",
-        ).length;
-        const failed = images.filter(
-          (image) => image.result?.status === "failed",
-        ).length;
-        const rated = images.filter((image) => image.feedback?.stars).length;
-        const parts = [
-          `${done}/${images.length} done`,
-          ...(failed ? [`${failed} failed`] : []),
-          `${rated} rated`,
-        ];
-        for (const prompt of round.prompts) {
-          const stars = images
-            .filter((image) => image.prompt === prompt.id)
-            .map((image) => image.feedback?.stars)
-            .filter(Boolean);
-          if (stars.length > 0) {
-            const average = stars.reduce((a, b) => a + b, 0) / stars.length;
-            parts.push(`${letterFor(prompt.id)} ★${average.toFixed(1)}`);
-          }
-        }
-        document
-          .getElementById("summary")
-          .replaceChildren(...parts.map((text) => el("span", { text })));
+      function recent(task) {
+        return (
+          task.finished_at && Date.now() - Date.parse(task.finished_at) < 60000
+        );
       }
 
-      function card(image) {
-        const result = image.result;
-        const label = el("div", { class: "label" }, [
-          el("b", { text: letterFor(image.prompt) }),
-          el("span", { text: hints(result) }),
-        ]);
+      function renderTasks() {
+        const icons = { running: "⏳", done: "✓", failed: "✕" };
+        const visible = state.tasks.filter(
+          (t) => t.state !== "done" || recent(t),
+        );
+        $("tasks").replaceChildren(
+          ...visible.slice(0, 8).map((task) =>
+            el("div", { class: `task ${task.state}` }, [
+              el("span", { text: icons[task.state] }),
+              el("span", { class: "what", text: task.label }),
+              el("span", {
+                class: "detail",
+                text: task.error ?? task.message,
+              }),
+            ]),
+          ),
+        );
+        $("start").disabled = state.tasks.some(
+          (t) => t.state === "running" && t.kind === "next-round",
+        );
+      }
 
-        if (!result) {
-          return el("div", { class: "card" }, [
-            label,
-            el("div", { class: "placeholder", text: "Generating…" }),
-          ]);
-        }
+      function running(key) {
+        return state.tasks.some((t) => t.state === "running" && t.key === key);
+      }
 
-        if (result.status === "failed") {
-          return el("div", { class: "card" }, [
-            label,
+      function inSuite(cell) {
+        return state.suite.some(
+          (item) => item.book === cell.book.slug && item.idea === cell.idea?.id,
+        );
+      }
+
+      function renderRow(cells) {
+        const first = cells[0];
+        const info = [];
+
+        if (state.data.round.kind === "idea") {
+          info.push(el("h2", { text: first.book.title }));
+          info.push(
             el("div", {
-              class: "placeholder failed",
-              text: `Failed: ${result.error}`,
+              class: "book",
+              text: `Idea ${first.row.split("#")[1]} from each ideas prompt`,
             }),
-          ]);
+          );
+        } else {
+          info.push(el("h2", { text: first.idea?.name ?? first.row }));
+          info.push(el("div", { class: "book", text: first.book.title }));
+          info.push(composition(first.idea));
+          info.push(ideaControl(first));
         }
 
+        return el("section", { class: "row" }, [
+          el("div", { class: "row-info" }, info),
+          el("div", { class: "cells" }, cells.map(renderCell)),
+        ]);
+      }
+
+      function composition(idea) {
+        if (!idea) {
+          return null;
+        }
+        return el("p", {
+          class: "composition",
+          title: "Click to expand",
+          text: idea.composition,
+          onclick: (event) => event.currentTarget.classList.toggle("open"),
+        });
+      }
+
+      function ideaControl(cell) {
+        if (!cell.idea) {
+          return null;
+        }
+        if (!inSuite(cell)) {
+          return el("div", { class: "retired", text: "Replaced in the suite" });
+        }
+        const replacing = running(`idea:${cell.book.slug}/${cell.idea.id}`);
+        return el("button", {
+          type: "button",
+          class: "quiet",
+          text: replacing ? "Replacing…" : "Replace idea",
+          disabled: replacing,
+          onclick: () => replaceIdea(cell),
+        });
+      }
+
+      function replaceIdea(cell) {
+        const reason = prompt(
+          `Replace "${cell.idea.name}" with a new ${cell.book.title} idea from the next round on.\n\nWhat's wrong with it? (optional)`,
+        );
+        if (reason === null) {
+          return;
+        }
+        startTask("/api/ideas/replace", {
+          book: cell.book.slug,
+          idea: cell.idea.id,
+          reason,
+        });
+      }
+
+      function renderCell(cell) {
+        const result = cell.result;
+        const regenerating = running(`image:${state.round}/${cell.key}`);
+        let regenerate = null;
+        if (cell.idea && result) {
+          regenerate = el("button", {
+            type: "button",
+            class: "quiet regen",
+            title: "Generate a new image for this card",
+            text: regenerating ? "Regenerating…" : "↻ Regenerate",
+            disabled: regenerating,
+            onclick: (event) => {
+              event.stopPropagation();
+              startTask(`/api/rounds/${state.round}/regenerate`, {
+                key: cell.key,
+              });
+            },
+          });
+        }
+        const body = [
+          el("div", { class: "cell-head" }, [
+            el("span", { class: "letter", text: letterFor(cell.prompt) }),
+            el("span", { text: hints(result) }),
+            regenerate,
+          ]),
+        ];
+
+        if (state.data.round.kind === "idea" && cell.idea) {
+          body.push(el("div", { class: "idea-name", text: cell.idea.name }));
+          body.push(composition(cell.idea));
+        }
+
+        let status = null;
+        if (cell.ideas_error) {
+          status = [
+            "placeholder failed",
+            `Idea writing failed: ${cell.ideas_error}`,
+          ];
+        } else if (!result && cell.idea) {
+          status = ["placeholder", "Generating…"];
+        } else if (!result) {
+          status = ["placeholder", "Writing ideas…"];
+        } else if (result.status === "failed") {
+          status = ["placeholder failed", `Failed: ${result.error}`];
+        }
+        if (status) {
+          body.push(el("div", { class: status[0], text: status[1] }));
+          return el("div", { class: "cell" }, body);
+        }
+
+        body.push(
+          el("div", { class: "pair" }, [
+            figure(cell, "Source", result.files.master, "source", 2),
+            figure(cell, "Poster", result.files.preview, "", 0),
+          ]),
+        );
+        body.push(...ratingControls(cell));
+
+        return el(
+          "div",
+          {
+            class: "cell",
+            tabindex: "0",
+            "data-key": cell.key,
+            onclick: () => select(cell.key, false),
+          },
+          body,
+        );
+      }
+
+      function figure(cell, caption, file, className, viewIndex) {
+        return el("figure", {}, [
+          el("img", {
+            class: className,
+            loading: "lazy",
+            alt: `${caption} for prompt ${letterFor(cell.prompt)}`,
+            src: fileUrl(cell, file, 480),
+            onclick: () => openOverlay(cell, viewIndex),
+          }),
+          el("figcaption", { text: caption }),
+        ]);
+      }
+
+      function hints(result) {
+        if (result?.status !== "done") {
+          return "";
+        }
+        const parts = [`haze ${result.metrics.native_haze.toFixed(2)}`];
+        if (result.metrics.accent_contact !== null) {
+          parts.push(`accent ${result.metrics.accent_contact.toFixed(2)}`);
+        }
+        return parts.join(" · ");
+      }
+
+      // ---- Rating ----
+
+      function ratingControls(cell) {
         const current = {
-          stars: image.feedback?.stars ?? null,
-          tags: new Set(image.feedback?.tags ?? []),
-          note: image.feedback?.note ?? "",
+          stars: cell.feedback?.stars ?? null,
+          tags: new Set(cell.feedback?.tags ?? []),
+          note: cell.feedback?.note ?? "",
         };
-        const status = el("div", { class: "status" });
-        if (image.feedback && image.feedback.attempt !== result.attempt) {
-          status.textContent = "Rated an earlier attempt";
+        const saved = el("div", { class: "saved" });
+        if (cell.feedback && cell.feedback.attempt !== cell.result.attempt) {
+          saved.textContent = "Rated an earlier attempt";
         }
 
         const save = async () => {
-          status.textContent = "Saving…";
-          const response = await fetch(`/api/rounds/${state.round}/feedback`, {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-              prompt: image.prompt,
-              book: image.book,
-              idea: image.idea,
+          saved.textContent = "Saving…";
+          try {
+            await api(`/api/rounds/${state.round}/feedback`, {
+              prompt: cell.prompt,
+              book: cell.book.slug,
+              idea: cell.idea.id,
               stars: current.stars,
               tags: [...current.tags],
               note: current.note,
-            }),
-          });
-          if (!response.ok) {
-            status.textContent = `Not saved: ${(await response.json()).error}`;
+            });
+          } catch (error) {
+            saved.textContent = `Not saved: ${error.message}`;
             return;
           }
-          status.textContent = "Saved";
-          image.feedback = {
-            ...current,
+          cell.feedback = {
+            stars: current.stars,
             tags: [...current.tags],
-            attempt: result.attempt,
+            note: current.note,
+            attempt: cell.result.attempt,
           };
-          renderSummary();
+          saved.textContent = "Saved";
+          renderStats();
         };
 
         const starButtons = [1, 2, 3, 4, 5].map((value) =>
@@ -553,27 +949,25 @@
             type: "button",
             "aria-label": `${value} stars`,
             text: "★",
-            onclick: () => {
-              current.stars = value;
-              paintStars();
-              save();
-            },
+            onclick: () => setStars(value),
           }),
         );
-        const paintStars = () => {
+        const paint = () => {
           starButtons.forEach((button, index) =>
             button.classList.toggle("on", index < (current.stars ?? 0)),
           );
         };
-        paintStars();
+        const setStars = (value) => {
+          current.stars = value;
+          paint();
+          save();
+        };
+        paint();
 
-        const tagButtons = [
-          ...state.data.tags.good.map((tag) => [tag, "good"]),
-          ...state.data.tags.bad.map((tag) => [tag, "bad"]),
-        ].map(([tag, kind]) => {
+        const tags = state.data.tags.map((tag) => {
           const button = el("button", {
             type: "button",
-            class: `tag ${kind}`,
+            class: current.tags.has(tag) ? "tag on" : "tag",
             text: tag,
             onclick: () => {
               if (current.tags.has(tag)) {
@@ -585,12 +979,13 @@
               save();
             },
           });
-          button.classList.toggle("on", current.tags.has(tag));
           return button;
         });
 
         const note = el("textarea", {
-          placeholder: "What's good / bad?",
+          class: "note",
+          rows: "1",
+          placeholder: "What's good or bad?",
           "aria-label": "Note",
           onchange: (event) => {
             current.note = event.target.value;
@@ -599,241 +994,161 @@
         });
         note.value = current.note;
 
-        return el("div", { class: "card" }, [
-          label,
-          el("img", {
-            class: "poster",
-            loading: "lazy",
-            alt: `Prompt ${letterFor(image.prompt)} poster`,
-            src: fileUrl(image, result.files.preview),
-            onclick: () => openOverlay(image),
-          }),
-          el("div", { class: "stars" }, starButtons),
-          el("div", { class: "tags" }, tagButtons),
+        // Keyboard rating reaches the selected card through this hook.
+        cell.setStars = setStars;
+
+        return [
+          el("div", { class: "rate" }, [
+            el("span", { class: "stars" }, starButtons),
+            ...tags,
+          ]),
           note,
-          status,
-        ]);
-      }
-
-      function hints(result) {
-        if (!result || result.status !== "done") {
-          return "";
-        }
-        const parts = [`haze ${result.metrics.native_haze.toFixed(2)}`];
-        if (result.metrics.accent_contact !== null) {
-          parts.push(`accent ${result.metrics.accent_contact.toFixed(2)}`);
-        }
-        return parts.join(" · ");
-      }
-
-      function openOverlay(image) {
-        const overlay = document.getElementById("overlay");
-        const bar = document.getElementById("overlay-bar");
-        const view = document.getElementById("overlay-view");
-        const views = [
-          ["Poster", image.result.files.preview, false],
-          ["Poster 100%", image.result.files.preview, true],
-          ["Master", image.result.files.master, false],
-          ["Native", image.result.files.native, false],
+          saved,
         ];
-        const show = (index) => {
-          const [, file, full] = views[index];
-          view.replaceChildren(
-            el("img", { src: fileUrl(image, file), class: full ? "full" : "" }),
-          );
-          [...bar.children].forEach((button, buttonIndex) =>
-            button.classList.toggle("on", buttonIndex === index),
-          );
+      }
+
+      function cellNodes() {
+        return [...document.querySelectorAll(".cell[data-key]")];
+      }
+
+      function select(key, scroll) {
+        state.selected = key;
+        for (const node of cellNodes()) {
+          const chosen = node.dataset.key === key;
+          node.classList.toggle("selected", chosen);
+          if (chosen && scroll) {
+            node.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }
+        }
+      }
+
+      function moveSelection(event) {
+        const nodes = cellNodes();
+        if (nodes.length === 0) {
+          return;
+        }
+        event.preventDefault();
+        const perRow = state.data.prompts.length;
+        const steps = {
+          ArrowRight: 1,
+          ArrowLeft: -1,
+          ArrowDown: perRow,
+          ArrowUp: -perRow,
         };
-        bar.replaceChildren(
-          ...views.map(([name], index) =>
+        const index = nodes.findIndex((n) => n.dataset.key === state.selected);
+        let next = 0;
+        if (index >= 0) {
+          next = Math.min(
+            nodes.length - 1,
+            Math.max(0, index + steps[event.key]),
+          );
+        }
+        select(nodes[next].dataset.key, true);
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if ($("overlay").classList.contains("open")) {
+          overlayKeys(event);
+          return;
+        }
+        const tag = document.activeElement?.tagName;
+        if (["TEXTAREA", "INPUT", "SELECT"].includes(tag)) {
+          return;
+        }
+        if (event.key.startsWith("Arrow")) {
+          moveSelection(event);
+          return;
+        }
+        if (/^[1-5]$/.test(event.key) && state.selected) {
+          const cell = state.data.cells.find((c) => c.key === state.selected);
+          cell?.setStars?.(Number(event.key));
+        }
+      });
+
+      // ---- Full-size view ----
+
+      const overlay = { cell: null, index: 0 };
+
+      function views(cell) {
+        return [
+          ["Poster", cell.result.files.preview, false],
+          ["Poster 100%", cell.result.files.preview, true],
+          ["Source", cell.result.files.master, false],
+          ["Native", cell.result.files.native, false],
+        ];
+      }
+
+      function openOverlay(cell, index) {
+        overlay.cell = cell;
+        showView(index);
+        $("overlay").classList.add("open");
+      }
+
+      function showView(index) {
+        const list = views(overlay.cell);
+        overlay.index = (index + list.length) % list.length;
+        const [, file, full] = list[overlay.index];
+        $("overlay-view").replaceChildren(
+          el("img", {
+            src: fileUrl(overlay.cell, file),
+            class: full ? "full" : null,
+          }),
+        );
+        $("overlay-bar").replaceChildren(
+          ...list.map(([name], i) =>
             el("button", {
               type: "button",
+              class: i === overlay.index ? "on" : null,
               text: name,
-              onclick: () => show(index),
+              onclick: () => showView(i),
             }),
           ),
           el("button", {
             type: "button",
             text: "Close (Esc)",
-            onclick: () => overlay.classList.remove("open"),
+            onclick: closeOverlay,
           }),
         );
-        show(0);
-        overlay.classList.add("open");
       }
 
-      function inSuite(entry) {
-        return state.suite.some(
-          (item) => item.book === entry.book && item.idea === entry.idea,
-        );
+      function closeOverlay() {
+        $("overlay").classList.remove("open");
       }
 
-      function ideaControl(entry) {
-        if (!inSuite(entry)) {
-          return el("span", {
-            class: "retired",
-            text: "replaced in the suite",
-          });
-        }
-        return el("button", {
-          type: "button",
-          class: "secondary replace",
-          text: "Replace idea",
-          disabled: state.job?.busy ? "" : null,
-          onclick: () => replaceIdea(entry),
-        });
-      }
-
-      async function replaceIdea(entry) {
-        const reason = window.prompt(
-          `Replace "${entry.name}" with a new ${entry.book_title} idea from the next round on. What's wrong with it? (optional)`,
-        );
-        if (reason === null) {
-          return;
-        }
-        await startJob("/api/ideas/replace", {
-          book: entry.book,
-          idea: entry.idea,
-          reason,
-        });
-      }
-
-      async function startJob(path, body) {
-        const response = await fetch(path, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        const result = await response.json();
-        if (!response.ok) {
-          alert(result.error);
-          return;
-        }
-        state.job = result;
-        renderPanel();
-        render();
-        scheduleStatus();
-      }
-
-      // Follows background jobs; switches to a new round once it exists.
-      async function pollStatus() {
-        const previous = state.job;
-        state.job = await (await fetch("/api/status")).json();
-        const finished = previous?.busy && !state.job.busy;
-        const newRound =
-          state.job.round && !state.rounds.includes(state.job.round);
-        if (newRound) {
-          await loadRounds();
-          if (state.rounds.includes(state.job.round)) {
-            state.round = state.job.round;
-            roundSelect.value = state.round;
-            await loadRound();
-          }
-        } else if (finished && state.round) {
-          await loadRound();
-        }
-        renderPanel();
-        scheduleStatus();
-      }
-
-      function scheduleStatus() {
-        clearTimeout(state.jobTimer);
-        const delay = state.job?.busy ? 4000 : 20000;
-        state.jobTimer = setTimeout(pollStatus, delay);
-      }
-
-      function renderPanel() {
-        const panel = document.getElementById("panel");
-        const job = state.job;
-        const busy = Boolean(job?.busy);
-        let jobText = "Idle";
-        let jobClass = "job";
-        if (busy) {
-          jobText = `Working: ${job.message}`;
-          jobClass = "job busy";
-        } else if (job?.error) {
-          jobText = `Last job failed: ${job.error}`;
-          jobClass = "job failed";
-        } else if (job && job.message !== "Idle") {
-          jobText = job.message;
-        }
-
-        const direction = el("textarea", {
-          placeholder:
-            "Optional direction for the prompt agent, e.g. focus on clean edges; stop adding detail",
-          "aria-label": "Direction for the prompt agent",
-          oninput: (event) => {
-            state.direction = event.target.value;
-          },
-        });
-        direction.value = state.direction;
-
-        const count = el(
-          "select",
-          {
-            "aria-label": "New prompts",
-            onchange: (event) => {
-              state.newPrompts = Number(event.target.value);
-            },
-          },
-          [1, 2, 3, 4].map((value) =>
-            el("option", {
-              value: String(value),
-              text: `${value} new + best so far`,
-            }),
-          ),
-        );
-        count.value = String(state.newPrompts);
-
-        const failed = (state.data?.images ?? []).some(
-          (image) => image.result?.status === "failed",
-        );
-        const actions = [
-          count,
-          el("button", {
-            type: "button",
-            class: "primary",
-            text: "Write & run next round",
-            disabled: busy ? "" : null,
-            onclick: () =>
-              startJob("/api/next", {
-                direction: state.direction,
-                newPrompts: state.newPrompts,
-              }),
-          }),
-        ];
-        if (failed && state.round) {
-          actions.push(
-            el("button", {
-              type: "button",
-              class: "secondary",
-              text: "Retry failed images",
-              disabled: busy ? "" : null,
-              onclick: () => startJob(`/api/rounds/${state.round}/resume`, {}),
-            }),
-          );
-        }
-
-        panel.replaceChildren(
-          el("div", { class: jobClass, role: "status", text: jobText }),
-          el("div", { class: "next" }, [
-            direction,
-            el("div", { class: "actions" }, actions),
-          ]),
-        );
-      }
-
-      document.addEventListener("keydown", (event) => {
+      function overlayKeys(event) {
         if (event.key === "Escape") {
-          document.getElementById("overlay").classList.remove("open");
+          closeOverlay();
+        } else if (event.key === "ArrowRight") {
+          showView(overlay.index + 1);
+        } else if (event.key === "ArrowLeft") {
+          showView(overlay.index - 1);
         }
-      });
-      roundSelect.addEventListener("change", () => {
-        state.round = roundSelect.value;
+      }
+
+      // ---- Controls ----
+
+      $("round").addEventListener("change", () => {
+        state.round = $("round").value;
+        state.selected = null;
         loadRound();
       });
-      loadRounds().then(pollStatus);
+      $("next-toggle").addEventListener("click", () => {
+        $("next").hidden = !$("next").hidden;
+      });
+      $("retry").addEventListener("click", () =>
+        startTask(`/api/rounds/${state.round}/resume`, {}),
+      );
+      $("start").addEventListener("click", () => {
+        const kind = document.querySelector('input[name="kind"]:checked').value;
+        startTask("/api/next", {
+          kind,
+          direction: $("direction").value,
+          newPrompts: Number($("count").value),
+        });
+        $("next").hidden = true;
+      });
+
+      loadRounds().then(pollTasks);
     </script>
   </body>
 </html>

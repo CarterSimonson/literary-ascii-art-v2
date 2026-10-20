@@ -22,19 +22,26 @@ import {
   ART_GENERATION_MODEL,
   ART_GENERATION_REASONING_EFFORT,
 } from "../generation-settings.ts";
+import { fillIdeasPrompt, IDEAS_PROMPT_TEMPLATE } from "../ideas/prompt.ts";
 import { slugSchema } from "../ideas/schema.ts";
-import { fillImagePrompt } from "../images/prompt.ts";
+import { fillImagePrompt, IMAGE_PROMPT_TEMPLATE } from "../images/prompt.ts";
 import { readLatestFeedback, type FeedbackRecord } from "./feedback.ts";
 import {
+  IDEAS_PER_BOOK,
   listRoundIds,
+  loadRoundItems,
   readImageResult,
   readRoundFile,
+  readVerified,
   roundDirectory,
+  sha256,
+  type RoundItem,
+  type RoundKind,
 } from "./round.ts";
 import { loadSuite, type Suite } from "./suite.ts";
 
-// Every template must still pass the idea in and keep the instructions the
-// generation pipeline depends on (native tool, file handoff, JSON response).
+// Every image template must still pass the idea in and keep the instructions
+// the generation pipeline depends on (native tool, file handoff, JSON reply).
 export const REQUIRED_PLACEHOLDERS = [
   "title",
   "author",
@@ -49,6 +56,7 @@ export const REQUIRED_PHRASES = [
   "artwork_colors",
   "review_notes",
 ];
+export const REQUIRED_IDEAS_PLACEHOLDERS = ["book", "count"];
 
 // A prompt needs this many ratings before it can be carried forward as best.
 const MINIMUM_RATINGS_FOR_BEST = 3;
@@ -144,6 +152,9 @@ export const writePromptsWithCodex: PromptWriter = async (input) => {
 
 export interface PlanNextRoundArgs {
   outputRoot: string;
+  // "image" varies the image prompt over the suite ideas; "idea" varies the
+  // ideas prompt and draws every new idea with the best image prompt.
+  kind: RoundKind;
   // Free-text guidance from the user for this round; may be empty.
   direction: string;
   newPrompts: number;
@@ -160,7 +171,7 @@ export interface PlannedRound {
 
 // Reads every round and its feedback, asks the prompt agent for new templates,
 // validates them, and writes the next round's prompt files. The best-rated
-// prompt so far is carried forward unchanged as the control.
+// template of that kind carries forward unchanged as the control.
 export async function planNextRound(
   args: PlanNextRoundArgs,
 ): Promise<PlannedRound> {
@@ -168,17 +179,28 @@ export async function planNextRound(
     ...(args.suiteDirectory ? { directory: args.suiteDirectory } : {}),
     ...(args.registryPath ? { registryPath: args.registryPath } : {}),
   });
-  const history = await loadHistory(args.outputRoot);
+  const history = await loadHistory(args.outputRoot, args.suiteDirectory);
   const latest = history.at(-1);
 
   if (!latest) {
     throw new Error("No rounds yet; run the first round with bookgen eval run");
   }
 
-  const best = bestPrompt(history);
-
-  if (!best) {
+  if (!history.some((round) => round.images.some((image) => image.feedback))) {
     throw new Error("Rate some images before starting the next round");
+  }
+
+  const bestImage = bestTemplate(history, "image") ?? committedImagePrompt();
+
+  if (args.kind === "image" && bestImage.stars.length === 0) {
+    throw new Error("Rate some images before starting the next round");
+  }
+
+  const bestIdeas = bestTemplate(history, "idea") ?? committedIdeasPrompt();
+  let control = bestImage;
+
+  if (args.kind === "idea") {
+    control = bestIdeas;
   }
 
   const roundId = nextRoundId(history);
@@ -189,7 +211,7 @@ export async function planNextRound(
   await rm(agentDirectory, { recursive: true, force: true });
   await mkdir(join(agentDirectory, "thumbnails"), { recursive: true });
 
-  const text = writerBrief({ history, best, args });
+  const text = writerBrief({ history, control, bestImage, args });
   const thumbnails = await writeThumbnails(latest, agentDirectory);
   const input: UserInput[] = [{ type: "text", text }];
 
@@ -218,48 +240,72 @@ export async function planNextRound(
   );
 
   const response = writerResponseSchema.parse(JSON.parse(output.response));
-  validatePrompts(response, best.id, suite);
+
+  if (args.kind === "idea") {
+    validateIdeasPrompts(response, control.id, suite);
+  } else {
+    validateImagePrompts(response, control.id, suite);
+  }
 
   const promptsDirectory = join(agentDirectory, "prompts");
   await mkdir(promptsDirectory);
+
+  let suffix = ".prompt.md";
+
+  if (args.kind === "idea") {
+    suffix = ".ideas.md";
+    await writeFile(
+      join(promptsDirectory, `${bestImage.id}.prompt.md`),
+      bestImage.template,
+    );
+  }
+
   await writeFile(
-    join(promptsDirectory, `${best.id}.prompt.md`),
-    best.template,
+    join(promptsDirectory, `${control.id}${suffix}`),
+    control.template,
   );
 
   for (const prompt of response.prompts) {
     await writeFile(
-      join(promptsDirectory, `${prompt.id}.prompt.md`),
+      join(promptsDirectory, `${prompt.id}${suffix}`),
       prompt.template,
     );
   }
 
   await writeFile(
     join(promptsDirectory, "notes.md"),
-    roundNotes({ roundId, best, response, direction: args.direction }),
+    roundNotes({ roundId, control, bestImage, response, args }),
   );
 
   return { roundId, promptsDirectory };
 }
 
+interface Template {
+  id: string;
+  sha256: string;
+  template: string;
+}
+
 interface ImageRecord {
-  prompt: string;
-  book: string;
-  idea: string;
-  name: string;
+  item: RoundItem;
   result: Record<string, unknown> | null;
   feedback: FeedbackRecord | null;
-  directory: string;
 }
 
 interface RoundHistory {
   roundId: string;
+  kind: RoundKind;
   notes: string;
-  prompts: { id: string; sha256: string; template: string }[];
+  // The varied templates: image prompts or ideas prompts, by kind.
+  prompts: Template[];
+  imagePrompt: Template | null;
   images: ImageRecord[];
 }
 
-async function loadHistory(outputRoot: string): Promise<RoundHistory[]> {
+async function loadHistory(
+  outputRoot: string,
+  suiteDirectory: string | undefined,
+): Promise<RoundHistory[]> {
   const history: RoundHistory[] = [];
 
   for (const roundId of await listRoundIds(outputRoot)) {
@@ -267,46 +313,44 @@ async function loadHistory(outputRoot: string): Promise<RoundHistory[]> {
     const roundFile = await readRoundFile(round);
     const feedback = await readLatestFeedback(round);
 
-    const prompts = [];
+    const prompts: Template[] = [];
 
     for (const prompt of roundFile.prompts) {
       prompts.push({
         id: prompt.id,
         sha256: prompt.sha256,
-        template: await readFile(join(round, prompt.file), "utf8"),
+        template: await readVerified(round, prompt),
       });
+    }
+
+    let imagePrompt: Template | null = null;
+
+    if (roundFile.image_prompt) {
+      imagePrompt = {
+        id: roundFile.image_prompt.id,
+        sha256: roundFile.image_prompt.sha256,
+        template: await readVerified(round, roundFile.image_prompt),
+      };
     }
 
     const images: ImageRecord[] = [];
 
-    for (const prompt of roundFile.prompts) {
-      for (const entry of roundFile.cases) {
-        const directory = join(
-          round,
-          "images",
-          prompt.id,
-          entry.book,
-          entry.idea,
-        );
-        const result = await readImageResult(directory);
-        const record = feedback.get(`${prompt.id}/${entry.book}/${entry.idea}`);
+    for (const item of await loadRoundItems(round, roundFile, suiteDirectory)) {
+      const result = await readImageResult(item.directory);
 
-        images.push({
-          prompt: prompt.id,
-          book: entry.book,
-          idea: entry.idea,
-          name: entry.name,
-          result,
-          feedback: currentFeedback(record, result?.attempt),
-          directory,
-        });
-      }
+      images.push({
+        item,
+        result: result,
+        feedback: currentFeedback(feedback.get(item.key), result?.attempt),
+      });
     }
 
     history.push({
       roundId,
+      kind: roundFile.kind,
       notes: await readOptional(join(round, "prompts", "notes.md")),
       prompts,
+      imagePrompt,
       images,
     });
   }
@@ -326,30 +370,32 @@ function currentFeedback(
   return record;
 }
 
-interface PooledPrompt {
-  id: string;
-  sha256: string;
-  template: string;
+interface PooledTemplate extends Template {
   labels: string[];
   stars: number[];
   tags: Map<string, number>;
   failures: number;
 }
 
-// Pools ratings by template text, so a prompt carried across rounds keeps its
-// whole record.
-function poolPrompts(history: RoundHistory[]): PooledPrompt[] {
-  const pooled = new Map<string, PooledPrompt>();
+// Pools ratings by template text across rounds of one kind, so a template
+// carried forward keeps its whole record.
+function poolTemplates(
+  history: RoundHistory[],
+  kind: RoundKind,
+): PooledTemplate[] {
+  const pooled = new Map<string, PooledTemplate>();
 
   for (const round of history) {
+    if (round.kind !== kind) {
+      continue;
+    }
+
     for (const prompt of round.prompts) {
       let entry = pooled.get(prompt.sha256);
 
       if (!entry) {
         entry = {
-          id: prompt.id,
-          sha256: prompt.sha256,
-          template: prompt.template,
+          ...prompt,
           labels: [],
           stars: [],
           tags: new Map(),
@@ -362,11 +408,11 @@ function poolPrompts(history: RoundHistory[]): PooledPrompt[] {
       entry.labels.push(`${round.roundId}/${prompt.id}`);
 
       for (const image of round.images) {
-        if (image.prompt !== prompt.id) {
+        if (image.item.promptId !== prompt.id) {
           continue;
         }
 
-        if (image.result?.status === "failed") {
+        if (image.result?.status === "failed" || image.item.ideasError) {
           entry.failures++;
         }
 
@@ -392,8 +438,13 @@ function average(values: number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-function bestPrompt(history: RoundHistory[]): PooledPrompt | null {
-  const rated = poolPrompts(history).filter((entry) => entry.stars.length > 0);
+function bestTemplate(
+  history: RoundHistory[],
+  kind: RoundKind,
+): PooledTemplate | null {
+  const rated = poolTemplates(history, kind).filter(
+    (entry) => entry.stars.length > 0,
+  );
   const qualified = rated.filter(
     (entry) => entry.stars.length >= MINIMUM_RATINGS_FOR_BEST,
   );
@@ -404,7 +455,7 @@ function bestPrompt(history: RoundHistory[]): PooledPrompt | null {
     candidates = rated;
   }
 
-  let best: PooledPrompt | null = null;
+  let best: PooledTemplate | null = null;
 
   for (const entry of candidates) {
     if (!best || average(entry.stars) >= average(best.stars)) {
@@ -413,6 +464,38 @@ function bestPrompt(history: RoundHistory[]): PooledPrompt | null {
   }
 
   return best;
+}
+
+function committed(
+  id: string,
+  template: string,
+  label: string,
+): PooledTemplate {
+  return {
+    id,
+    sha256: sha256(template),
+    template,
+    labels: [label],
+    stars: [],
+    tags: new Map(),
+    failures: 0,
+  };
+}
+
+function committedImagePrompt(): PooledTemplate {
+  return committed(
+    "current-image",
+    IMAGE_PROMPT_TEMPLATE,
+    "committed image prompt",
+  );
+}
+
+function committedIdeasPrompt(): PooledTemplate {
+  return committed(
+    "current-ideas",
+    IDEAS_PROMPT_TEMPLATE,
+    "committed ideas prompt",
+  );
 }
 
 function nextRoundId(history: RoundHistory[]): string {
@@ -450,15 +533,15 @@ async function writeThumbnails(
     const path = join(
       agentDirectory,
       "thumbnails",
-      `${image.prompt}--${image.book}--${image.idea}.jpg`,
+      `${image.item.key.replaceAll("/", "--")}.jpg`,
     );
-    await sharp(join(image.directory, files.preview))
+    await sharp(join(image.item.directory, files.preview))
       .resize({ width: THUMBNAIL_WIDTH })
       .jpeg({ quality: 75 })
       .toFile(path);
 
     thumbnails.push({
-      caption: `Rendered poster: ${imageLabel(round.roundId, image)} — ${feedbackSummary(image.feedback)}`,
+      caption: `Rendered poster: ${imageLabel(round.roundId, image.item)} — ${feedbackSummary(image.feedback)}`,
       path,
     });
   }
@@ -466,8 +549,10 @@ async function writeThumbnails(
   return thumbnails;
 }
 
-function imageLabel(roundId: string, image: ImageRecord): string {
-  return `${roundId}/${image.prompt} on ${image.book}/${image.idea} ("${image.name}")`;
+function imageLabel(roundId: string, item: RoundItem): string {
+  const name = item.idea?.name ?? "no idea";
+
+  return `${roundId}/${item.promptId} on ${item.book.slug} "${name}"`;
 }
 
 function feedbackSummary(feedback: FeedbackRecord | null): string {
@@ -498,28 +583,25 @@ function feedbackSummary(feedback: FeedbackRecord | null): string {
 
 interface WriterBriefArgs {
   history: RoundHistory[];
-  best: PooledPrompt;
+  control: PooledTemplate;
+  bestImage: PooledTemplate;
   args: PlanNextRoundArgs;
 }
 
+const PIPELINE_SUMMARY = `This is a literary character-art poster pipeline. An ideas prompt asks an agent for poster composition ideas for a book. An image prompt turns each idea into one transparent PNG source master. The master is cleaned (binary alpha, palette colors), then every opaque pixel becomes a monospaced character from the book on a 24 × 36 inch poster, and transparent pixels stay blank paper. The target look: one calm rectangular text field in one ink, one instantly readable iconic subject cut out of it as negative space, interior details as bold transparent channels, clean vector contours, and at most one accent ringed by a gap.
+
+The user rates every rendered poster 1–5 stars, with optional tags and notes.`;
+
 function writerBrief(brief: WriterBriefArgs): string {
-  const { history, best, args } = brief;
+  const { history, control, bestImage, args } = brief;
   const latest = history.at(-1);
-  const pooled = poolPrompts(history).sort(
-    (left, right) => average(right.stars) - average(left.stars),
-  );
-  const sections: string[] = [];
+  const sections: string[] = [PIPELINE_SUMMARY];
 
-  sections.push(`You improve the image-generation prompt for a literary character-art poster pipeline. Each prompt template is sent to an image agent that generates one transparent PNG source master for a book idea. The master is cleaned (binary alpha, palette colors), then every opaque pixel becomes a monospaced character from the book on a 24 × 36 inch poster, and transparent pixels stay blank paper. The target look: one calm rectangular text field in one ink, one instantly readable iconic subject cut out of it as negative space, interior details as bold transparent channels, clean vector contours, and at most one accent ringed by a gap.
-
-The user rates every image 1–5 stars with tags and notes. Your job is to read that feedback and write ${String(args.newPrompts)} new prompt template(s) that should score higher. The ideas are fixed; only the prompt changes. The best prompt so far (${best.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it.`);
-
-  sections.push(`Template rules:
-- Templates are complete prompts using placeholders filled per idea: {{title}}, {{author}}, {{size}}, {{name}}, {{composition}}, {{literary_basis}}, {{conversion_resilience}}, {{palette}}. Include at least ${REQUIRED_PLACEHOLDERS.map((name) => `{{${name}}}`).join(", ")}. Any other {{...}} is an error.
-- Keep the operational instructions from the control verbatim: native image tool use with transparent_background=true, saving the unmodified native PNG as master.png, the artwork_colors / review_notes / error JSON response, and the bans on programmatic drawing. Change the visual direction, not the plumbing.
-- Each new template tests one clear hypothesis grounded in the ratings, tags, and notes. Make them meaningfully different from each other. If ratings have stalled across rounds, try a bolder change.
-- Give each template a short, descriptive lowercase-hyphenated id that has not been used before (used so far: ${[...new Set(history.flatMap((round) => round.prompts.map((prompt) => prompt.id)))].join(", ")}).
-- In analysis, summarize what the feedback says works and fails, in a few sentences.`);
+  if (args.kind === "idea") {
+    sections.push(ideasTask(history, control, bestImage, args.newPrompts));
+  } else {
+    sections.push(imageTask(history, control, args.newPrompts));
+  }
 
   if (args.direction.trim() !== "") {
     sections.push(
@@ -527,49 +609,42 @@ The user rates every image 1–5 stars with tags and notes. Your job is to read 
     );
   }
 
-  sections.push(
-    "Prompt leaderboard (ratings pooled across rounds):\n" +
-      pooled
-        .map((entry) => {
-          const tags = [...entry.tags.entries()]
-            .sort((left, right) => right[1] - left[1])
-            .map(([tag, count]) => `${tag}×${String(count)}`)
-            .join(", ");
-
-          return `- ${entry.labels.join(", ")}: ${average(entry.stars).toFixed(2)} stars from ${String(entry.stars.length)} ratings; failures ${String(entry.failures)}; tags: ${tags || "none"}`;
-        })
-        .join("\n"),
-  );
+  sections.push(leaderboard(history, "image", "Image prompt leaderboard"));
+  sections.push(leaderboard(history, "idea", "Ideas prompt leaderboard"));
 
   for (const round of history) {
     if (round.notes.trim() !== "") {
       sections.push(
-        `Notes written for ${round.roundId}:\n${round.notes.trim().slice(0, 4000)}`,
+        `Notes written for ${round.roundId} (${round.kind} round):\n${round.notes.trim().slice(0, 4000)}`,
       );
     }
   }
 
   if (latest) {
     sections.push(
-      `Every image in ${latest.roundId}:\n` +
+      `Every image in ${latest.roundId} (${latest.kind} round):\n` +
         latest.images
           .map((image) => imageLine(latest.roundId, image))
           .join("\n"),
     );
 
-    for (const prompt of latest.prompts) {
-      if (prompt.sha256 === best.sha256) {
+    const sameKind = [...history]
+      .reverse()
+      .find((round) => round.kind === args.kind);
+
+    for (const prompt of sameKind?.prompts ?? []) {
+      if (prompt.sha256 === control.sha256) {
         continue;
       }
 
       sections.push(
-        `Template ${latest.roundId}/${prompt.id}:\n<<<\n${prompt.template}\n>>>`,
+        `Template ${sameKind?.roundId ?? ""}/${prompt.id}:\n<<<\n${prompt.template}\n>>>`,
       );
     }
   }
 
   sections.push(
-    `Control template (best so far, carried forward):\n<<<\n${best.template}\n>>>`,
+    `Control template (best so far, carried forward):\n<<<\n${control.template}\n>>>`,
   );
   sections.push(
     "Thumbnails of the latest round's rendered posters follow, each after its label.",
@@ -578,15 +653,86 @@ The user rates every image 1–5 stars with tags and notes. Your job is to read 
   return sections.join("\n\n");
 }
 
+function usedIds(history: RoundHistory[], kind: RoundKind): string {
+  const ids = history
+    .filter((round) => round.kind === kind)
+    .flatMap((round) => round.prompts.map((prompt) => prompt.id));
+
+  return [...new Set(ids)].join(", ") || "none";
+}
+
+function imageTask(
+  history: RoundHistory[],
+  control: PooledTemplate,
+  count: number,
+): string {
+  return `Your job: write ${String(count)} new IMAGE prompt template(s) that should score higher. The ideas are fixed; only the image prompt changes. The best image prompt so far (${control.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it.
+
+Template rules:
+- Templates are complete prompts using placeholders filled per idea: {{title}}, {{author}}, {{size}}, {{name}}, {{composition}}, {{literary_basis}}, {{conversion_resilience}}, {{palette}}. Include at least ${REQUIRED_PLACEHOLDERS.map((name) => `{{${name}}}`).join(", ")}. Any other {{...}} is an error.
+- Keep the operational instructions from the control verbatim: native image tool use with transparent_background=true, saving the unmodified native PNG as master.png, the artwork_colors / review_notes / error JSON response, and the bans on programmatic drawing. Change the visual direction, not the plumbing.
+- Each new template tests one clear hypothesis grounded in the ratings, tags, and notes. Make them meaningfully different from each other. If ratings have stalled across rounds, try a bolder change.
+- Give each template a short, descriptive lowercase-hyphenated id not used before (used: ${usedIds(history, "image")}).
+- In analysis, summarize what the feedback says works and fails, in a few sentences.`;
+}
+
+function ideasTask(
+  history: RoundHistory[],
+  control: PooledTemplate,
+  bestImage: PooledTemplate,
+  count: number,
+): string {
+  return `Your job: write ${String(count)} new IDEAS prompt template(s) whose ideas should become higher-rated posters. Each template asks for ${String(IDEAS_PER_BOOK)} ideas per book; every idea is then drawn with one fixed image prompt (${bestImage.labels.join(", ")}), so differences in ratings come from the ideas. The best ideas prompt so far (${control.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it.
+
+Template rules:
+- Templates are complete prompts using {{book}} (the book's title and author as JSON) and {{count}} (how many ideas to return). Both are required; any other {{...}} is an error.
+- The response format is enforced separately: each idea has id, name, composition, literary_basis, palette (at most three hex colors with uses), and conversion_resilience. Keep asking for those fields.
+- Think about which subjects survive as one clean silhouette rebuilt from text, and which pull the image model into shading or clutter (organic textures, smoke, machinery, crowds). Use the ratings to tell good subjects from bad ones.
+- Each new template tests one clear hypothesis grounded in the ratings and notes. Make them meaningfully different from each other.
+- Give each template a short, descriptive lowercase-hyphenated id not used before (used: ${usedIds(history, "idea")}).
+- In analysis, summarize what the feedback says about the ideas themselves, in a few sentences.`;
+}
+
+function leaderboard(
+  history: RoundHistory[],
+  kind: RoundKind,
+  title: string,
+): string {
+  const pooled = poolTemplates(history, kind).sort(
+    (left, right) => average(right.stars) - average(left.stars),
+  );
+
+  if (pooled.length === 0) {
+    return `${title}: no ${kind} rounds yet.`;
+  }
+
+  const lines = pooled.map((entry) => {
+    const tags = [...entry.tags.entries()]
+      .sort((left, right) => right[1] - left[1])
+      .map(([tag, count]) => `${tag}×${String(count)}`)
+      .join(", ");
+
+    return `- ${entry.labels.join(", ")}: ${average(entry.stars).toFixed(2)} stars from ${String(entry.stars.length)} ratings; failures ${String(entry.failures)}; tags: ${tags || "none"}`;
+  });
+
+  return `${title} (ratings pooled across rounds):\n${lines.join("\n")}`;
+}
+
 function imageLine(roundId: string, image: ImageRecord): string {
-  const label = `- ${imageLabel(roundId, image)}`;
+  const label = `- ${imageLabel(roundId, image.item)}`;
+  const composition = image.item.idea?.composition.slice(0, 240) ?? "";
+  const ideaText = ` [idea: ${composition}]`;
+
+  if (image.item.ideasError) {
+    return `${label}: idea writing failed: ${image.item.ideasError}`;
+  }
 
   if (!image.result) {
-    return `${label}: not generated`;
+    return `${label}: not generated${ideaText}`;
   }
 
   if (image.result.status === "failed") {
-    return `${label}: generation failed: ${String(image.result.error)}`;
+    return `${label}: generation failed: ${String(image.result.error)}${ideaText}`;
   }
 
   const metrics = image.result.metrics as
@@ -603,17 +749,13 @@ function imageLine(roundId: string, image: ImageRecord): string {
   }
 
   if (notes.length > 0) {
-    parts.push(`image agent notes: ${notes.join(" ").slice(0, 400)}`);
+    parts.push(`image agent notes: ${notes.join(" ").slice(0, 300)}`);
   }
 
-  return `${label}: ${parts.join("; ")}`;
+  return `${label}: ${parts.join("; ")}${ideaText}`;
 }
 
-function validatePrompts(
-  response: WriterResponse,
-  controlId: string,
-  suite: Suite,
-): void {
+function checkIds(response: WriterResponse, controlId: string): void {
   const ids = new Set<string>([controlId]);
 
   for (const prompt of response.prompts) {
@@ -622,7 +764,17 @@ function validatePrompts(
     }
 
     ids.add(prompt.id);
+  }
+}
 
+function validateImagePrompts(
+  response: WriterResponse,
+  controlId: string,
+  suite: Suite,
+): void {
+  checkIds(response, controlId);
+
+  for (const prompt of response.prompts) {
     for (const name of REQUIRED_PLACEHOLDERS) {
       if (!prompt.template.includes(`{{${name}}}`)) {
         throw new Error(`Prompt '${prompt.id}' is missing {{${name}}}`);
@@ -651,22 +803,54 @@ function validatePrompts(
   }
 }
 
+function validateIdeasPrompts(
+  response: WriterResponse,
+  controlId: string,
+  suite: Suite,
+): void {
+  checkIds(response, controlId);
+
+  for (const prompt of response.prompts) {
+    for (const name of REQUIRED_IDEAS_PLACEHOLDERS) {
+      if (!prompt.template.includes(`{{${name}}}`)) {
+        throw new Error(`Ideas prompt '${prompt.id}' is missing {{${name}}}`);
+      }
+    }
+
+    for (const suiteCase of suite.cases) {
+      fillIdeasPrompt(prompt.template, {
+        title: suiteCase.book.title,
+        author: suiteCase.book.author,
+        count: IDEAS_PER_BOOK,
+      });
+    }
+  }
+}
+
 interface RoundNotesArgs {
   roundId: string;
-  best: PooledPrompt;
+  control: PooledTemplate;
+  bestImage: PooledTemplate;
   response: WriterResponse;
-  direction: string;
+  args: PlanNextRoundArgs;
 }
 
 function roundNotes(notes: RoundNotesArgs): string {
   const lines = [
-    `# ${notes.roundId} prompts`,
+    `# ${notes.roundId} prompts (${notes.args.kind} round)`,
     "",
     `Written by the prompt agent on ${new Date().toISOString()}.`,
   ];
 
-  if (notes.direction.trim() !== "") {
-    lines.push("", `Direction from the user: ${notes.direction.trim()}`);
+  if (notes.args.direction.trim() !== "") {
+    lines.push("", `Direction from the user: ${notes.args.direction.trim()}`);
+  }
+
+  if (notes.args.kind === "idea") {
+    lines.push(
+      "",
+      `Every idea is drawn with the image prompt ${notes.bestImage.id} (${notes.bestImage.labels.join(", ")}).`,
+    );
   }
 
   lines.push(
@@ -677,7 +861,7 @@ function roundNotes(notes: RoundNotesArgs): string {
     "",
     "## Prompts",
     "",
-    `- ${notes.best.id} (control): best so far (${notes.best.labels.join(", ")}), ${average(notes.best.stars).toFixed(2)} stars from ${String(notes.best.stars.length)} ratings. Unchanged.`,
+    `- ${notes.control.id} (control): best so far (${notes.control.labels.join(", ")}), ${average(notes.control.stars).toFixed(2)} stars from ${String(notes.control.stars.length)} ratings. Unchanged.`,
   );
 
   for (const prompt of notes.response.prompts) {

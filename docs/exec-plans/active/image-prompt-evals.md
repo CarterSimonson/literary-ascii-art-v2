@@ -4,53 +4,71 @@
 
 Make the generated source images much better. An agent writes prompt variants,
 the user rates the results, and the agent revises the prompts from that feedback
-until the ratings converge on something good.
+until the ratings converge on something good. The same loop also tunes the
+ideas prompt.
 
 ## Loop
 
 Run `bookgen eval serve` and work entirely on the page:
 
-1. Rate each image: 1–5 stars, good/bad tags, and a note.
-2. Optionally type a direction for the agent, pick how many new prompts to try,
-   and click **Write & run next round**.
+1. Rate each card: 1–5 stars, any of five problem tags (haze, ragged, busy,
+   unclear, off-idea), and a short note. Each card shows the source image beside
+   the poster. Click a card, then press 1–5; arrow keys move between cards.
+2. Click **Next round…**, choose **Improve the image prompt** or **Improve the
+   ideas prompt**, pick how many new prompts to try, optionally type a
+   direction, and start it.
 3. The prompt agent (`src/evals/improve.ts`, Codex) reads every round's prompts,
-   notes, results, and ratings, plus thumbnails of the latest posters. It
-   writes new templates, each with a hypothesis. The best-rated prompt so far
-   (pooled by template text, at least three ratings when available) carries
-   forward unchanged as the control.
-4. The page generates the round in the background and switches to it as
-   images land. Repeat.
-5. **Replace idea** on a row swaps a weak idea for a new one from the same book
-   (`src/evals/ideas.ts`), from the next round on. The old case moves to
-   `evals/image-prompt/retired/<book>/` with the reason, and `suite_version`
-   goes up. These are repository edits to commit.
+   notes, results, and ratings, plus thumbnails of the latest posters, and
+   writes new templates with a hypothesis each. The best-rated template of that
+   kind so far (pooled by template text, at least three ratings when available)
+   carries forward unchanged as the control. Before any idea rounds, the
+   control ideas prompt is the committed one.
+4. The page generates the round in the background and switches to it.
+5. **↻ Regenerate** on a card makes a new image for it; **Replace idea** on a
+   row swaps a weak suite idea for a new one from the same book, from the next
+   round on (`src/evals/ideas.ts`). Both run in parallel with each other and
+   with other regenerations; the task strip shows each one's progress or error.
+   A new round waits while ideas are being replaced.
 6. When a prompt clearly wins, check it on fresh ideas, then copy it into
-   `IMAGE_PROMPT_TEMPLATE` in `src/images/prompt.ts` and bump
-   `IMAGE_PROMPT_VERSION`.
+   `IMAGE_PROMPT_TEMPLATE` (`src/images/prompt.ts`) or `IDEAS_PROMPT_TEMPLATE`
+   (`src/ideas/prompt.ts`) and bump its version.
 
 `bookgen eval run <round> --prompts <dir>` still runs a round from hand-written
 templates.
 
+## Round kinds
+
+- **Image rounds** vary the image prompt over the suite's nine fixed ideas.
+  Templates are `*.prompt.md`.
+- **Idea rounds** vary the ideas prompt. Templates are `*.ideas.md`; each writes
+  three ideas per suite book, and every idea is drawn with one fixed image
+  prompt (the best so far, a single `*.prompt.md`). Rows are book × idea
+  number; each card shows its own idea.
+
 ## Decisions
 
 - Suite: three ideas each from The Great Gatsby, The Odyssey, and The War of the
-  Worlds, frozen in `evals/image-prompt/`. Ideas stay fixed during tuning; swap
-  one only when the user flags it as weak, and bump `suite_version`.
-- One image per prompt × idea. Judge a prompt by its average over all nine ideas.
-- New templates must keep {{title}}, {{author}}, {{name}}, {{composition}},
+  Worlds, in `evals/image-prompt/`. Ideas stay fixed during image tuning; swap
+  one only when the user flags it as weak. Replacement moves the old case to
+  `retired/<book>/` with the reason and bumps `suite_version`. These files are
+  written by the page, so Prettier ignores them; commit them like code.
+- One image per prompt × idea. Judge a prompt by its average over all ideas.
+- Image templates must keep {{title}}, {{author}}, {{name}}, {{composition}},
   {{literary_basis}}, and {{palette}}, and the operational phrases
   `transparent_background=true`, `master.png`, `artwork_colors`, and
-  `review_notes`; otherwise the round is not created.
-- Prompt templates are uncommitted files using `{{title}}`, `{{author}}`,
-  `{{size}}`, `{{name}}`, `{{composition}}`, `{{literary_basis}}`,
-  `{{conversion_resilience}}`, and `{{palette}}`. Unknown placeholders fail
-  before generation. Each round records every template's text and hash.
-- Generation runs in parallel and is not retried automatically. Rerunning
-  `eval run <round>` retries failed images; `--retry <prompt>/<book>/<idea>`
-  regenerates a finished one as a new attempt.
-- Only `poster-24x36` is rendered, as a one-third-scale preview.
+  `review_notes`. Ideas templates must keep {{book}} and {{count}}. Unknown
+  placeholders fail before generation. Each round records every template's text
+  and hash.
+- Each round keeps its own copy of its ideas (`cases.yaml` or `ideas/`), so
+  regenerating in an old round still works after the suite changes. Rounds from
+  before snapshots recover their ideas from the suite or `retired/`.
+- Generation runs in parallel and is not retried automatically. Each image has
+  its own lock, so different images can regenerate at once.
+- Only `poster-24x36` is rendered, as a one-third-scale preview. The page loads
+  cached thumbnails and the full image on click.
 - The user's ratings are the judge. Native haze and accent contact show beside
-  each image as hints.
+  each image as hints. Tags are a short list of common problems; stars carry
+  quality and notes carry everything else.
 - Prompt labels are shown as letters on the rating page to keep review blind.
 - Nothing about the external reference posters is committed.
 
@@ -59,8 +77,10 @@ templates.
 Rounds live under the main checkout's ignored `output/evals/rounds/<round-id>/`:
 
 ```text
-round.yaml                 suite hash, prompt IDs and hashes, cases, settings
-prompts/*.prompt.md        exact templates; prompts/notes.md holds hypotheses
+round.yaml                 kind, suite hash, prompt IDs and hashes, settings
+cases.yaml                 image rounds: the exact ideas used
+ideas/<prompt>/<book>.yaml idea rounds: ideas each ideas template wrote
+prompts/                   exact templates; prompts/notes.md holds hypotheses
 images/<prompt>/<book>/<idea>/
   result.yaml              latest status, files, scores, cleanup stats, usage,
                            Codex review notes, error on failure
@@ -80,16 +100,16 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
 
 - [x] Frozen nine-idea suite and loader (`src/evals/suite.ts`).
 - [x] Two scores (`src/evals/metrics.ts`).
-- [x] Image prompt as a fillable template (`src/images/prompt.ts`; v4 output
-      unchanged).
+- [x] Image and ideas prompts as fillable templates (output unchanged).
 - [x] `bookgen eval run` (`src/evals/round.ts`, `src/evals/render.ts`).
 - [x] `bookgen eval serve` and the rating page (`src/evals/serve.ts`,
       `src/evals/portal.html`, `src/evals/feedback.ts`).
-- [x] Round 1: control, flat-print, and stencil; 27 of 27 generated.
-- [x] Prompt agent and **Write & run next round** on the page
-      (`src/evals/improve.ts`, `src/evals/jobs.ts`).
-- [x] **Replace idea** on the page (`src/evals/ideas.ts`).
-- [ ] Rate round 1 and run round 2 from the page.
+- [x] Prompt agent and next rounds from the page (`src/evals/improve.ts`).
+- [x] Parallel tasks: regenerate, replace idea, retry (`src/evals/tasks.ts`).
+- [x] Idea rounds.
+- [x] Round 1 (control, flat-print, stencil) and round 2 (flat-print carried
+      forward, chromatic-relief, story-relief), both run and partly rated.
+- [ ] First idea round from the page.
 
 ## Findings
 
@@ -97,7 +117,10 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   for `the-distance-of-desire`, and 0.43 for `the-machine-of-carelessness`. The
   green light in `the-distance-of-desire` touches the field along its whole
   outline (accent contact 1.0). Both scores match what review found.
-- All six new Odyssey and War of the Worlds ideas use a single ink, so
-  `the-distance-of-desire` is the only accent case.
+- Round 1: the stencil wording gave clean native images (haze under 0.05) on 6
+  of 9 ideas, against 4 of 9 for the control and flat-print. Haze depended more
+  on the subject than the wording: `the-rooted-bed` was hazy under all three.
+- The user replaced five suite ideas after round 1, with reasons recorded in
+  `retired/`; most asked for more interesting, dynamic subjects.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.

@@ -63,15 +63,12 @@ export async function replaceSuiteIdea(args: ReplaceIdeaArgs): Promise<Idea> {
     rejectionReason(args.reason) +
     `\nUse an id not already used: ${siblings.map((entry) => entry.idea.id).join(", ")}.\n`;
 
-  const response = await collectResponse(
-    (args.generate ?? generateWithCodex)({
-      prompt,
-      model: undefined,
-      ideaCount: 1,
-      signal: args.signal ?? new AbortController().signal,
-    }),
-  );
-  const idea = parseIdeasResponse(response, 1).ideas[0];
+  const [idea] = await generateIdeas({
+    prompt,
+    count: 1,
+    ...(args.generate ? { generate: args.generate } : {}),
+    ...(args.signal ? { signal: args.signal } : {}),
+  });
 
   if (!idea) {
     throw new Error("The ideas agent returned no idea");
@@ -80,6 +77,48 @@ export async function replaceSuiteIdea(args: ReplaceIdeaArgs): Promise<Idea> {
   if (siblings.some((entry) => entry.idea.id === idea.id)) {
     throw new Error(`The ideas agent reused the id '${idea.id}'; try again`);
   }
+
+  // Codex runs in parallel; suite edits happen one at a time.
+  const release = await suiteLock();
+
+  try {
+    await swapCase({ directory, args, idea });
+  } finally {
+    release();
+  }
+
+  // Confirms the edited suite still loads before reporting success.
+  await loadSuite({
+    directory,
+    ...(args.registryPath ? { registryPath: args.registryPath } : {}),
+  });
+
+  return idea;
+}
+
+interface SwapCaseArgs {
+  directory: string;
+  args: ReplaceIdeaArgs;
+  idea: Idea;
+}
+
+let suiteQueue: Promise<void> = Promise.resolve();
+
+// Resolves with a release function once earlier suite edits have finished.
+async function suiteLock(): Promise<() => void> {
+  let release = (): void => {};
+  const turn = new Promise<void>((resolveTurn) => {
+    release = resolveTurn;
+  });
+  const previous = suiteQueue;
+  suiteQueue = previous.then(() => turn);
+  await previous;
+
+  return release;
+}
+
+async function swapCase(swap: SwapCaseArgs): Promise<void> {
+  const { directory, args, idea } = swap;
 
   // Retire the old case, then write the new one and point the suite at it.
   const today = new Date().toISOString().slice(0, 10);
@@ -135,14 +174,6 @@ export async function replaceSuiteIdea(args: ReplaceIdeaArgs): Promise<Idea> {
         cases,
       }),
   );
-
-  // Confirms the edited suite still loads before reporting success.
-  await loadSuite({
-    directory,
-    ...(args.registryPath ? { registryPath: args.registryPath } : {}),
-  });
-
-  return idea;
 }
 
 function rejectionReason(reason: string): string {
@@ -153,9 +184,21 @@ function rejectionReason(reason: string): string {
   return `\nThe user rejected the previous idea because: ${reason.trim()}\nAvoid that problem in the new idea.\n`;
 }
 
-async function collectResponse(
-  events: ReturnType<IdeaGenerator>,
-): Promise<string> {
+export interface GenerateIdeasArgs {
+  prompt: string;
+  count: number;
+  generate?: IdeaGenerator;
+  signal?: AbortSignal;
+}
+
+// Runs the ideas agent with a finished prompt and returns validated ideas.
+export async function generateIdeas(args: GenerateIdeasArgs): Promise<Idea[]> {
+  const events = (args.generate ?? generateWithCodex)({
+    prompt: args.prompt,
+    model: undefined,
+    ideaCount: args.count,
+    signal: args.signal ?? new AbortController().signal,
+  });
   let response = "";
   let completed = false;
 
@@ -184,5 +227,5 @@ async function collectResponse(
     throw new Error("Codex stream ended without a completed turn");
   }
 
-  return response;
+  return parseIdeasResponse(response, args.count).ideas;
 }
