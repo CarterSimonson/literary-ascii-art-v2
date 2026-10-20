@@ -447,29 +447,59 @@ export async function runCli(
 
   evals
     .command("serve")
-    .description("Open the local rating page for eval rounds")
+    .description(
+      "Open the local rating page; it can also write and run the next round",
+    )
     .option(
       "--port <port>",
       "Port on 127.0.0.1",
       (value: string): number => parsePositiveInteger(value, 65535),
       4317,
     )
+    .option(
+      "--concurrency <count>",
+      "Images generated at once for rounds started from the page",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option(
+      "--timeout <seconds>",
+      "Timeout per image attempt",
+      parseTimeout,
+      900,
+    )
+    .option("--registry <path>", "Book registry YAML", "books.yaml")
     .option("--output <directory>", "Output root", "output")
-    .action(async (flags: { port: number; output: string }): Promise<void> => {
-      const server = startPortal({
-        outputRoot: flags.output,
-        port: flags.port,
-      });
-      stdout(`Rating page: http://127.0.0.1:${String(server.port)}/\n`);
-
-      // Serve until interrupted.
-      await new Promise<void>((resolveStop) => {
-        options.signal?.addEventListener("abort", () => {
-          void server.stop();
-          resolveStop();
+    .action(
+      async (flags: {
+        port: number;
+        concurrency: number;
+        timeout: number;
+        registry: string;
+        output: string;
+      }): Promise<void> => {
+        const { server, jobs } = startPortal({
+          outputRoot: flags.output,
+          port: flags.port,
+          registryPath: flags.registry,
+          concurrency: flags.concurrency,
+          timeoutSeconds: flags.timeout,
         });
-      });
-    });
+        stdout(`Rating page: http://127.0.0.1:${String(server.port)}/\n`);
+
+        // Serve until interrupted.
+        await new Promise<void>((resolveStop) => {
+          options.signal?.addEventListener("abort", () => {
+            void server.stop();
+            resolveStop();
+          });
+        });
+
+        if (jobs.status().busy) {
+          stderr("Stopped while a job was running; resume it from the page\n");
+        }
+      },
+    );
 
   try {
     await program.parseAsync(argv, { from: "user" });

@@ -1,9 +1,12 @@
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join, resolve, sep } from "node:path";
 
 import { parse } from "yaml";
+import { z } from "zod";
 
+import type { IdeaGenerator } from "../ideas/codex.ts";
 import { slugSchema } from "../ideas/schema.ts";
+import type { ImageGenerator } from "../images/codex.ts";
 import {
   appendFeedback,
   FEEDBACK_TAGS,
@@ -11,26 +14,61 @@ import {
   feedbackKey,
   readLatestFeedback,
 } from "./feedback.ts";
-import { readRoundFile, roundDirectory } from "./round.ts";
+import { replaceSuiteIdea } from "./ideas.ts";
+import { planNextRound, type PromptWriter } from "./improve.ts";
+import { createJobRunner, type JobRunner } from "./jobs.ts";
+import {
+  listRoundIds,
+  readRoundFile,
+  roundDirectory,
+  runRound,
+  type RunRoundArgs,
+} from "./round.ts";
+import { loadSuite } from "./suite.ts";
 
 export interface StartPortalArgs {
   outputRoot: string;
   port: number;
+  suiteDirectory?: string;
+  registryPath?: string;
+  targetRegistry?: string;
+  concurrency?: number;
+  timeoutSeconds?: number;
+  // Injected in tests; Codex otherwise.
+  writer?: PromptWriter;
+  generate?: ImageGenerator;
+  ideaGenerator?: IdeaGenerator;
+}
+
+export interface Portal {
+  server: ReturnType<typeof Bun.serve>;
+  jobs: JobRunner;
 }
 
 const portalPage = new URL("./portal.html", import.meta.url);
 
-// Serves the rating page on localhost. It reads rounds and writes only
-// feedback.jsonl inside a round directory.
-export function startPortal(
-  args: StartPortalArgs,
-): ReturnType<typeof Bun.serve> {
-  return Bun.serve({
+const nextRoundSchema = z.strictObject({
+  direction: z.string().max(4000),
+  newPrompts: z.number().int().min(1).max(4),
+});
+
+const replaceIdeaSchema = z.strictObject({
+  book: slugSchema,
+  idea: slugSchema,
+  reason: z.string().max(2000),
+});
+
+// Serves the rating page on localhost. Besides feedback, it can run one
+// background job at a time: the next round, retrying failures, or replacing an
+// idea in the suite.
+export function startPortal(args: StartPortalArgs): Portal {
+  const jobs = createJobRunner();
+  const server = Bun.serve({
     hostname: "127.0.0.1",
     port: args.port,
     fetch: async (request): Promise<Response> => {
       try {
-        return await route(request, args.outputRoot);
+        return await route(request, args, jobs);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
 
@@ -38,11 +76,18 @@ export function startPortal(
       }
     },
   });
+
+  return { server, jobs };
 }
 
-async function route(request: Request, outputRoot: string): Promise<Response> {
+async function route(
+  request: Request,
+  args: StartPortalArgs,
+  jobs: JobRunner,
+): Promise<Response> {
   const url = new URL(request.url);
   const parts = url.pathname.split("/").filter((part) => part !== "");
+  const post = request.method === "POST";
 
   if (parts.length === 0) {
     return new Response(Bun.file(portalPage), {
@@ -51,48 +96,128 @@ async function route(request: Request, outputRoot: string): Promise<Response> {
   }
 
   if (parts[0] === "files" && parts.length >= 3) {
-    return serveRoundFile(outputRoot, parts);
+    return serveRoundFile(args.outputRoot, parts);
   }
 
-  if (parts[0] !== "api" || parts[1] !== "rounds") {
+  if (parts[0] !== "api") {
+    return new Response("Not found", { status: 404 });
+  }
+
+  if (parts[1] === "status") {
+    return Response.json(jobs.status());
+  }
+
+  if (parts[1] === "next" && post) {
+    const body = nextRoundSchema.parse(await request.json());
+    jobs.start("next-round", async (report) => {
+      report({
+        message: "Prompt agent is reading feedback and writing prompts",
+      });
+      const planned = await planNextRound({
+        outputRoot: args.outputRoot,
+        direction: body.direction,
+        newPrompts: body.newPrompts,
+        ...suiteArgs(args),
+        ...(args.writer ? { writer: args.writer } : {}),
+      });
+
+      return generate(args, planned.roundId, planned.promptsDirectory, report);
+    });
+
+    return Response.json(jobs.status());
+  }
+
+  if (parts[1] === "ideas" && parts[2] === "replace" && post) {
+    const body = replaceIdeaSchema.parse(await request.json());
+    jobs.start("replace-idea", async (report) => {
+      report({ message: `Writing a new idea to replace ${body.idea}` });
+      const idea = await replaceSuiteIdea({
+        ...body,
+        ...suiteArgs(args),
+        ...(args.ideaGenerator ? { generate: args.ideaGenerator } : {}),
+      });
+
+      return `Replaced ${body.idea} with "${idea.name}"; it is used from the next round`;
+    });
+
+    return Response.json(jobs.status());
+  }
+
+  if (parts[1] === "suite") {
+    const suite = await loadSuite(suiteArgs(args));
+
+    return Response.json(
+      suite.cases.map((entry) => ({
+        book: entry.book.slug,
+        idea: entry.idea.id,
+      })),
+    );
+  }
+
+  if (parts[1] !== "rounds") {
     return new Response("Not found", { status: 404 });
   }
 
   if (parts.length === 2) {
-    return Response.json(await listRounds(outputRoot));
+    return Response.json((await listRoundIds(args.outputRoot)).reverse());
   }
 
   const roundId = slugSchema.parse(parts[2]);
-  const round = roundDirectory(outputRoot, roundId);
+  const round = roundDirectory(args.outputRoot, roundId);
 
   if (parts.length === 3 && request.method === "GET") {
     return Response.json(await roundView(round));
   }
 
-  if (parts[3] === "feedback" && request.method === "POST") {
+  if (parts[3] === "feedback" && post) {
     await saveFeedback(round, await request.json());
 
     return Response.json({ ok: true });
   }
 
+  if (parts[3] === "resume" && post) {
+    jobs.start("retry-failed", async (report) =>
+      generate(args, roundId, undefined, report),
+    );
+
+    return Response.json(jobs.status());
+  }
+
   return new Response("Not found", { status: 404 });
 }
 
-async function listRounds(outputRoot: string): Promise<string[]> {
-  try {
-    const entries = await readdir(resolve(outputRoot, "evals", "rounds"));
+function suiteArgs(
+  args: StartPortalArgs,
+): Pick<RunRoundArgs, "suiteDirectory" | "registryPath"> {
+  return {
+    ...(args.suiteDirectory ? { suiteDirectory: args.suiteDirectory } : {}),
+    ...(args.registryPath ? { registryPath: args.registryPath } : {}),
+  };
+}
 
-    return entries
-      .filter((entry) => !entry.startsWith("."))
-      .sort()
-      .reverse();
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-      return [];
-    }
+async function generate(
+  args: StartPortalArgs,
+  roundId: string,
+  promptsDirectory: string | undefined,
+  report: (update: { message: string; round?: string }) => void,
+): Promise<string> {
+  report({ message: `Generating ${roundId}`, round: roundId });
 
-    throw error;
-  }
+  const summary = await runRound({
+    roundId,
+    outputRoot: args.outputRoot,
+    concurrency: args.concurrency ?? 3,
+    timeoutSeconds: args.timeoutSeconds ?? 900,
+    ...suiteArgs(args),
+    ...(args.targetRegistry ? { targetRegistry: args.targetRegistry } : {}),
+    ...(promptsDirectory ? { promptsDirectory } : {}),
+    ...(args.generate ? { generate: args.generate } : {}),
+    onProgress: (message) => {
+      report({ message: `${roundId}: ${message}`, round: roundId });
+    },
+  });
+
+  return `${roundId} finished: ${String(summary.done)} generated, ${String(summary.failed)} failed`;
 }
 
 async function serveRoundFile(

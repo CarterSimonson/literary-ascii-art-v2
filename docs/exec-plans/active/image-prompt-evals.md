@@ -8,18 +8,28 @@ until the ratings converge on something good.
 
 ## Loop
 
-1. The agent writes about 3 prompt templates for a round, with a hypothesis for
-   each in `notes.md`. One is always the current best prompt, as the control.
-2. `bookgen eval run <round> --prompts <dir>` generates one image per prompt ×
-   suite idea (27 images, 3 at a time), cleans it, renders a 24 × 36 preview,
-   and scores it.
-3. `bookgen eval serve` opens the rating page. The user gives each image 1–5
-   stars, good/bad tags, and a note.
-4. The agent reads the round's feedback and images, writes the next round, and
-   runs it. Repeat.
-5. When a prompt clearly wins, check it on fresh ideas, then copy it into
+Run `bookgen eval serve` and work entirely on the page:
+
+1. Rate each image: 1–5 stars, good/bad tags, and a note.
+2. Optionally type a direction for the agent, pick how many new prompts to try,
+   and click **Write & run next round**.
+3. The prompt agent (`src/evals/improve.ts`, Codex) reads every round's prompts,
+   notes, results, and ratings, plus thumbnails of the latest posters. It
+   writes new templates, each with a hypothesis. The best-rated prompt so far
+   (pooled by template text, at least three ratings when available) carries
+   forward unchanged as the control.
+4. The page generates the round in the background and switches to it as
+   images land. Repeat.
+5. **Replace idea** on a row swaps a weak idea for a new one from the same book
+   (`src/evals/ideas.ts`), from the next round on. The old case moves to
+   `evals/image-prompt/retired/<book>/` with the reason, and `suite_version`
+   goes up. These are repository edits to commit.
+6. When a prompt clearly wins, check it on fresh ideas, then copy it into
    `IMAGE_PROMPT_TEMPLATE` in `src/images/prompt.ts` and bump
    `IMAGE_PROMPT_VERSION`.
+
+`bookgen eval run <round> --prompts <dir>` still runs a round from hand-written
+templates.
 
 ## Decisions
 
@@ -27,6 +37,10 @@ until the ratings converge on something good.
   Worlds, frozen in `evals/image-prompt/`. Ideas stay fixed during tuning; swap
   one only when the user flags it as weak, and bump `suite_version`.
 - One image per prompt × idea. Judge a prompt by its average over all nine ideas.
+- New templates must keep {{title}}, {{author}}, {{name}}, {{composition}},
+  {{literary_basis}}, and {{palette}}, and the operational phrases
+  `transparent_background=true`, `master.png`, `artwork_colors`, and
+  `review_notes`; otherwise the round is not created.
 - Prompt templates are uncommitted files using `{{title}}`, `{{author}}`,
   `{{size}}`, `{{name}}`, `{{composition}}`, `{{literary_basis}}`,
   `{{conversion_resilience}}`, and `{{palette}}`. Unknown placeholders fail
@@ -54,6 +68,8 @@ images/<prompt>/<book>/<idea>/
                            generated.png (native), master.png, preview.png
 feedback.jsonl             append-only ratings: stars, tags, note, time, and
                            the attempt and master hash they judged
+agent/                     for rounds the page wrote: request.md (the brief),
+                           thumbnails/, events.jsonl, response.json, prompts/
 ```
 
 The latest feedback record per image is the current rating; earlier records
@@ -69,9 +85,11 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
 - [x] `bookgen eval run` (`src/evals/round.ts`, `src/evals/render.ts`).
 - [x] `bookgen eval serve` and the rating page (`src/evals/serve.ts`,
       `src/evals/portal.html`, `src/evals/feedback.ts`).
-- [ ] Round 1: control, flat-print, and stencil (in progress).
-- [ ] An in-app agent that writes the next round from feedback, so the loop runs
-      without a coding session.
+- [x] Round 1: control, flat-print, and stencil; 27 of 27 generated.
+- [x] Prompt agent and **Write & run next round** on the page
+      (`src/evals/improve.ts`, `src/evals/jobs.ts`).
+- [x] **Replace idea** on the page (`src/evals/ideas.ts`).
+- [ ] Rate round 1 and run round 2 from the page.
 
 ## Findings
 

@@ -53,6 +53,10 @@ retry semantics. Modules have these responsibilities:
 - `src/evals/serve.ts`, `src/evals/portal.html`, and `src/evals/feedback.ts`:
   `eval serve`; local rating page and append-only feedback.
 - `src/evals/metrics.ts`: native haze and accent contact hints for eval review.
+- `src/evals/improve.ts`: prompt agent that reads all rounds and ratings and
+  writes the next round's templates; the best-rated prompt carries forward.
+- `src/evals/ideas.ts`: replaces a suite idea with a new one and retires the old.
+- `src/evals/jobs.ts`: one background job at a time for the rating page.
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.
 

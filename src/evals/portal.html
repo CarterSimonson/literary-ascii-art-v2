@@ -242,6 +242,70 @@
         max-width: none;
         max-height: none;
       }
+      .panel {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 12px 16px 0;
+        display: grid;
+        gap: 8px;
+      }
+      .job {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .job.busy {
+        border-color: var(--accent);
+      }
+      .job.failed {
+        border-color: var(--bad);
+        color: var(--bad);
+      }
+      .next {
+        display: grid;
+        gap: 8px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .next .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .primary,
+      .secondary {
+        border-radius: 6px;
+        padding: 6px 12px;
+        cursor: pointer;
+        border: 1px solid var(--accent);
+      }
+      .primary {
+        background: var(--accent);
+        color: var(--surface);
+      }
+      .secondary {
+        background: none;
+        color: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      h2 .replace {
+        margin-left: 8px;
+        font-size: 12px;
+        padding: 2px 8px;
+      }
+      h2 .retired {
+        margin-left: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: normal;
+      }
       .empty {
         color: var(--muted);
         padding: 40px 0;
@@ -255,6 +319,7 @@
       <select id="round" aria-label="Round"></select>
       <div class="summary" id="summary"></div>
     </header>
+    <div class="panel" id="panel"></div>
     <main id="main"><p class="empty">Loading…</p></main>
     <div class="overlay" id="overlay">
       <div class="bar" id="overlay-bar"></div>
@@ -262,13 +327,26 @@
     </div>
     <script>
       const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      const state = { rounds: [], round: null, data: null, timer: null };
+      const state = {
+        rounds: [],
+        round: null,
+        data: null,
+        suite: [],
+        job: null,
+        timer: null,
+        jobTimer: null,
+        direction: "",
+        newPrompts: 2,
+      };
       const main = document.getElementById("main");
       const roundSelect = document.getElementById("round");
 
       function el(tag, attributes = {}, children = []) {
         const node = document.createElement(tag);
         for (const [key, value] of Object.entries(attributes)) {
+          if (value === null || value === undefined) {
+            continue;
+          }
           if (key === "text") {
             node.textContent = value;
           } else if (key.startsWith("on")) {
@@ -309,7 +387,9 @@
         location.hash = state.round;
         const response = await fetch(`/api/rounds/${state.round}`);
         state.data = await response.json();
+        state.suite = await (await fetch("/api/suite")).json();
         render();
+        renderPanel();
         clearTimeout(state.timer);
         const pending = state.data.images.some(
           (image) => image.result === null,
@@ -369,6 +449,7 @@
             el("h2", {}, [
               document.createTextNode(`${entry.name} `),
               el("small", { text: entry.book_title }),
+              ideaControl(entry),
             ]),
             el("div", { class: "row" }, cards),
           ]);
@@ -582,6 +663,167 @@
         overlay.classList.add("open");
       }
 
+      function inSuite(entry) {
+        return state.suite.some(
+          (item) => item.book === entry.book && item.idea === entry.idea,
+        );
+      }
+
+      function ideaControl(entry) {
+        if (!inSuite(entry)) {
+          return el("span", {
+            class: "retired",
+            text: "replaced in the suite",
+          });
+        }
+        return el("button", {
+          type: "button",
+          class: "secondary replace",
+          text: "Replace idea",
+          disabled: state.job?.busy ? "" : null,
+          onclick: () => replaceIdea(entry),
+        });
+      }
+
+      async function replaceIdea(entry) {
+        const reason = window.prompt(
+          `Replace "${entry.name}" with a new ${entry.book_title} idea from the next round on. What's wrong with it? (optional)`,
+        );
+        if (reason === null) {
+          return;
+        }
+        await startJob("/api/ideas/replace", {
+          book: entry.book,
+          idea: entry.idea,
+          reason,
+        });
+      }
+
+      async function startJob(path, body) {
+        const response = await fetch(path, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          alert(result.error);
+          return;
+        }
+        state.job = result;
+        renderPanel();
+        render();
+        scheduleStatus();
+      }
+
+      // Follows background jobs; switches to a new round once it exists.
+      async function pollStatus() {
+        const previous = state.job;
+        state.job = await (await fetch("/api/status")).json();
+        const finished = previous?.busy && !state.job.busy;
+        const newRound =
+          state.job.round && !state.rounds.includes(state.job.round);
+        if (newRound) {
+          await loadRounds();
+          if (state.rounds.includes(state.job.round)) {
+            state.round = state.job.round;
+            roundSelect.value = state.round;
+            await loadRound();
+          }
+        } else if (finished && state.round) {
+          await loadRound();
+        }
+        renderPanel();
+        scheduleStatus();
+      }
+
+      function scheduleStatus() {
+        clearTimeout(state.jobTimer);
+        const delay = state.job?.busy ? 4000 : 20000;
+        state.jobTimer = setTimeout(pollStatus, delay);
+      }
+
+      function renderPanel() {
+        const panel = document.getElementById("panel");
+        const job = state.job;
+        const busy = Boolean(job?.busy);
+        let jobText = "Idle";
+        let jobClass = "job";
+        if (busy) {
+          jobText = `Working: ${job.message}`;
+          jobClass = "job busy";
+        } else if (job?.error) {
+          jobText = `Last job failed: ${job.error}`;
+          jobClass = "job failed";
+        } else if (job && job.message !== "Idle") {
+          jobText = job.message;
+        }
+
+        const direction = el("textarea", {
+          placeholder:
+            "Optional direction for the prompt agent, e.g. focus on clean edges; stop adding detail",
+          "aria-label": "Direction for the prompt agent",
+          oninput: (event) => {
+            state.direction = event.target.value;
+          },
+        });
+        direction.value = state.direction;
+
+        const count = el(
+          "select",
+          {
+            "aria-label": "New prompts",
+            onchange: (event) => {
+              state.newPrompts = Number(event.target.value);
+            },
+          },
+          [1, 2, 3, 4].map((value) =>
+            el("option", {
+              value: String(value),
+              text: `${value} new + best so far`,
+            }),
+          ),
+        );
+        count.value = String(state.newPrompts);
+
+        const failed = (state.data?.images ?? []).some(
+          (image) => image.result?.status === "failed",
+        );
+        const actions = [
+          count,
+          el("button", {
+            type: "button",
+            class: "primary",
+            text: "Write & run next round",
+            disabled: busy ? "" : null,
+            onclick: () =>
+              startJob("/api/next", {
+                direction: state.direction,
+                newPrompts: state.newPrompts,
+              }),
+          }),
+        ];
+        if (failed && state.round) {
+          actions.push(
+            el("button", {
+              type: "button",
+              class: "secondary",
+              text: "Retry failed images",
+              disabled: busy ? "" : null,
+              onclick: () => startJob(`/api/rounds/${state.round}/resume`, {}),
+            }),
+          );
+        }
+
+        panel.replaceChildren(
+          el("div", { class: jobClass, role: "status", text: jobText }),
+          el("div", { class: "next" }, [
+            direction,
+            el("div", { class: "actions" }, actions),
+          ]),
+        );
+      }
+
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           document.getElementById("overlay").classList.remove("open");
@@ -591,7 +833,7 @@
         state.round = roundSelect.value;
         loadRound();
       });
-      loadRounds();
+      loadRounds().then(pollStatus);
     </script>
   </body>
 </html>

@@ -91,6 +91,33 @@ export function roundDirectory(outputRoot: string, roundId: string): string {
   return resolve(outputRoot, "evals", "rounds", slugSchema.parse(roundId));
 }
 
+// Round IDs in natural order, oldest first (round-2 before round-10).
+export async function listRoundIds(outputRoot: string): Promise<string[]> {
+  try {
+    const rounds = resolve(outputRoot, "evals", "rounds");
+    const entries = await readdir(rounds);
+    const ids: string[] = [];
+
+    // A round exists once its round.yaml does; a directory holding only a
+    // prompt agent's draft is not a round yet.
+    for (const entry of entries) {
+      if (await Bun.file(join(rounds, entry, "round.yaml")).exists()) {
+        ids.push(entry);
+      }
+    }
+
+    return ids.sort((left, right) =>
+      left.localeCompare(right, "en", { numeric: true }),
+    );
+  } catch (error) {
+    if (isMissing(error)) {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
 export function imageDirectory(
   round: string,
   promptId: string,

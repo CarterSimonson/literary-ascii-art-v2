@@ -6,13 +6,21 @@ import { join } from "node:path";
 import sharp from "sharp";
 import { parse } from "yaml";
 
+import { replaceSuiteIdea } from "../src/evals/ideas.ts";
+import { planNextRound, type PromptWriter } from "../src/evals/improve.ts";
 import { measureImage } from "../src/evals/metrics.ts";
 import { runRound, type RunRoundArgs } from "../src/evals/round.ts";
 import { startPortal } from "../src/evals/serve.ts";
 import { loadSuite } from "../src/evals/suite.ts";
 import type { ImageGenerator } from "../src/images/codex.ts";
 import type { SourceImage } from "../src/render/convert.ts";
-import { fixtureUsage, rejection } from "./fixtures.ts";
+import {
+  fakeGenerator as fakeIdeaGenerator,
+  fixtureUsage,
+  ideasResponse,
+  rejection,
+  responseEvents,
+} from "./fixtures.ts";
 
 type Rgba = [number, number, number, number];
 
@@ -296,7 +304,7 @@ describe("eval rounds", () => {
       ...fixture.args(fakeGenerator([])),
       promptsDirectory: fixture.prompts,
     });
-    const server = startPortal({
+    const { server } = startPortal({
       outputRoot: join(fixture.root, "output"),
       port: 0,
     });
@@ -348,6 +356,214 @@ describe("eval rounds", () => {
     } finally {
       await server.stop();
     }
+  });
+});
+
+// A template that passes the prompt agent's checks.
+const VALID_TEMPLATE =
+  "Draw {{name}} ({{composition}}; {{literary_basis}}) from {{title}} by {{author}} in {{palette}}, as a flat screen print. Use transparent_background=true, save master.png, and return artwork_colors and review_notes.";
+
+interface WriterCall {
+  text: string;
+  images: string[];
+}
+
+function fakeWriter(
+  calls: WriterCall[],
+  prompts: { id: string; template: string }[],
+): PromptWriter {
+  return async (input) => {
+    calls.push({
+      text: input.input
+        .map((item) => (item.type === "text" ? item.text : ""))
+        .join("\n"),
+      images: input.input.flatMap((item) =>
+        item.type === "local_image" ? [item.path] : [],
+      ),
+    });
+
+    return Promise.resolve({
+      response: JSON.stringify({
+        analysis: "Flat prints scored higher; haze persists in the control.",
+        prompts: prompts.map((prompt) => ({
+          ...prompt,
+          hypothesis: `Testing ${prompt.id}`,
+        })),
+      }),
+      usage: fixtureUsage,
+    });
+  };
+}
+
+async function rate(
+  root: string,
+  ratings: { prompt: string; stars: number; note: string }[],
+): Promise<void> {
+  const { server } = startPortal({ outputRoot: join(root, "output"), port: 0 });
+
+  try {
+    for (const rating of ratings) {
+      await fetch(
+        `http://127.0.0.1:${String(server.port)}/api/rounds/round-1/feedback`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            prompt: rating.prompt,
+            book: "the-great-gatsby",
+            idea: "the-weight-of-shirts",
+            stars: rating.stars,
+            tags: [],
+            note: rating.note,
+          }),
+        },
+      );
+    }
+  } finally {
+    await server.stop();
+  }
+}
+
+describe("next rounds", () => {
+  test("the prompt agent sees ratings and posters, and the best prompt carries forward unchanged", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    await rate(fixture.root, [
+      { prompt: "control", stars: 2, note: "Hazy collar" },
+      { prompt: "flat", stars: 4, note: "Crisp edges" },
+    ]);
+    const calls: WriterCall[] = [];
+
+    const planned = await planNextRound({
+      outputRoot: join(fixture.root, "output"),
+      direction: "Keep the edges crisp",
+      newPrompts: 1,
+      suiteDirectory: join(fixture.root, "suite"),
+      writer: fakeWriter(calls, [
+        { id: "solid-block", template: VALID_TEMPLATE },
+      ]),
+    });
+
+    expect(planned.roundId).toBe("round-2");
+    expect(calls[0]?.text).toContain("Crisp edges");
+    expect(calls[0]?.text).toContain("Keep the edges crisp");
+    expect(calls[0]?.images).toHaveLength(2);
+    expect(
+      await readFile(join(planned.promptsDirectory, "flat.prompt.md"), "utf8"),
+    ).toBe("Draw {{name}} as a flat screen print.");
+    expect(
+      await readFile(join(planned.promptsDirectory, "notes.md"), "utf8"),
+    ).toContain("flat (control): best so far");
+  });
+
+  test("a new prompt that drops a required instruction is rejected", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    await rate(fixture.root, [{ prompt: "flat", stars: 3, note: "" }]);
+
+    const failure = await rejection(
+      planNextRound({
+        outputRoot: join(fixture.root, "output"),
+        direction: "",
+        newPrompts: 1,
+        suiteDirectory: join(fixture.root, "suite"),
+        writer: fakeWriter(
+          [],
+          [
+            {
+              id: "short",
+              template: VALID_TEMPLATE.replace("master.png", "a file"),
+            },
+          ],
+        ),
+      }),
+    );
+
+    expect(failure).toThrow("dropped the required instruction 'master.png'");
+  });
+
+  test("clicking next round on the page writes prompts and generates the new round", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    await rate(fixture.root, [{ prompt: "flat", stars: 4, note: "Good" }]);
+    const generated: string[] = [];
+    const { server, jobs } = startPortal({
+      outputRoot: join(fixture.root, "output"),
+      port: 0,
+      suiteDirectory: join(fixture.root, "suite"),
+      targetRegistry: join(fixture.root, "targets.yaml"),
+      writer: fakeWriter([], [{ id: "solid-block", template: VALID_TEMPLATE }]),
+      generate: fakeGenerator(generated),
+    });
+    const base = `http://127.0.0.1:${String(server.port)}`;
+
+    try {
+      const started = await fetch(`${base}/api/next`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ direction: "", newPrompts: 1 }),
+      });
+      expect(started.status).toBe(200);
+      await jobs.idle();
+
+      const status = (await (await fetch(`${base}/api/status`)).json()) as {
+        busy: boolean;
+        message: string;
+        error: string | null;
+      };
+      expect(status).toMatchObject({ busy: false, error: null });
+      expect(status.message).toContain("round-2 finished: 2 generated");
+      expect(await (await fetch(`${base}/api/rounds`)).json()).toEqual([
+        "round-2",
+        "round-1",
+      ]);
+    } finally {
+      await server.stop();
+    }
+  });
+
+  test("replacing an idea swaps it in the suite and retires the old one", async () => {
+    const fixture = await roundFixture();
+    const suiteDirectory = join(fixture.root, "suite");
+
+    const idea = await replaceSuiteIdea({
+      book: "the-great-gatsby",
+      idea: "the-weight-of-shirts",
+      reason: "Too literal",
+      suiteDirectory,
+      generate: fakeIdeaGenerator(
+        responseEvents(JSON.stringify(ideasResponse("fresh", 1))),
+      ),
+    });
+
+    const suite = await loadSuite({ directory: suiteDirectory });
+    expect(idea.id).toBe("fresh-1");
+    expect(suite.cases.map((entry) => entry.id)).toEqual([
+      "the-great-gatsby/fresh-1",
+    ]);
+    expect(suite.suiteVersion).toBe(2);
+    expect(
+      parse(
+        await readFile(
+          join(
+            suiteDirectory,
+            "retired",
+            "the-great-gatsby",
+            "the-weight-of-shirts.yaml",
+          ),
+          "utf8",
+        ),
+      ),
+    ).toMatchObject({ retired: { reason: "Too literal" } });
   });
 });
 
