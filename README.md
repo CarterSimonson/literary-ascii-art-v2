@@ -231,10 +231,12 @@ YAML contains book identity, generation provenance (including the requested
 `idea_count`), and the requested number of concepts with
 composition, literary basis, a list of hex colors with intended uses, and
 conversion rationale. Concepts describe text-filled regions and empty forms,
-including mixed multi-color environments in earlier prompt versions. Version 6 uses one system: a single text
-field in one primary ink, one iconic subject cut out of it as transparent negative
-space, interior details drawn as transparent channels, and at most one accent color
-ringed by a gap. Palettes have at most three colors, including any suggested paper,
+including mixed multi-color environments in earlier prompt versions. Version 7 uses one system: a single text
+field in one primary ink, with one compact scene of a relationship central to the
+book (a dominant silhouette plus one or two forms that set the stakes) cut out of
+it as transparent negative space, interior details drawn as transparent channels,
+and at most one accent color ringed by a gap. Version 7 replaced the
+isolated-subject version 6 after it rated highest in an ideas eval round. Palettes have at most three colors, including any suggested paper,
 which belongs to rendering. Image dimensions belong to generation
 settings: one reusable master will be placed within different poster sizes,
 with surrounding space filled at render time. The trace saves the exact prompt, SDK

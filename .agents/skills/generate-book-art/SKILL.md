@@ -10,10 +10,10 @@ Create purely pictorial literary art whose intent survives reduction to a charac
 The current baseline direction, modeled on the Litographs posters the product competes with, is under evaluation and may change. Until results favor something else, use this system:
 
 - **One text field.** A single rectangle of text in one primary ink fills the interior art area, up to a narrow transparent placement margin.
-- **One iconic subject.** A single figure, face, object, or tightly grouped pair, cut out of the field as a crisp transparent silhouette so the paper shows through. It must read instantly at thumbnail size.
+- **One defining scene.** A compact scene of a relationship central to the book (pursuit, confrontation, separation, waiting): a dominant silhouette plus one or two substantial forms that set the stakes, cut out of the field as crisp transparent shapes so the paper shows through. It must read instantly at thumbnail size and could not illustrate an unrelated book. Eval ratings favored this over isolated objects and abstract symbols.
 - **Details as unprinted lines.** Draw features, folds, steps, waves, or architecture as bold transparent channels through the field, not with extra colors or shading.
 - **At most one accent.** An optional second ink colors one element only, ringed by a transparent channel so it never touches the primary field.
-- **Calm.** The rest of the field is plain text: no secondary scenery, props, or scattered shapes.
+- **Calm.** The rest of the field is plain text: no panoramas, montages, crowds, decorative props, or scattered shapes.
 - **Clean contours.** Smooth vector curves and straight lines like a precise paper cut. No torn, ragged, distressed, or dithered edges, specks, or fragments.
 
 Rendering prints whole characters only and leaves an empty cell wherever two ink colors meet, but designed gaps in the art are what make the poster look crisp. Draw them deliberately.
