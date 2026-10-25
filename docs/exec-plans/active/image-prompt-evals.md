@@ -76,7 +76,7 @@ The judge now runs in the loop:
 - The prompt agent's winner for a round is the prompt with the best mean judge
   rank (the user's mean stars for rounds without judgments). Since every round
   carries the best prompt so far as its control, the latest round's winner is
-  carried forward. Its brief shows judge ranks and notes beside any user
+  carried forward; on a tie the current best stays. Its brief shows judge ranks and notes beside any user
   ratings, and user ratings outweigh the judge where they disagree.
 
 ## Decisions
@@ -191,5 +191,10 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   intended scene. Winners matched the user in rounds 2 and 3; in round 1 the
   judge consistently prefers stencil, where the user's means were within 0.6
   stars. Stable enough to steer rounds, with the user spot-checking.
+- Round 4 (ideas: defining-scene control, readable-encounter,
+  signature-action), judged without user ratings: readable-encounter and
+  defining-scene tied at mean rank 1.89, signature-action 2.22. On a tie the
+  current best stays the control, so defining-scene carries forward until a
+  variant actually beats it. Readable-encounter took 5 of 9 row wins.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.

@@ -279,9 +279,17 @@ function bestTemplate(
       continue;
     }
 
-    const winnerId = roundWinner(round);
-    const prompt = round.prompts.find((entry) => entry.id === winnerId);
-    const entry = pooled.find((item) => item.sha256 === prompt?.sha256);
+    const winners = roundWinners(round)
+      .map((id) => round.prompts.find((entry) => entry.id === id))
+      .map((prompt) => pooled.find((item) => item.sha256 === prompt?.sha256));
+
+    // On a tie the current best stays, so the control only changes when a new
+    // prompt actually beats it.
+    if (best && winners.includes(best)) {
+      continue;
+    }
+
+    const entry = winners[0];
 
     if (entry) {
       best = entry;
@@ -321,29 +329,26 @@ function roundResults(round: RoundHistory): PromptResult[] {
   });
 }
 
-function roundWinner(round: RoundHistory): string | null {
+// Every prompt tied for the round's best result.
+function roundWinners(round: RoundHistory): string[] {
   const results = roundResults(round);
   const judged = results.every((result) => result.meanRank !== null);
-  let winner: string | null = null;
-  let bestValue = Infinity;
+  const scored: { prompt: string; value: number }[] = [];
 
   for (const result of results) {
-    let value: number | null = null;
-
-    if (judged) {
-      value = result.meanRank;
-    } else if (result.meanStars !== null) {
+    if (judged && result.meanRank !== null) {
+      scored.push({ prompt: result.prompt, value: result.meanRank });
+    } else if (!judged && result.meanStars !== null) {
       // Higher stars are better; negate so lower is better for both.
-      value = -result.meanStars;
-    }
-
-    if (value !== null && value < bestValue) {
-      winner = result.prompt;
-      bestValue = value;
+      scored.push({ prompt: result.prompt, value: -result.meanStars });
     }
   }
 
-  return winner;
+  const best = Math.min(...scored.map((entry) => entry.value));
+
+  return scored
+    .filter((entry) => Math.abs(entry.value - best) < 1e-9)
+    .map((entry) => entry.prompt);
 }
 
 function committed(
@@ -603,7 +608,14 @@ function leaderboard(
       return `${result.prompt} (${parts.join("; ") || "no results"})`;
     });
 
-    return `- ${round.roundId}: winner ${roundWinner(round) ?? "none"}; ${results.join(", ")}`;
+    const winners = roundWinners(round);
+    let winner = "none";
+
+    if (winners.length > 0) {
+      winner = winners.join(" and ");
+    }
+
+    return `- ${round.roundId}: best ${winner}; ${results.join(", ")}`;
   });
 
   return `${title} (judge ranks are within each idea, 1 = best; the user spot-checks some images):\n${lines.join("\n")}`;
