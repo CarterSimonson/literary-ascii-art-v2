@@ -1,6 +1,24 @@
 import { appendFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+// The judge scores each image 0–5 on every axis, with a reason, before giving
+// its overall stars. The order here is the order shown to people and agents.
+export const JUDGE_AXES = [
+  "correctness",
+  "representation",
+  "recognition",
+  "artistic",
+] as const;
+
+export type JudgeAxis = (typeof JUDGE_AXES)[number];
+
+export interface AxisScore {
+  score: number;
+  reason: string;
+}
+
+export type JudgeScores = Record<JudgeAxis, AxisScore>;
+
 // One AI judge verdict on one image, appended to the round's judge.jsonl.
 // Ranks are within the image's row (1 is best), judged together.
 export interface JudgmentRecord {
@@ -13,10 +31,34 @@ export interface JudgmentRecord {
   attempt: number;
   master_sha256: string;
   rank: number;
+  // Absent from judgments made before judge v5.
+  scores?: JudgeScores;
   stars: number;
   tags: string[];
   note: string;
   confidence: string;
+}
+
+// "correctness 4, representation 3, ..." for briefs and reports.
+export function scoresSummary(scores: JudgeScores | undefined): string {
+  if (!scores) {
+    return "no axis scores";
+  }
+
+  return JUDGE_AXES.map(
+    (axis) => `${axis} ${String(scores[axis].score)}/5`,
+  ).join(", ");
+}
+
+// Every axis with its score and the judge's reason, one per line.
+export function scoresDetail(scores: JudgeScores | undefined): string[] {
+  if (!scores) {
+    return [];
+  }
+
+  return JUDGE_AXES.map(
+    (axis) => `${axis} ${String(scores[axis].score)}/5: ${scores[axis].reason}`,
+  );
 }
 
 export async function appendJudgments(

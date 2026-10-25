@@ -16,6 +16,7 @@ import {
   type RoundHistory,
   type Template,
 } from "./history.ts";
+import { scoresSummary } from "./judgments.ts";
 import {
   IDEAS_PER_BOOK,
   roundDirectory,
@@ -651,7 +652,7 @@ function judgmentSummary(image: ImageRecord): string {
     return "not judged";
   }
 
-  return `judge: rank ${String(judgment.rank)} in its idea, ${String(judgment.stars)}/5, "${judgment.note}"`;
+  return `judge: rank ${String(judgment.rank)} in its idea, ${String(judgment.stars)}/5 (${scoresSummary(judgment.scores)}), "${judgment.note}"`;
 }
 
 function imageLine(roundId: string, image: ImageRecord): string {

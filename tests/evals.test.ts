@@ -7,7 +7,10 @@ import sharp from "sharp";
 import { parse, stringify } from "yaml";
 
 import { replaceSuiteIdea } from "../src/evals/ideas.ts";
-import { readLatestJudgments } from "../src/evals/judgments.ts";
+import {
+  readLatestJudgments,
+  type JudgeScores,
+} from "../src/evals/judgments.ts";
 import {
   judgeRound,
   runJudgeCheck,
@@ -161,6 +164,15 @@ async function roundFixture(): Promise<RoundFixture> {
   };
 }
 
+function axisScores(score: number, reason: string): JudgeScores {
+  return {
+    correctness: { score, reason: `${reason}: clean fill` },
+    representation: { score, reason: `${reason}: faithful scene` },
+    recognition: { score, reason: `${reason}: plainly the book` },
+    artistic: { score, reason: `${reason}: a bit plain` },
+  };
+}
+
 // Ranks images in the order shown and gives everything three stars.
 const fakeJudge: Judge = async (input) => {
   const text = input.input
@@ -173,6 +185,7 @@ const fakeJudge: Judge = async (input) => {
       ranking: Array.from({ length: images }, (_, index) => index + 1),
       ratings: Array.from({ length: images }, (_, index) => ({
         image: index + 1,
+        scores: axisScores(3, `Shown ${String(index + 1)}`),
         stars: 3,
         tags: [],
         note: `Shown ${String(index + 1)}`,
@@ -865,6 +878,7 @@ describe("AI judge check", () => {
           ranking: Array.from({ length: images }, (_, index) => index + 1),
           ratings: Array.from({ length: images }, (_, index) => ({
             image: index + 1,
+            scores: axisScores(3, "Clean but plain"),
             stars: 3,
             tags: [],
             note: "Clean but plain",
@@ -907,9 +921,12 @@ describe("AI judge check", () => {
         join(repeated.directory, "run-2", "rankings.jsonl"),
       ).exists(),
     ).toBe(true);
-    expect(await readFile(join(directory, "report.md"), "utf8")).toContain(
-      "Within one star: 100%",
+    const report = await readFile(join(directory, "report.md"), "utf8");
+    expect(report).toContain("Within one star: 100%");
+    expect(report).toContain(
+      "correctness 3/5, representation 3/5, recognition 3/5, artistic 3/5",
     );
+    expect(report).toContain("artistic 3/5: Clean but plain: a bit plain");
   });
 
   test("the judge's ranking decides row order and round winners; stars give agreement", () => {
@@ -927,6 +944,7 @@ describe("AI judge check", () => {
       human,
       judge,
       judge_rank: rank,
+      judge_scores: axisScores(judge, "fixture"),
       confidence: "high",
       human_note: "",
       judge_note: "",
@@ -1086,6 +1104,17 @@ describe("judged rounds", () => {
     expect(briefs[0]).toContain(
       "Intended scene of every image below, for context only: The Weight of Shirts",
     );
+    expect(briefs[0]).toContain("score every axis");
+    const scores = (await readLatestJudgments(round)).get(
+      "flat/the-great-gatsby/the-weight-of-shirts",
+    )?.scores;
+    expect(scores).toMatchObject({
+      correctness: { score: 3 },
+      representation: { score: 3 },
+      recognition: { score: 3 },
+      artistic: { score: 3 },
+    });
+    expect(scores?.artistic.reason).toContain("a bit plain");
     expect(await judgeRound(judge)).toMatchObject({ judged: 0 });
 
     const { server, tasks } = startPortal({
