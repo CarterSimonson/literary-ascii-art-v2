@@ -45,6 +45,24 @@ retry semantics. Modules have these responsibilities:
   layout, source-color glyph rendering, and exact print-size PNG encoding.
 - `src/render/run.ts` and `src/render/publication.ts`: rendering orchestration,
   manifests, locking, staged batch replacement, and publication recovery.
+- `src/evals/suite.ts` and `evals/image-prompt/`: nine frozen ideas from three
+  books for [image-prompt evals](docs/exec-plans/active/image-prompt-evals.md).
+- `src/evals/round.ts` and `src/evals/render.ts`: `eval run`; image rounds (image
+  templates × suite ideas) and idea rounds (ideas templates write fresh ideas,
+  drawn with one image prompt); parallel generation with per-image locks, cleanup, 24 × 36 previews, and per-image
+  results under `output/evals/rounds/`.
+- `src/evals/serve.ts`, `src/evals/portal.html`, and `src/evals/feedback.ts`:
+  `eval serve`; local rating page and append-only feedback.
+- `src/evals/metrics.ts`: native haze and accent contact hints for eval review.
+- `src/evals/improve.ts`: prompt agent that reads all rounds and ratings and
+  writes the next round's templates; the best-rated prompt carries forward.
+- `src/evals/judge.ts`, `src/evals/judgments.ts`, `src/evals/history.ts`, and
+  `src/evals/codex.ts`: AI judge that ranks and rates each idea row from a rubric
+  and the user's rated examples, judging rounds into `judge.jsonl`, its agreement
+  and stability checks, the shared round history, and structured Codex calls.
+- `src/evals/ideas.ts`: replaces a suite idea with a new one and retires the old.
+- `src/evals/tasks.ts`: parallel background tasks for the rating page, with
+  duplicate and conflict checks.
 - `tests/`: input, output, retry, failure, and CLI checks using fake SDK generation
   and decoded PNG fixtures.
 

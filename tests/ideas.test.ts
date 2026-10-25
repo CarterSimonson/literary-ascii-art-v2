@@ -237,7 +237,7 @@ describe("book-grouped outputs and retry behavior", (): void => {
         join(outputRoot, "dracula/traces/ideas/prompt.txt"),
         "utf8",
       ),
-    ).toContain("Generate exactly 3 distinct composition ideas");
+    ).toContain("Generate exactly 3 distinct ideas");
   });
 
   test("rejects a response with a different number of ideas than requested", async (): Promise<void> => {

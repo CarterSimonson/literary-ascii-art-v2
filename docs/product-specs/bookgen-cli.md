@@ -102,15 +102,19 @@ Newly generated ideas have at most three: a primary text ink, an optional accent
 ink, and an optional suggested paper color, which stays outside the source master.
 Saved ideas with larger palettes remain readable downstream.
 
-Ideas prompt version 6 follows the Litographs visual system: one rectangular text
-field in one primary ink fills the interior art area; one iconic subject is cut out
-of it as a crisp transparent silhouette; interior details are drawn as bold
-transparent channels rather than extra colors; an optional accent colors one
-element only, ringed by a transparent channel. The rest of the field stays plain,
-without secondary scenery. Contours are smooth vector shapes with no torn or
-ragged edges, and strokes and gaps stay at least about 1% of the canvas width.
-Earlier versions favored multi-color illustrated environments; rerun ideas and
-images to adopt version 6. Two-stage reads remain optional. Dimensions and aspect ratio belong to image
+Ideas prompt version 7 asks for a compact scene of a defining dramatic
+relationship from the book, not an isolated object or generic pose: a dominant
+silhouette plus one or two substantial forms that establish the stakes, with a
+specificity check that the scene could not illustrate an unrelated book. One
+rectangular text field in one primary ink fills the interior art area; the scene
+is cut out of it as crisp transparent silhouettes and broad channels; an optional
+accent colors one element only, separated by a transparent gap. No panoramas,
+montages, crowds, fine texture, or ornament. Contours are smooth vector shapes,
+and channels and gaps stay at least about 1% of the canvas width. Version 7 is
+the "defining-scene" variant, rated highest in eval round 3 (3.6 stars against
+2.75 for version 6). Version 6 used one isolated iconic subject; earlier versions
+favored multi-color illustrated environments. Rerun ideas and images to adopt
+version 7. Two-stage reads remain optional. Dimensions and aspect ratio belong to image
 settings, not idea compositions. Version 1 used fixed palette roles and separate
 visual-device fields; rerun ideas to replace it with version 2.
 

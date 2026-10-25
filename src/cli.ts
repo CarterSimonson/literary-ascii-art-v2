@@ -20,6 +20,9 @@ import {
   DEFAULT_SEPARATION_RADIUS,
   MAX_SEPARATION_RADIUS,
 } from "./render/convert.ts";
+import { runRound } from "./evals/round.ts";
+import { judgeRound, runJudgeCheck } from "./evals/judge.ts";
+import { startPortal } from "./evals/serve.ts";
 
 interface GenerationFlags {
   registry: string;
@@ -44,6 +47,7 @@ export interface CliOptions {
   reclean?: typeof runReclean;
   fetchBook?: typeof runFetch;
   render?: typeof runRender;
+  round?: typeof runRound;
   stdout?: (message: string) => void;
   stderr?: (message: string) => void;
   signal?: AbortSignal;
@@ -73,6 +77,18 @@ function parseSeparation(value: string): number {
   }
 
   return radius;
+}
+
+function parsePositiveInteger(value: string, maximum: number): number {
+  const number = Number(value);
+
+  if (!Number.isInteger(number) || number < 1 || number > maximum) {
+    throw new InvalidArgumentError(
+      `Must be an integer from 1 to ${String(maximum)}`,
+    );
+  }
+
+  return number;
 }
 
 function parseIdeaCount(value: string): number {
@@ -358,6 +374,225 @@ export async function runCli(
 
         for (const path of paths) {
           stdout(`${path}\n`);
+        }
+      },
+    );
+
+  const evals = program
+    .command("eval")
+    .description("Run and review image-prompt evaluation rounds");
+
+  evals
+    .command("run")
+    .description(
+      "Generate, render, and score every prompt × suite idea; reruns fill in missing or failed images",
+    )
+    .argument("<round-id>", "Round ID, e.g. round-1")
+    .option(
+      "--prompts <directory>",
+      "Create the round from *.prompt.md templates (and notes.md) in this directory",
+    )
+    .option("--retry <image...>", "Regenerate <prompt>/<book>/<idea> images")
+    .option(
+      "--concurrency <count>",
+      "Images generated at once",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option(
+      "--timeout <seconds>",
+      "Timeout per image attempt",
+      parseTimeout,
+      600,
+    )
+    .option("--registry <path>", "Book registry YAML", "books.yaml")
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (
+        roundId: string,
+        flags: {
+          prompts?: string;
+          retry?: string[];
+          concurrency: number;
+          timeout: number;
+          registry: string;
+          output: string;
+        },
+      ): Promise<void> => {
+        const summary = await (options.round ?? runRound)({
+          roundId,
+          outputRoot: flags.output,
+          registryPath: flags.registry,
+          concurrency: flags.concurrency,
+          timeoutSeconds: flags.timeout,
+          ...(flags.prompts ? { promptsDirectory: flags.prompts } : {}),
+          ...(flags.retry ? { retry: flags.retry } : {}),
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message: string): void => {
+            stderr(`${message}\n`);
+          },
+        });
+
+        stderr(
+          `${String(summary.done)} done, ${String(summary.failed)} failed, ${String(summary.skipped)} already done\n`,
+        );
+        stdout(`${summary.directory}\n`);
+
+        if (summary.failed > 0) {
+          throw new Error(
+            "Some images failed; rerun the same command to retry them",
+          );
+        }
+      },
+    );
+
+  evals
+    .command("judge")
+    .description(
+      "Have the AI judge rank and rate a round's images that are not judged yet",
+    )
+    .argument("<round-id>", "Round ID, e.g. round-4")
+    .option(
+      "--concurrency <count>",
+      "Rows judged at once",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (
+        roundId: string,
+        flags: { concurrency: number; output: string },
+      ): Promise<void> => {
+        const summary = await judgeRound({
+          outputRoot: flags.output,
+          roundId,
+          concurrency: flags.concurrency,
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message: string): void => {
+            stderr(`${message}\n`);
+          },
+        });
+
+        stdout(
+          `Judged ${String(summary.judged)} of ${String(summary.rows)} rows\n`,
+        );
+
+        if (summary.failed.length > 0) {
+          throw new Error(`Judging failed: ${summary.failed.join("; ")}`);
+        }
+      },
+    );
+
+  evals
+    .command("judge-check")
+    .description(
+      "Have the AI judge rate already-rated rounds and report how well it agrees with your ratings",
+    )
+    .option(
+      "--rounds <round-id...>",
+      "Rounds to check (default: every rated round)",
+    )
+    .option(
+      "--repeat <count>",
+      "Run the check this many times and report how stable the rankings are",
+      (value: string): number => parsePositiveInteger(value, 5),
+      1,
+    )
+    .option(
+      "--concurrency <count>",
+      "Rows judged at once",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (flags: {
+        rounds?: string[];
+        repeat: number;
+        concurrency: number;
+        output: string;
+      }): Promise<void> => {
+        const { directory, summary, stability } = await runJudgeCheck({
+          outputRoot: flags.output,
+          repeat: flags.repeat,
+          concurrency: flags.concurrency,
+          ...(flags.rounds ? { rounds: flags.rounds } : {}),
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message: string): void => {
+            stderr(`${message}\n`);
+          },
+        });
+
+        stderr(
+          `Within one star: ${String(Math.round(summary.within_one * 100))}%, correlation: ${String(summary.correlation)}\n`,
+        );
+        if (stability) {
+          stderr(
+            `Pairs in the same order every run: ${String(Math.round(stability.pair_agreement * 100))}%\n`,
+          );
+          stdout(`${directory}/stability.md\n`);
+          return;
+        }
+
+        stdout(`${directory}/report.md\n`);
+      },
+    );
+
+  evals
+    .command("serve")
+    .description(
+      "Open the local rating page; it can also write and run the next round",
+    )
+    .option(
+      "--port <port>",
+      "Port on 127.0.0.1",
+      (value: string): number => parsePositiveInteger(value, 65535),
+      4317,
+    )
+    .option(
+      "--concurrency <count>",
+      "Images generated at once for rounds started from the page",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option(
+      "--timeout <seconds>",
+      "Timeout per image attempt",
+      parseTimeout,
+      900,
+    )
+    .option("--registry <path>", "Book registry YAML", "books.yaml")
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (flags: {
+        port: number;
+        concurrency: number;
+        timeout: number;
+        registry: string;
+        output: string;
+      }): Promise<void> => {
+        const { server, tasks } = startPortal({
+          outputRoot: flags.output,
+          port: flags.port,
+          registryPath: flags.registry,
+          concurrency: flags.concurrency,
+          timeoutSeconds: flags.timeout,
+        });
+        stdout(`Rating page: http://127.0.0.1:${String(server.port)}/\n`);
+
+        // Serve until interrupted.
+        await new Promise<void>((resolveStop) => {
+          options.signal?.addEventListener("abort", () => {
+            void server.stop();
+            resolveStop();
+          });
+        });
+
+        if (tasks.list().some((task) => task.state === "running")) {
+          stderr(
+            "Stopped while tasks were running; retry them from the page\n",
+          );
         }
       },
     );

@@ -1,0 +1,37 @@
+schema_version: 1
+purpose: Object with organic parts (olive trunk, roots); tests mixing clean
+  geometry with natural contours.
+source: output/odyssey/ideas.yaml, ideas prompt v6, generated 2026-10-20
+idea:
+  id: the-rooted-bed
+  name: The Rooted Bed
+  composition: A single marriage bed appears in transparent side profile across
+    the lower middle of the text field, occupying a little over half its width.
+    Its broad horizontal frame joins a substantial living olive trunk that
+    serves as the headpost; beneath that post, two broad roots extend as
+    continuous parts of the same silhouette. A plain footpost balances the
+    opposite end. Wide transparent channels clarify the frame’s construction and
+    the trunk’s fork, without bark marks, leaves, bedding decoration, or
+    surrounding architecture. One primary-color rectangular text field fills the
+    interior to a narrow transparent placement margin. No accent ink. Use smooth
+    vector edges and keep all structural members, channels, and gaps at least
+    about 1% of canvas width. Include no display lettering, gradients, shading,
+    texture, distressed edges, isolated fragments, frame, or mockup.
+  literary_basis: "Odysseus built the marriage bed around a living olive tree.
+    Penelope’s suggestion that it has been moved prompts his revealing account
+    of its construction, establishing the private knowledge through which she
+    recognizes him. The rooted bed makes homecoming tangible: their shared life
+    has a foundation that cannot simply be carried away."
+  palette:
+    - color: "#425347"
+      use: "Primary text ink: muted olive green."
+    - color: "#F3EDDF"
+      use: Suggested paper color, visible through the bed, trunk, roots, and
+        construction channels.
+  conversion_resilience: A broad horizontal bed frame and unmistakably rooted
+    headpost provide two clear, connected shapes. Heavy structural members and
+    simplified roots retain their identity at thumbnail scale; the design
+    requires neither wood grain nor small domestic accessories.
+retired:
+  on: 2026-10-20
+  reason: this is just bad. maybe we can do the boat in a rough sea instead?

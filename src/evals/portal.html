@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prompt Rounds</title>
+    <style>
+      :root {
+        --bg: #f4f3ef;
+        --surface: #ffffff;
+        --text: #1d1d1b;
+        --muted: #6b6a66;
+        --line: #dcdad3;
+        --accent: #2b5d8a;
+        --accent-text: #ffffff;
+        --bad: #a3392f;
+        --bad-bg: #f7e4e1;
+        --star: #c98a12;
+        --select: #2b5d8a;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141413;
+          --surface: #1f1f1e;
+          --text: #ecebe7;
+          --muted: #9b9a95;
+          --line: #363532;
+          --accent: #7fb0dc;
+          --accent-text: #10202e;
+          --bad: #f09a8f;
+          --bad-bg: #3b2320;
+          --star: #f0b84a;
+          --select: #7fb0dc;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.4 system-ui,
+          sans-serif;
+      }
+      button,
+      select,
+      textarea,
+      input {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .primary {
+        background: var(--accent);
+        color: var(--accent-text);
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        padding: 5px 12px;
+      }
+      .quiet {
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 10px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 15px;
+      }
+      header select {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 3px 6px;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .stats b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .keys {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .wrap {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 12px 16px 48px;
+      }
+      .tasks {
+        display: grid;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+      .task {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .task.running {
+        border-color: var(--accent);
+      }
+      .task.failed {
+        border-color: var(--bad);
+        background: var(--bad-bg);
+      }
+      .task .what {
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .task .detail {
+        color: var(--muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+      }
+      .task.failed .detail {
+        color: var(--bad);
+        white-space: normal;
+      }
+      .panel {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .panel[hidden] {
+        display: none;
+      }
+      .panel .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+      .panel textarea {
+        width: 100%;
+        min-height: 54px;
+        resize: vertical;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 6px 8px;
+      }
+      details.notes {
+        margin-bottom: 12px;
+      }
+      details.notes summary {
+        cursor: pointer;
+        color: var(--muted);
+      }
+      details.notes pre {
+        white-space: pre-wrap;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 12px;
+        max-height: 360px;
+        overflow: auto;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 12px;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .row-info h2 {
+        font-size: 15px;
+        margin: 0 0 2px;
+      }
+      .row-info .book {
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+      .composition {
+        font-size: 12px;
+        color: var(--muted);
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        cursor: pointer;
+        margin: 0 0 8px;
+      }
+      .composition.open {
+        display: block;
+      }
+      .row-info .retired {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .cells {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+      }
+      .cell {
+        background: var(--surface);
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+        display: grid;
+        gap: 6px;
+        align-content: start;
+        outline: none;
+      }
+      .cell.selected {
+        border-color: var(--select);
+      }
+      .cell-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .cell-head .letter {
+        font-weight: 700;
+        color: var(--text);
+        font-size: 14px;
+      }
+      .cell-head .regen {
+        margin-left: auto;
+        padding: 1px 8px;
+        font-size: 12px;
+      }
+      .cell .idea-name {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .pair figure {
+        margin: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .pair figcaption {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+      }
+      .pair img {
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        object-fit: contain;
+        border-radius: 4px;
+        cursor: zoom-in;
+        background: #fff;
+      }
+      .pair img.source {
+        /* Checkerboard so transparent areas read as empty. */
+        background-color: #fff;
+        background-image:
+          linear-gradient(45deg, #e6e6e6 25%, transparent 25%),
+          linear-gradient(-45deg, #e6e6e6 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #e6e6e6 75%),
+          linear-gradient(-45deg, transparent 75%, #e6e6e6 75%);
+        background-size: 12px 12px;
+        background-position:
+          0 0,
+          0 6px,
+          6px -6px,
+          -6px 0;
+      }
+      .placeholder {
+        aspect-ratio: 4 / 3;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 10px;
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 6px;
+        font-size: 13px;
+      }
+      .placeholder.failed {
+        color: var(--bad);
+      }
+      .rate {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 6px;
+      }
+      .stars {
+        margin-right: 4px;
+      }
+      .stars button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        line-height: 1;
+        padding: 0 1px;
+        color: var(--line);
+      }
+      .stars button.on {
+        color: var(--star);
+      }
+      .tag {
+        border: 1px solid var(--line);
+        background: none;
+        border-radius: 999px;
+        padding: 0 8px;
+        font-size: 12px;
+      }
+      .tag.on {
+        background: var(--bad-bg);
+        border-color: var(--bad);
+        color: var(--bad);
+      }
+      .note {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 8px;
+        resize: vertical;
+        min-height: 30px;
+        height: 30px;
+      }
+      .judge {
+        font-size: 12px;
+        color: var(--muted);
+        border-left: 3px solid var(--line);
+        padding: 2px 0 2px 8px;
+      }
+      .judge b {
+        color: var(--text);
+      }
+      .judge.top {
+        border-left-color: var(--star);
+      }
+      .toggle {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        font-size: 13px;
+      }
+      .saved {
+        font-size: 11px;
+        color: var(--muted);
+        min-height: 14px;
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        background: rgb(0 0 0 / 0.88);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+      }
+      .overlay.open {
+        display: flex;
+      }
+      .overlay .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .overlay .bar button {
+        background: #333;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 6px;
+        padding: 4px 10px;
+      }
+      .overlay .bar button.on {
+        background: #fff;
+        color: #000;
+      }
+      .overlay .view {
+        flex: 1;
+        overflow: auto;
+        width: 100%;
+        text-align: center;
+      }
+      .overlay img {
+        max-width: 100%;
+        max-height: calc(100vh - 70px);
+        background: #fff;
+      }
+      .overlay img.full {
+        max-width: none;
+        max-height: none;
+      }
+      .empty {
+        color: var(--muted);
+        padding: 40px 0;
+        text-align: center;
+      }
+      @media (max-width: 720px) {
+        .row,
+        .cells {
+          grid-template-columns: 1fr;
+        }
+        .keys {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Prompt rounds</h1>
+      <select id="round" aria-label="Round"></select>
+      <div class="stats" id="stats"></div>
+      <div class="spacer"></div>
+      <span class="keys">Click a card · 1–5 stars · arrows move</span>
+      <label class="toggle">
+        <input type="checkbox" id="top-picks" />
+        Judge's top picks only
+      </label>
+      <button type="button" class="quiet" id="judge" hidden>Judge round</button>
+      <button type="button" class="quiet" id="retry" hidden>
+        Retry failed
+      </button>
+      <button type="button" class="primary" id="next-toggle">
+        Next round…
+      </button>
+    </header>
+    <div class="wrap">
+      <div class="tasks" id="tasks"></div>
+      <section class="panel" id="next" hidden>
+        <div class="options">
+          <label>
+            <input type="radio" name="kind" value="image" checked />
+            Improve the image prompt
+          </label>
+          <label>
+            <input type="radio" name="kind" value="idea" />
+            Improve the ideas prompt
+          </label>
+          <label>
+            <select id="count" aria-label="New prompts">
+              <option value="1">1 new prompt</option>
+              <option value="2" selected>2 new prompts</option>
+              <option value="3">3 new prompts</option>
+              <option value="4">4 new prompts</option>
+            </select>
+            + the best so far
+          </label>
+        </div>
+        <textarea
+          id="direction"
+          aria-label="Direction for the prompt agent"
+          placeholder="Optional direction for the prompt agent, e.g. focus on clean edges; stop adding detail"
+        ></textarea>
+        <div>
+          <button type="button" class="primary" id="start">
+            Write &amp; run next round
+          </button>
+        </div>
+      </section>
+      <details class="notes" id="notes"></details>
+      <main id="main"><p class="empty">Loading…</p></main>
+    </div>
+    <div class="overlay" id="overlay">
+      <div class="bar" id="overlay-bar"></div>
+      <div class="view" id="overlay-view"></div>
+    </div>
+    <script>
+      const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const state = {
+        rounds: [],
+        round: null,
+        data: null,
+        suite: [],
+        tasks: [],
+        selected: null,
+        topPicks: false,
+      };
+      const $ = (id) => document.getElementById(id);
+
+      function el(tag, attributes = {}, children = []) {
+        const node = document.createElement(tag);
+        for (const [key, value] of Object.entries(attributes)) {
+          if (value === null || value === undefined || value === false) {
+            continue;
+          }
+          if (key === "text") {
+            node.textContent = value;
+          } else if (key.startsWith("on")) {
+            node.addEventListener(key.slice(2), value);
+          } else {
+            node.setAttribute(key, value === true ? "" : value);
+          }
+        }
+        node.append(...children.filter(Boolean));
+        return node;
+      }
+
+      async function api(path, body) {
+        const options = {};
+        if (body) {
+          options.method = "POST";
+          options.headers = { "content-type": "application/json" };
+          options.body = JSON.stringify(body);
+        }
+        const response = await fetch(path, options);
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error);
+        }
+        return result;
+      }
+
+      // ---- Loading ----
+
+      async function loadRounds(preferred) {
+        state.rounds = await api("/api/rounds");
+        $("round").replaceChildren(
+          ...state.rounds.map((id) => el("option", { value: id, text: id })),
+        );
+        const wanted = preferred ?? decodeURIComponent(location.hash.slice(1));
+        state.round = state.rounds.includes(wanted) ? wanted : state.rounds[0];
+        if (!state.round) {
+          $("main").replaceChildren(
+            el("p", {
+              class: "empty",
+              text: "No rounds yet. Start one with bookgen eval run.",
+            }),
+          );
+          return;
+        }
+        $("round").value = state.round;
+        await loadRound();
+      }
+
+      async function loadRound() {
+        location.hash = state.round;
+        const [data, suite] = await Promise.all([
+          api(`/api/rounds/${state.round}`),
+          api("/api/suite"),
+        ]);
+        state.data = data;
+        state.suite = suite;
+        render();
+      }
+
+      // Reloads results while anything is generating, without disturbing a
+      // note being typed.
+      async function refresh() {
+        const typing = document.activeElement?.classList.contains("note");
+        if (!typing && state.round) {
+          await loadRound();
+        }
+      }
+
+      async function pollTasks() {
+        const wasRunning = state.tasks.some((t) => t.state === "running");
+        try {
+          state.tasks = await api("/api/tasks");
+        } catch {
+          setTimeout(pollTasks, 15000);
+          return;
+        }
+        renderTasks();
+
+        const running = state.tasks.filter((t) => t.state === "running");
+        const newRound = running.find(
+          (t) => t.round && !state.rounds.includes(t.round),
+        );
+        if (newRound) {
+          await loadRounds(newRound.round);
+        } else if (running.length > 0 || wasRunning) {
+          await refresh();
+        }
+        setTimeout(pollTasks, running.length > 0 ? 4000 : 15000);
+      }
+
+      async function startTask(path, body) {
+        try {
+          await api(path, body);
+        } catch (error) {
+          alert(error.message);
+          return;
+        }
+        state.tasks = await api("/api/tasks");
+        renderTasks();
+        render();
+      }
+
+      // ---- Rendering ----
+
+      function letterFor(promptId) {
+        const index = state.data.prompts.findIndex((p) => p.id === promptId);
+        return LETTERS[index] ?? promptId;
+      }
+
+      function fileUrl(cell, file, width) {
+        const url = `/files/${state.round}/${cell.directory}/${file}`;
+        return width ? `${url}?w=${width}` : url;
+      }
+
+      function render() {
+        if (!state.data) {
+          return;
+        }
+        renderStats();
+        renderNotes();
+        renderTasks();
+        const rows = new Map();
+        // Spot-checking: only each row's top-ranked image.
+        const cells = state.data.cells.filter(
+          (cell) => !state.topPicks || cell.judgment?.rank === 1,
+        );
+        for (const cell of cells) {
+          if (!rows.has(cell.row)) {
+            rows.set(cell.row, []);
+          }
+          rows.get(cell.row).push(cell);
+        }
+        $("main").replaceChildren(...[...rows.values()].map(renderRow));
+        if (state.selected) {
+          select(state.selected, false);
+        }
+      }
+
+      function renderStats() {
+        const cells = state.data.cells;
+        const done = cells.filter((c) => c.result?.status === "done").length;
+        const failed = cells.filter(
+          (c) => c.result?.status === "failed" || c.ideas_error,
+        ).length;
+        const rated = cells.filter((c) => c.feedback?.stars).length;
+        const kind = state.data.round.kind === "idea" ? "Ideas" : "Image";
+        const parts = [
+          el("span", {}, [el("b", { text: kind }), " round"]),
+          el("span", { text: `${done}/${cells.length} done` }),
+          el("span", { text: `${rated} rated` }),
+        ];
+        if (failed) {
+          parts.push(el("span", { text: `${failed} failed` }));
+        }
+        for (const prompt of state.data.prompts) {
+          const stars = cells
+            .filter((c) => c.prompt === prompt.id && c.feedback?.stars)
+            .map((c) => c.feedback.stars);
+          let average = "–";
+          if (stars.length > 0) {
+            average = (stars.reduce((a, b) => a + b, 0) / stars.length).toFixed(
+              1,
+            );
+          }
+          const ranks = cells
+            .filter((c) => c.prompt === prompt.id && c.judgment)
+            .map((c) => c.judgment.rank);
+          let rank = "";
+          if (ranks.length > 0) {
+            rank = ` · rank ${(ranks.reduce((a, b) => a + b, 0) / ranks.length).toFixed(1)}`;
+          }
+          parts.push(
+            el("span", {}, [
+              el("b", { text: letterFor(prompt.id) }),
+              ` ★${average}${rank}`,
+            ]),
+          );
+        }
+        $("stats").replaceChildren(...parts);
+        $("retry").hidden = failed === 0;
+        const unjudged = cells.some(
+          (c) => c.result?.status === "done" && !c.judgment,
+        );
+        $("judge").hidden = !unjudged || running(`judge:${state.round}`);
+      }
+
+      function renderNotes() {
+        const { notes, prompts, image_prompt: imagePrompt } = state.data;
+        const blocks = [
+          el("summary", {
+            text: "Agent notes and prompts (cards show letters to keep rating blind)",
+          }),
+        ];
+        if (notes) {
+          blocks.push(el("pre", { text: notes }));
+        }
+        for (const prompt of prompts) {
+          blocks.push(
+            el("details", {}, [
+              el("summary", { text: `${letterFor(prompt.id)} · ${prompt.id}` }),
+              el("pre", { text: prompt.text }),
+            ]),
+          );
+        }
+        if (imagePrompt) {
+          blocks.push(
+            el("details", {}, [
+              el("summary", {
+                text: `Image prompt used for every idea · ${imagePrompt.id}`,
+              }),
+              el("pre", { text: imagePrompt.text }),
+            ]),
+          );
+        }
+        const open = $("notes").open;
+        $("notes").replaceChildren(...blocks);
+        $("notes").open = open;
+      }
+
+      function recent(task) {
+        return (
+          task.finished_at && Date.now() - Date.parse(task.finished_at) < 60000
+        );
+      }
+
+      function renderTasks() {
+        const icons = { running: "⏳", done: "✓", failed: "✕" };
+        const visible = state.tasks.filter(
+          (t) => t.state !== "done" || recent(t),
+        );
+        $("tasks").replaceChildren(
+          ...visible.slice(0, 8).map((task) =>
+            el("div", { class: `task ${task.state}` }, [
+              el("span", { text: icons[task.state] }),
+              el("span", { class: "what", text: task.label }),
+              el("span", {
+                class: "detail",
+                text: task.error ?? task.message,
+              }),
+            ]),
+          ),
+        );
+        $("start").disabled = state.tasks.some(
+          (t) => t.state === "running" && t.kind === "next-round",
+        );
+      }
+
+      function running(key) {
+        return state.tasks.some((t) => t.state === "running" && t.key === key);
+      }
+
+      function inSuite(cell) {
+        return state.suite.some(
+          (item) => item.book === cell.book.slug && item.idea === cell.idea?.id,
+        );
+      }
+
+      function renderRow(cells) {
+        const first = cells[0];
+        const info = [];
+
+        if (state.data.round.kind === "idea") {
+          info.push(el("h2", { text: first.book.title }));
+          info.push(
+            el("div", {
+              class: "book",
+              text: `Idea ${first.row.split("#")[1]} from each ideas prompt`,
+            }),
+          );
+        } else {
+          info.push(el("h2", { text: first.idea?.name ?? first.row }));
+          info.push(el("div", { class: "book", text: first.book.title }));
+          info.push(composition(first.idea));
+          info.push(ideaControl(first));
+        }
+
+        return el("section", { class: "row" }, [
+          el("div", { class: "row-info" }, info),
+          el("div", { class: "cells" }, cells.map(renderCell)),
+        ]);
+      }
+
+      function composition(idea) {
+        if (!idea) {
+          return null;
+        }
+        return el("p", {
+          class: "composition",
+          title: "Click to expand",
+          text: idea.composition,
+          onclick: (event) => event.currentTarget.classList.toggle("open"),
+        });
+      }
+
+      function ideaControl(cell) {
+        if (!cell.idea) {
+          return null;
+        }
+        if (!inSuite(cell)) {
+          return el("div", { class: "retired", text: "Replaced in the suite" });
+        }
+        const replacing = running(`idea:${cell.book.slug}/${cell.idea.id}`);
+        return el("button", {
+          type: "button",
+          class: "quiet",
+          text: replacing ? "Replacing…" : "Replace idea",
+          disabled: replacing,
+          onclick: () => replaceIdea(cell),
+        });
+      }
+
+      function replaceIdea(cell) {
+        const reason = prompt(
+          `Replace "${cell.idea.name}" with a new ${cell.book.title} idea from the next round on.\n\nWhat's wrong with it? (optional)`,
+        );
+        if (reason === null) {
+          return;
+        }
+        startTask("/api/ideas/replace", {
+          book: cell.book.slug,
+          idea: cell.idea.id,
+          reason,
+        });
+      }
+
+      function renderCell(cell) {
+        const result = cell.result;
+        const regenerating = running(`image:${state.round}/${cell.key}`);
+        let regenerate = null;
+        if (cell.idea && result) {
+          regenerate = el("button", {
+            type: "button",
+            class: "quiet regen",
+            title: "Generate a new image for this card",
+            text: regenerating ? "Regenerating…" : "↻ Regenerate",
+            disabled: regenerating,
+            onclick: (event) => {
+              event.stopPropagation();
+              startTask(`/api/rounds/${state.round}/regenerate`, {
+                key: cell.key,
+              });
+            },
+          });
+        }
+        const body = [
+          el("div", { class: "cell-head" }, [
+            el("span", { class: "letter", text: letterFor(cell.prompt) }),
+            el("span", { text: hints(result) }),
+            regenerate,
+          ]),
+        ];
+
+        if (state.data.round.kind === "idea" && cell.idea) {
+          body.push(el("div", { class: "idea-name", text: cell.idea.name }));
+          body.push(composition(cell.idea));
+        }
+
+        let status = null;
+        if (cell.ideas_error) {
+          status = [
+            "placeholder failed",
+            `Idea writing failed: ${cell.ideas_error}`,
+          ];
+        } else if (!result && cell.idea) {
+          status = ["placeholder", "Generating…"];
+        } else if (!result) {
+          status = ["placeholder", "Writing ideas…"];
+        } else if (result.status === "failed") {
+          status = ["placeholder failed", `Failed: ${result.error}`];
+        }
+        if (status) {
+          body.push(el("div", { class: status[0], text: status[1] }));
+          return el("div", { class: "cell" }, body);
+        }
+
+        body.push(
+          el("div", { class: "pair" }, [
+            figure(cell, "Source", result.files.master, "source", 2),
+            figure(cell, "Poster", result.files.preview, "", 0),
+          ]),
+        );
+        if (cell.judgment) {
+          const judgment = cell.judgment;
+          body.push(
+            el(
+              "div",
+              {
+                class: judgment.rank === 1 ? "judge top" : "judge",
+                title: `Judge confidence: ${judgment.confidence}`,
+              },
+              [
+                el("b", {
+                  text: `Judge #${judgment.rank} · ★${judgment.stars}`,
+                }),
+                ` — ${judgment.note}`,
+              ],
+            ),
+          );
+        }
+        body.push(...ratingControls(cell));
+
+        return el(
+          "div",
+          {
+            class: "cell",
+            tabindex: "0",
+            "data-key": cell.key,
+            onclick: () => select(cell.key, false),
+          },
+          body,
+        );
+      }
+
+      function figure(cell, caption, file, className, viewIndex) {
+        return el("figure", {}, [
+          el("img", {
+            class: className,
+            loading: "lazy",
+            alt: `${caption} for prompt ${letterFor(cell.prompt)}`,
+            src: fileUrl(cell, file, 480),
+            onclick: () => openOverlay(cell, viewIndex),
+          }),
+          el("figcaption", { text: caption }),
+        ]);
+      }
+
+      function hints(result) {
+        if (result?.status !== "done") {
+          return "";
+        }
+        const parts = [`haze ${result.metrics.native_haze.toFixed(2)}`];
+        if (result.metrics.accent_contact !== null) {
+          parts.push(`accent ${result.metrics.accent_contact.toFixed(2)}`);
+        }
+        return parts.join(" · ");
+      }
+
+      // ---- Rating ----
+
+      function ratingControls(cell) {
+        const current = {
+          stars: cell.feedback?.stars ?? null,
+          tags: new Set(cell.feedback?.tags ?? []),
+          note: cell.feedback?.note ?? "",
+        };
+        const saved = el("div", { class: "saved" });
+        if (cell.feedback && cell.feedback.attempt !== cell.result.attempt) {
+          saved.textContent = "Rated an earlier attempt";
+        }
+
+        const save = async () => {
+          saved.textContent = "Saving…";
+          try {
+            await api(`/api/rounds/${state.round}/feedback`, {
+              prompt: cell.prompt,
+              book: cell.book.slug,
+              idea: cell.idea.id,
+              stars: current.stars,
+              tags: [...current.tags],
+              note: current.note,
+            });
+          } catch (error) {
+            saved.textContent = `Not saved: ${error.message}`;
+            return;
+          }
+          cell.feedback = {
+            stars: current.stars,
+            tags: [...current.tags],
+            note: current.note,
+            attempt: cell.result.attempt,
+          };
+          saved.textContent = "Saved";
+          renderStats();
+        };
+
+        const starButtons = [1, 2, 3, 4, 5].map((value) =>
+          el("button", {
+            type: "button",
+            "aria-label": `${value} stars`,
+            text: "★",
+            onclick: () => setStars(value),
+          }),
+        );
+        const paint = () => {
+          starButtons.forEach((button, index) =>
+            button.classList.toggle("on", index < (current.stars ?? 0)),
+          );
+        };
+        const setStars = (value) => {
+          current.stars = value;
+          paint();
+          save();
+        };
+        paint();
+
+        const tags = state.data.tags.map((tag) => {
+          const button = el("button", {
+            type: "button",
+            class: current.tags.has(tag) ? "tag on" : "tag",
+            text: tag,
+            onclick: () => {
+              if (current.tags.has(tag)) {
+                current.tags.delete(tag);
+              } else {
+                current.tags.add(tag);
+              }
+              button.classList.toggle("on", current.tags.has(tag));
+              save();
+            },
+          });
+          return button;
+        });
+
+        const note = el("textarea", {
+          class: "note",
+          rows: "1",
+          placeholder: "What's good or bad?",
+          "aria-label": "Note",
+          onchange: (event) => {
+            current.note = event.target.value;
+            save();
+          },
+        });
+        note.value = current.note;
+
+        // Keyboard rating reaches the selected card through this hook.
+        cell.setStars = setStars;
+
+        return [
+          el("div", { class: "rate" }, [
+            el("span", { class: "stars" }, starButtons),
+            ...tags,
+          ]),
+          note,
+          saved,
+        ];
+      }
+
+      function cellNodes() {
+        return [...document.querySelectorAll(".cell[data-key]")];
+      }
+
+      function select(key, scroll) {
+        state.selected = key;
+        for (const node of cellNodes()) {
+          const chosen = node.dataset.key === key;
+          node.classList.toggle("selected", chosen);
+          if (chosen && scroll) {
+            node.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }
+        }
+      }
+
+      function moveSelection(event) {
+        const nodes = cellNodes();
+        if (nodes.length === 0) {
+          return;
+        }
+        event.preventDefault();
+        const perRow = state.topPicks ? 1 : state.data.prompts.length;
+        const steps = {
+          ArrowRight: 1,
+          ArrowLeft: -1,
+          ArrowDown: perRow,
+          ArrowUp: -perRow,
+        };
+        const index = nodes.findIndex((n) => n.dataset.key === state.selected);
+        let next = 0;
+        if (index >= 0) {
+          next = Math.min(
+            nodes.length - 1,
+            Math.max(0, index + steps[event.key]),
+          );
+        }
+        select(nodes[next].dataset.key, true);
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if ($("overlay").classList.contains("open")) {
+          overlayKeys(event);
+          return;
+        }
+        const tag = document.activeElement?.tagName;
+        if (["TEXTAREA", "INPUT", "SELECT"].includes(tag)) {
+          return;
+        }
+        if (event.key.startsWith("Arrow")) {
+          moveSelection(event);
+          return;
+        }
+        if (/^[1-5]$/.test(event.key) && state.selected) {
+          const cell = state.data.cells.find((c) => c.key === state.selected);
+          cell?.setStars?.(Number(event.key));
+        }
+      });
+
+      // ---- Full-size view ----
+
+      const overlay = { cell: null, index: 0 };
+
+      function views(cell) {
+        return [
+          ["Poster", cell.result.files.preview, false],
+          ["Poster 100%", cell.result.files.preview, true],
+          ["Source", cell.result.files.master, false],
+          ["Native", cell.result.files.native, false],
+        ];
+      }
+
+      function openOverlay(cell, index) {
+        overlay.cell = cell;
+        showView(index);
+        $("overlay").classList.add("open");
+      }
+
+      function showView(index) {
+        const list = views(overlay.cell);
+        overlay.index = (index + list.length) % list.length;
+        const [, file, full] = list[overlay.index];
+        $("overlay-view").replaceChildren(
+          el("img", {
+            src: fileUrl(overlay.cell, file),
+            class: full ? "full" : null,
+          }),
+        );
+        $("overlay-bar").replaceChildren(
+          ...list.map(([name], i) =>
+            el("button", {
+              type: "button",
+              class: i === overlay.index ? "on" : null,
+              text: name,
+              onclick: () => showView(i),
+            }),
+          ),
+          el("button", {
+            type: "button",
+            text: "Close (Esc)",
+            onclick: closeOverlay,
+          }),
+        );
+      }
+
+      function closeOverlay() {
+        $("overlay").classList.remove("open");
+      }
+
+      function overlayKeys(event) {
+        if (event.key === "Escape") {
+          closeOverlay();
+        } else if (event.key === "ArrowRight") {
+          showView(overlay.index + 1);
+        } else if (event.key === "ArrowLeft") {
+          showView(overlay.index - 1);
+        }
+      }
+
+      // ---- Controls ----
+
+      $("round").addEventListener("change", () => {
+        state.round = $("round").value;
+        state.selected = null;
+        loadRound();
+      });
+      $("next-toggle").addEventListener("click", () => {
+        $("next").hidden = !$("next").hidden;
+      });
+      $("top-picks").addEventListener("change", () => {
+        state.topPicks = $("top-picks").checked;
+        state.selected = null;
+        render();
+      });
+      $("judge").addEventListener("click", () =>
+        startTask(`/api/rounds/${state.round}/judge`, {}),
+      );
+      $("retry").addEventListener("click", () =>
+        startTask(`/api/rounds/${state.round}/resume`, {}),
+      );
+      $("start").addEventListener("click", () => {
+        const kind = document.querySelector('input[name="kind"]:checked').value;
+        startTask("/api/next", {
+          kind,
+          direction: $("direction").value,
+          newPrompts: Number($("count").value),
+        });
+        $("next").hidden = true;
+      });
+
+      loadRounds().then(pollTasks);
+    </script>
+  </body>
+</html>

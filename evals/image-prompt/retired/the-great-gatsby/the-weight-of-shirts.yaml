@@ -1,0 +1,37 @@
+schema_version: 1
+purpose: "Control: closest to the target in the v4 run. One silhouette with
+  folds drawn as channels; must not regress."
+source: output/the-great-gatsby/ideas.yaml, ideas prompt v6, generated 2026-10-18
+idea:
+  id: the-weight-of-shirts
+  name: The Weight of Shirts
+  composition: A single oversized dress shirt hangs diagonally through the center
+    of one rectangular primary-ink text field, surrounded by generous
+    uninterrupted text and a narrow transparent placement margin. Its
+    transparent silhouette has one extended sleeve, one sleeve folded inward, a
+    broad collar, and a curved hanging hem. Broad connected incursions of the
+    text field describe the collar underside and folded sleeve; transparent
+    channels between these forms describe the open placket and two sweeping
+    fabric folds. Omit buttons, patterns, hands, furniture, and additional
+    garments. Use no accent ink. The silhouette must feel heavy and suspended
+    through its asymmetry alone. Use smooth vector curves and crisp straight
+    collar edges; all important strokes, channels, and gaps must be at least
+    about 1% of canvas width. No display lettering, logos, gradients, shading,
+    texture, distress, tiny decoration, photorealism, frame, or mockup.
+  literary_basis: During Gatsby's tour of his mansion, he displays his shirts and
+    Daisy cries over their beauty. A single enlarged shirt concentrates that
+    scene into an intimate emblem of wealth offered as proof of worth. Its
+    collapsed, unoccupied shape suggests how material abundance carries the
+    emotional burden of Gatsby's attempt to recover their lost relationship.
+  palette:
+    - color: "#563E4B"
+      use: "Primary text ink: muted plum."
+    - color: "#F4EFE4"
+      use: "Suggested paper: pale cream revealing the shirt silhouette and channels."
+  conversion_resilience: The collar, unequal sleeves, and broad torso make a
+    recognizable garment outline without buttons or fabric texture. Only a few
+    wide channels interrupt the large shapes, so character spacing cannot erase
+    the shirt's structure.
+retired:
+  on: 2026-10-20
+  reason: Rejected by the user

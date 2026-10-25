@@ -41,9 +41,10 @@ Favor reproducible pipeline stages with explicit inputs, outputs, metadata, and 
   by placing the art and filling the surrounding space. Keep image dimensions out
   of composition ideas. Palettes have at most three colors. Never clip glyphs;
   separate differently colored regions with whole empty cells.
-- The current composition style (one text field, one iconic subject cut out as
-  negative space, one optional accent) is a baseline under evaluation, not a
-  settled rule. Change it when evaluated results favor something else.
+- The current composition style (one text field, one compact scene of a
+  defining relationship from the book cut out as negative space, one optional
+  accent) is ideas prompt v7, the top-rated variant in eval round 3. It is not a
+  settled rule; change it when evaluated results favor something else.
 - Group local generated outputs under `output/<book-id>/`: `ideas.yaml`,
   `raw/<idea-id>.png` masters, and separate later-stage artifacts. Keep output tidy
   and ignored by Git.

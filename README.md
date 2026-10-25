@@ -231,10 +231,12 @@ YAML contains book identity, generation provenance (including the requested
 `idea_count`), and the requested number of concepts with
 composition, literary basis, a list of hex colors with intended uses, and
 conversion rationale. Concepts describe text-filled regions and empty forms,
-including mixed multi-color environments in earlier prompt versions. Version 6 uses one system: a single text
-field in one primary ink, one iconic subject cut out of it as transparent negative
-space, interior details drawn as transparent channels, and at most one accent color
-ringed by a gap. Palettes have at most three colors, including any suggested paper,
+including mixed multi-color environments in earlier prompt versions. Version 7 uses one system: a single text
+field in one primary ink, with one compact scene of a relationship central to the
+book (a dominant silhouette plus one or two forms that set the stakes) cut out of
+it as transparent negative space, interior details drawn as transparent channels,
+and at most one accent color ringed by a gap. Version 7 replaced the
+isolated-subject version 6 after it rated highest in an ideas eval round. Palettes have at most three colors, including any suggested paper,
 which belongs to rendering. Image dimensions belong to generation
 settings: one reusable master will be placed within different poster sizes,
 with surrounding space filled at render time. The trace saves the exact prompt, SDK
@@ -319,6 +321,24 @@ complete text set; failure preserves the previous set. `.fetch.lock` prevents
 concurrent runs. After a forced kill, confirm no run is active before removing
 the lock; the next run recovers `.text.previous` if publication was interrupted.
 Readers should wait for CLI success before consuming the manifest and text.
+
+## Improving the image prompt
+
+Eval rounds compare image prompt templates on nine frozen ideas
+(`evals/image-prompt/`). Fetch text for each suite book first, then:
+
+```sh
+bookgen eval run round-1 --prompts <directory-of-*.prompt.md>
+bookgen eval serve
+```
+
+`eval run` generates one image per template × idea, three at a time, and renders
+a 24 × 36 preview of each. Rerun it to retry failures. `eval serve` opens a local
+page for 1–5 star ratings, tags, and notes, saved to the round's
+`feedback.jsonl`. From the page, **Next round** has a Codex prompt agent read all
+ratings and write new image or ideas prompt templates, keeping the best so far
+as the control, then generates that round. **Regenerate** and **Replace idea**
+run in parallel. Rounds started from the page are ranked by an AI judge, whose ranks pick each round's winner; tick **Judge's top picks only** to spot-check them. `bookgen eval judge <round>` judges an existing round. `bookgen eval judge-check` has the AI judge rank and rate already-rated rounds and reports how well it agrees with you; `--repeat 2` also reports how stable its rankings are. See the [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
 
 ## Development and verification
 

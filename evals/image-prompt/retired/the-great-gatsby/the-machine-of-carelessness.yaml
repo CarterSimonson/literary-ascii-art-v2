@@ -1,0 +1,39 @@
+schema_version: 1
+purpose: "Calm field and clean contours: the v4 run produced the most haze
+  regions and pinholes on this idea."
+source: output/the-great-gatsby/ideas.yaml, ideas prompt v6, generated 2026-10-18
+idea:
+  id: the-machine-of-carelessness
+  name: The Machine of Carelessness
+  composition: One uninterrupted rectangular field of primary-ink book text
+    extends to a narrow transparent placement margin. A large transparent
+    side-profile silhouette of an elongated touring automobile stretches across
+    the lower-middle field, leaving a deep, calm area of text above. Invent a
+    simplified period-appropriate body with a long hood, upright cabin, rounded
+    fenders, and two substantial wheels joined visibly to the body; reproduce no
+    identifiable vehicle or adaptation prop. Retain broad text-bearing bands to
+    organize the cabin and lower chassis, using bold transparent channels for
+    the windshield opening, door division, and wheel-arch separations. Omit
+    passengers, road, buildings, headlights, badges, and ornament. Use no accent
+    ink. All contours are smooth vector curves or confident straight edges, and
+    important bands, channels, and gaps are at least about 1% of canvas width.
+    No display lettering, logos, gradients, shading, texture, distress, isolated
+    fragments, photorealism, frame, or mockup.
+  literary_basis: Gatsby's conspicuous yellow automobile becomes the vehicle Daisy
+    drives when she kills Myrtle. Its luxurious scale connects conspicuous
+    consumption to lethal carelessness, while the empty cabin evokes the way
+    responsibility is displaced and abandoned. The ochre text field recalls the
+    car's color without requiring a colored vehicle silhouette.
+  palette:
+    - color: "#80643A"
+      use: "Primary text ink: subdued ochre brown, recalling the yellow automobile."
+    - color: "#F7F2E7"
+      use: "Suggested paper: light warm ivory for clear silhouette contrast."
+  conversion_resilience: The long hood, upright cabin, and two large wheel lobes
+    create an immediately readable vehicle profile. Broad structural bands
+    preserve its anatomy when rendered with small characters, while omitting
+    trim and mechanical detail prevents visual breakup.
+retired:
+  on: 2026-10-20
+  reason: The car isn't a very interesting subject. Maybe we could do the car
+    racing down the road, with some other things in the scene?

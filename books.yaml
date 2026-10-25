@@ -12,3 +12,7 @@ books:
     title: The Odyssey
     author: Homer
     gutenberg_id: 1727
+  war-of-the-worlds:
+    title: The War of the Worlds
+    author: H. G. Wells
+    gutenberg_id: 36

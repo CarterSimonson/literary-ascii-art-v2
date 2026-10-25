@@ -9,7 +9,12 @@ export async function generateCandidate(
   request: ImagesRequest,
   idea: Idea,
   trace: string,
-  options: { generate?: ImageGenerator; signal?: AbortSignal },
+  options: {
+    generate?: ImageGenerator;
+    signal?: AbortSignal;
+    // Replaces the default prompt; eval rounds pass filled variant templates.
+    prompt?: string;
+  },
   previousFailure?: string,
 ): Promise<{
   image: Awaited<ReturnType<ImageGenerator>>;
@@ -19,7 +24,7 @@ export async function generateCandidate(
 }> {
   await mkdir(trace, { recursive: true });
   const prompt =
-    buildImagePrompt(request, idea) +
+    (options.prompt ?? buildImagePrompt(request, idea)) +
     (previousFailure
       ? `\nThis is the single replacement attempt. The previous candidate failed: ${previousFailure}. Correct that defect while preserving the concept and palette.\n`
       : "");

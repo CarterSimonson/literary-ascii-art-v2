@@ -1,0 +1,38 @@
+schema_version: 1
+purpose: Ship in profile with funnels and ram; tests a wide horizontal subject
+  and mechanical detail.
+source: output/war-of-the-worlds/ideas.yaml, ideas prompt v6, generated 2026-10-20
+idea:
+  id: the-last-charge
+  name: The Last Charge
+  composition: A single rectangle of deep slate-blue text fills the interior with
+    a narrow transparent placement margin. The torpedo ram Thunder Child appears
+    as one broad transparent ship silhouette across the lower-middle field,
+    spanning roughly two thirds of its width. Show it from a low, slightly
+    oblique side angle, its long hull driving toward the right and its ram bow
+    projecting decisively forward. Two stout funnels and a compact
+    superstructure rise directly from the hull as connected masses. Broad
+    transparent channels continuing into the surrounding text describe the
+    sloping foredeck and a single bow wave attached to the prow. Leave most of
+    the upper field uninterrupted. No accent element, other ships, Martians,
+    smoke, flags, rigging, or lettering in the pictorial source mask.
+  literary_basis: Thunder Child attacks the fighting machines while civilian
+    vessels escape from the Essex coast. Its destruction gives the novel a
+    concentrated episode of human courage and protective action amid military
+    collapse. The low, forceful ship silhouette emphasizes a purposeful charge
+    and the brief possibility of resistance.
+  palette:
+    - color: "#344A59"
+      use: Primary text ink filling the rectangular interior.
+    - color: "#F1EFE7"
+      use: Suggested paper color, exposed by the ship and its transparent channels.
+  conversion_resilience: The long hull, projecting ram bow, and paired funnels
+    establish the ship through a few large shapes. The connected bow-wave
+    channel supplies motion without requiring a sea scene. Keep funnels, deck
+    channels, wave cuts, and all gaps at least about 1% of the canvas width;
+    omit portholes and rigging. Build the source with smooth vector curves,
+    straight edges, solid ink, and complete transparency, with no shading,
+    gradients, texture, distress, specks, or detached fragments.
+retired:
+  on: 2026-10-20
+  reason: it's boring, and not very recognizable

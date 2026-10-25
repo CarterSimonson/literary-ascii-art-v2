@@ -4,3 +4,7 @@ coverage/
 .artifacts/
 .worktrees/
 bun.lock
+# Written by the eval rating page (Replace idea).
+evals/image-prompt/cases/
+evals/image-prompt/retired/
+evals/image-prompt/suite.yaml
