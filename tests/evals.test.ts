@@ -9,9 +9,11 @@ import { parse, stringify } from "yaml";
 import { replaceSuiteIdea } from "../src/evals/ideas.ts";
 import {
   runJudgeCheck,
+  stabilityAcross,
   summarize,
   type Comparison,
   type Judge,
+  type RankedImage,
 } from "../src/evals/judge.ts";
 import { planNextRound, type PromptWriter } from "../src/evals/improve.ts";
 import { measureImage } from "../src/evals/metrics.ts";
@@ -832,6 +834,24 @@ describe("AI judge check", () => {
     const roundTwoBrief = briefs.find((brief) => brief.includes("first round"));
     expect(roundOneBrief).not.toContain("first round");
     expect(roundTwoBrief).not.toContain("second round");
+    const repeated = await runJudgeCheck({
+      outputRoot: join(fixture.root, "output"),
+      rubricPath: "evals/judge/rubric.md",
+      concurrency: 2,
+      repeat: 2,
+      judge,
+    });
+    expect(repeated.stability).toMatchObject({
+      runs: 2,
+      rows: 2,
+      identical_rows: 1,
+      pair_agreement: 1,
+    });
+    expect(
+      await Bun.file(
+        join(repeated.directory, "run-2", "rankings.jsonl"),
+      ).exists(),
+    ).toBe(true);
     expect(await readFile(join(directory, "report.md"), "utf8")).toContain(
       "Within one star: 100%",
     );
@@ -885,6 +905,47 @@ describe("AI judge check", () => {
       human_winner: "a",
       judge_winner: "b",
       judge_mean_ranks: { a: 1.667, b: 1.333 },
+    });
+  });
+
+  test("stability counts rows ranked identically, pairs kept in order, and steady winners", () => {
+    const rank = (
+      round: string,
+      row: string,
+      prompt: string,
+      value: number,
+    ): RankedImage => ({
+      round,
+      row,
+      prompt,
+      rank: value,
+    });
+    const first = [
+      rank("round-1", "x", "a", 1),
+      rank("round-1", "x", "b", 2),
+      rank("round-1", "x", "c", 3),
+      rank("round-1", "y", "a", 1),
+      rank("round-1", "y", "b", 2),
+      rank("round-1", "y", "c", 3),
+    ];
+    // Row y swaps b and c; a stays first everywhere.
+    const second = [
+      rank("round-1", "x", "a", 1),
+      rank("round-1", "x", "b", 2),
+      rank("round-1", "x", "c", 3),
+      rank("round-1", "y", "a", 1),
+      rank("round-1", "y", "c", 2),
+      rank("round-1", "y", "b", 3),
+    ];
+
+    const stability = stabilityAcross([first, second]);
+
+    expect(stability).toMatchObject({
+      runs: 2,
+      rows: 2,
+      identical_rows: 0.5,
+      pair_agreement: 0.833,
+      rounds: [{ round: "round-1", winners: ["a", "a"], stable: true }],
     });
   });
 });

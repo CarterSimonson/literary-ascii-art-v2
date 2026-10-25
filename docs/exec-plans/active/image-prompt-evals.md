@@ -135,7 +135,9 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
 - [x] First idea round from the page (round 3); defining-scene won and is now
       ideas prompt v7.
 - [x] AI judge and agreement check.
-- [ ] Decide from the check whether the judge can stand in for most ratings.
+- [x] Judge v3 with a repeatable stability check (`judge-check --repeat`).
+- [ ] Judge each new round automatically and show its ranking on the page;
+      the user spot-checks top picks.
 
 ## Findings
 
@@ -165,5 +167,15 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   the raw image made it stricter about haze and cutouts that cleanup removes
   (14 of 54 notes), which penalized posters the user rated 5, and it marked
   down posters that departed from the idea text, which the user does not.
+- Judge v3 judges only the poster (raw-image haze counts only if it shows in
+  the poster) and gives the idea text as context, not a target. Two runs on
+  rounds 1–3: 86% of image pairs kept the same order and 68% of 19 rows were
+  ranked identically; each round's winner was the same in both runs. Agreement
+  with the user's order within rows was 70% and 79% across the two runs, so
+  single-run agreement moves about ±5 points and v1–v3 are not distinguishable
+  on it. Notes citing haze or gaps fell from 14 (v2) to 5–7, and none cited the
+  intended scene. Winners matched the user in rounds 2 and 3; in round 1 the
+  judge consistently prefers stencil, where the user's means were within 0.6
+  stars. Stable enough to steer rounds, with the user spot-checking.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.

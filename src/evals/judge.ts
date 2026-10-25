@@ -13,7 +13,7 @@ import { runPool } from "./round.ts";
 
 // Bump when the brief, rubric handling, or example selection changes, so
 // judgments from different versions are not compared.
-export const JUDGE_VERSION = 2;
+export const JUDGE_VERSION = 3;
 export const DEFAULT_RUBRIC = "evals/judge/rubric.md";
 
 // Rated examples shown to the judge, spread across the star scale.
@@ -197,9 +197,11 @@ function judgeBrief(rubric: string, image: ImageRecord): string {
 ${rubric.trim()}
 
 Book: ${image.item.book.title} by ${image.item.book.author}.
-Idea: ${idea?.name ?? "unknown"}. ${idea?.composition ?? ""}
+Intended scene, for context only: ${idea?.name ?? "unknown"}. ${idea?.composition ?? ""}
 
-First rank all the images from best to worst in "ranking", using every image number exactly once with no ties; when two are close, decide anyway. Then give each image stars on the rubric's scale, any tags that clearly apply, a one-sentence note on what decided its place, and your confidence. Judge the poster as the product; use the raw image to see the shapes and defects behind it.`;
+Judge only the rendered poster, the product someone would hang. The raw image is there to help you read the shapes; haze, soft or partial transparency, and blotches in the raw image do not count against a poster unless they show in the poster itself as holes, stray fragments, or ragged edges. Do not penalize a poster for departing from the intended scene; judge whether the poster is good and recognizably this book.
+
+First rank all the images from best to worst in "ranking", using every image number exactly once with no ties; when two are close, decide anyway. Then give each image stars on the rubric's scale, any tags that clearly apply, a one-sentence note on what decided its place, and your confidence.`;
 }
 
 function exampleCaption(index: number, example: ImageRecord): string {
@@ -315,6 +317,9 @@ function noteLength(image: ImageRecord): number {
 
 export interface JudgeCheckArgs {
   outputRoot: string;
+  // Run the whole check this many times to measure how stable the judge's
+  // rankings are; nothing is averaged.
+  repeat?: number;
   rounds?: string[];
   rubricPath?: string;
   suiteDirectory?: string;
@@ -364,10 +369,19 @@ export interface JudgeCheckSummary {
   }[];
 }
 
-// Judges every rated round and compares the judge's stars with the user's.
+export interface JudgeCheckResult {
+  directory: string;
+  // The first run's summary.
+  summary: JudgeCheckSummary;
+  // Present when the check ran more than once.
+  stability: StabilitySummary | null;
+}
+
+// Judges every rated round and compares the judge with the user. With repeat,
+// each run goes in its own run-<n> directory, and stability.md compares them.
 export async function runJudgeCheck(
   args: JudgeCheckArgs,
-): Promise<{ directory: string; summary: JudgeCheckSummary }> {
+): Promise<JudgeCheckResult> {
   const rubric = await readFile(
     resolve(args.rubricPath ?? DEFAULT_RUBRIC),
     "utf8",
@@ -390,6 +404,60 @@ export async function runJudgeCheck(
     "judge",
     `check-${stamp}`,
   );
+  const repeat = args.repeat ?? 1;
+  const runs: RunResult[] = [];
+
+  for (let run = 1; run <= repeat; run++) {
+    let runDirectory = directory;
+
+    if (repeat > 1) {
+      runDirectory = join(directory, `run-${String(run)}`);
+      args.onProgress?.(`Run ${String(run)} of ${String(repeat)}`);
+    }
+
+    runs.push(
+      await runOnce({ args, history, rounds, rubric, directory: runDirectory }),
+    );
+  }
+
+  const first = runs[0];
+
+  if (!first) {
+    throw new Error("The judge check did not run");
+  }
+
+  let stability: StabilitySummary | null = null;
+
+  if (runs.length > 1) {
+    stability = stabilityAcross(runs.map((run) => run.ranked));
+    await writeFile(
+      join(directory, "stability.json"),
+      JSON.stringify(stability, null, 2) + "\n",
+    );
+    await writeFile(
+      join(directory, "stability.md"),
+      stabilityReport(stability),
+    );
+  }
+
+  return { directory, summary: first.summary, stability };
+}
+
+interface RunOnceArgs {
+  args: JudgeCheckArgs;
+  history: RoundHistory[];
+  rounds: RoundHistory[];
+  rubric: string;
+  directory: string;
+}
+
+interface RunResult {
+  summary: JudgeCheckSummary;
+  ranked: RankedImage[];
+}
+
+async function runOnce(input: RunOnceArgs): Promise<RunResult> {
+  const { args, history, rounds, rubric, directory } = input;
   await mkdir(directory, { recursive: true });
 
   const rows: { round: RoundHistory; row: ImageRecord[] }[] = [];
@@ -470,6 +538,11 @@ export async function runJudgeCheck(
   });
 
   comparisons.sort((left, right) => left.key.localeCompare(right.key));
+  ranked.sort((left, right) =>
+    `${left.round}/${left.row}/${String(left.rank)}`.localeCompare(
+      `${right.round}/${right.row}/${String(right.rank)}`,
+    ),
+  );
 
   const summary = summarize(comparisons, ranked);
 
@@ -478,12 +551,149 @@ export async function runJudgeCheck(
     comparisons.map((entry) => JSON.stringify(entry)).join("\n") + "\n",
   );
   await writeFile(
+    join(directory, "rankings.jsonl"),
+    ranked.map((entry) => JSON.stringify(entry)).join("\n") + "\n",
+  );
+  await writeFile(
     join(directory, "summary.json"),
     JSON.stringify(summary, null, 2) + "\n",
   );
   await writeFile(join(directory, "report.md"), report(summary, comparisons));
 
-  return { directory, summary };
+  return { summary, ranked };
+}
+
+export interface StabilitySummary {
+  runs: number;
+  // Rows judged in every run.
+  rows: number;
+  // Share of rows whose full ranking was identical in every run.
+  identical_rows: number;
+  // Share of image pairs within a row ordered the same way in every run.
+  pair_agreement: number;
+  rounds: { round: string; winners: string[]; stable: boolean }[];
+}
+
+// How consistently repeated runs rank the same rows and pick the same winners.
+export function stabilityAcross(runs: RankedImage[][]): StabilitySummary {
+  const orders = runs.map((ranked) => rowOrders(ranked));
+  const firstOrders = orders[0] ?? new Map<string, string[]>();
+  let rows = 0;
+  let identical = 0;
+  let pairs = 0;
+  let agreeing = 0;
+
+  for (const [row, order] of firstOrders) {
+    const others = orders.slice(1).map((entry) => entry.get(row));
+
+    if (others.some((other) => !other)) {
+      continue;
+    }
+
+    rows++;
+
+    if (others.every((other) => other?.join(",") === order.join(","))) {
+      identical++;
+    }
+
+    for (const [index, left] of order.entries()) {
+      for (const right of order.slice(index + 1)) {
+        pairs++;
+
+        const same = others.every(
+          (other) => (other?.indexOf(left) ?? 0) < (other?.indexOf(right) ?? 0),
+        );
+
+        if (same) {
+          agreeing++;
+        }
+      }
+    }
+  }
+
+  const roundIds = [
+    ...new Set(runs.flatMap((ranked) => ranked.map((entry) => entry.round))),
+  ].sort();
+
+  return {
+    runs: runs.length,
+    rows,
+    identical_rows: rows === 0 ? 0 : round3(identical / rows),
+    pair_agreement: pairs === 0 ? 0 : round3(agreeing / pairs),
+    rounds: roundIds.map((round) => {
+      const winners = runs.map((ranked) => roundWinner(ranked, round));
+
+      return {
+        round,
+        winners,
+        stable: new Set(winners).size === 1,
+      };
+    }),
+  };
+}
+
+// Prompt IDs per row, best first.
+function rowOrders(ranked: RankedImage[]): Map<string, string[]> {
+  const rows = new Map<string, RankedImage[]>();
+
+  for (const entry of ranked) {
+    const key = `${entry.round}/${entry.row}`;
+    const group = rows.get(key) ?? [];
+    group.push(entry);
+    rows.set(key, group);
+  }
+
+  const orders = new Map<string, string[]>();
+
+  for (const [key, group] of rows) {
+    const sorted = [...group].sort((left, right) => left.rank - right.rank);
+    orders.set(
+      key,
+      sorted.map((entry) => entry.prompt),
+    );
+  }
+
+  return orders;
+}
+
+function roundWinner(ranked: RankedImage[], round: string): string {
+  const ranks: Record<string, number[]> = {};
+
+  for (const entry of ranked) {
+    if (entry.round !== round) {
+      continue;
+    }
+
+    ranks[entry.prompt] = [...(ranks[entry.prompt] ?? []), entry.rank];
+  }
+
+  const means: Record<string, number> = {};
+
+  for (const [prompt, values] of Object.entries(ranks)) {
+    means[prompt] = mean(values);
+  }
+
+  return lowest(means);
+}
+
+function stabilityReport(stability: StabilitySummary): string {
+  const lines = [
+    `# Judge stability (judge v${String(JUDGE_VERSION)}, ${String(stability.runs)} runs)`,
+    "",
+    `- Rows ranked identically in every run: ${percent(stability.identical_rows)} of ${String(stability.rows)}`,
+    `- Image pairs in the same order in every run: ${percent(stability.pair_agreement)}`,
+    "",
+    "| Round | Winner per run | Stable |",
+    "| --- | --- | --- |",
+  ];
+
+  for (const round of stability.rounds) {
+    lines.push(
+      `| ${round.round} | ${round.winners.join(", ")} | ${round.stable ? "yes" : "no"} |`,
+    );
+  }
+
+  return lines.join("\n") + "\n";
 }
 
 function mean(values: number[]): number {

@@ -456,6 +456,12 @@ export async function runCli(
       "Rounds to check (default: every rated round)",
     )
     .option(
+      "--repeat <count>",
+      "Run the check this many times and report how stable the rankings are",
+      (value: string): number => parsePositiveInteger(value, 5),
+      1,
+    )
+    .option(
       "--concurrency <count>",
       "Rows judged at once",
       (value: string): number => parsePositiveInteger(value, 8),
@@ -465,11 +471,13 @@ export async function runCli(
     .action(
       async (flags: {
         rounds?: string[];
+        repeat: number;
         concurrency: number;
         output: string;
       }): Promise<void> => {
-        const { directory, summary } = await runJudgeCheck({
+        const { directory, summary, stability } = await runJudgeCheck({
           outputRoot: flags.output,
+          repeat: flags.repeat,
           concurrency: flags.concurrency,
           ...(flags.rounds ? { rounds: flags.rounds } : {}),
           ...(options.signal ? { signal: options.signal } : {}),
@@ -481,6 +489,14 @@ export async function runCli(
         stderr(
           `Within one star: ${String(Math.round(summary.within_one * 100))}%, correlation: ${String(summary.correlation)}\n`,
         );
+        if (stability) {
+          stderr(
+            `Pairs in the same order every run: ${String(Math.round(stability.pair_agreement * 100))}%\n`,
+          );
+          stdout(`${directory}/stability.md\n`);
+          return;
+        }
+
         stdout(`${directory}/report.md\n`);
       },
     );
