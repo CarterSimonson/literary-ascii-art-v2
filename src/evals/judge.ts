@@ -9,7 +9,8 @@ import { z } from "zod";
 import { codexStructuredRunner, type StructuredRunner } from "./codex.ts";
 import { FEEDBACK_TAGS } from "./feedback.ts";
 import { loadHistory, type ImageRecord, type RoundHistory } from "./history.ts";
-import { runPool } from "./round.ts";
+import { appendJudgments, type JudgmentRecord } from "./judgments.ts";
+import { roundDirectory, runPool } from "./round.ts";
 
 // Bump when the brief, rubric handling, or example selection changes, so
 // judgments from different versions are not compared.
@@ -313,6 +314,136 @@ export function pickExamples(
 
 function noteLength(image: ImageRecord): number {
   return image.feedback?.note.trim().length ?? 0;
+}
+
+export interface JudgeRoundArgs {
+  outputRoot: string;
+  roundId: string;
+  rubricPath?: string;
+  suiteDirectory?: string;
+  concurrency: number;
+  // Row keys to judge again even if they already have current judgments.
+  rows?: string[];
+  judge?: Judge;
+  signal?: AbortSignal;
+  onProgress?: (message: string) => void;
+}
+
+export interface JudgeRoundSummary {
+  rows: number;
+  judged: number;
+  failed: string[];
+}
+
+// Judges every row of a round that has a finished image without a current
+// judgment (or the requested rows), appending to the round's judge.jsonl.
+// Examples come from the user's ratings in other rounds.
+export async function judgeRound(
+  args: JudgeRoundArgs,
+): Promise<JudgeRoundSummary> {
+  const rubric = await readFile(
+    resolve(args.rubricPath ?? DEFAULT_RUBRIC),
+    "utf8",
+  );
+  const history = await loadHistory(args.outputRoot, args.suiteDirectory);
+  const round = history.find((entry) => entry.roundId === args.roundId);
+
+  if (!round) {
+    throw new Error(`Unknown round ${args.roundId}`);
+  }
+
+  const directory = roundDirectory(args.outputRoot, args.roundId);
+  const rows = new Map<string, ImageRecord[]>();
+
+  for (const image of round.images) {
+    const row = rows.get(image.item.rowKey) ?? [];
+    row.push(image);
+    rows.set(image.item.rowKey, row);
+  }
+
+  const pending = [...rows.entries()].filter(([rowKey, row]) => {
+    if (args.rows?.includes(rowKey)) {
+      return true;
+    }
+
+    return row.some(
+      (image) =>
+        image.result?.status === "done" &&
+        image.judgment?.judge_version !== JUDGE_VERSION,
+    );
+  });
+
+  const summary: JudgeRoundSummary = { rows: rows.size, judged: 0, failed: [] };
+
+  if (pending.length > 0) {
+    args.onProgress?.(`Judging ${String(pending.length)} rows`);
+  }
+
+  await runPool(pending, args.concurrency, async ([rowKey, row]) => {
+    try {
+      const ratings = await judgeRow({
+        rubric,
+        roundId: args.roundId,
+        row,
+        examples: pickExamples(history, args.roundId),
+        traceDirectory: join(
+          directory,
+          "judge",
+          rowKey.replaceAll("/", "--").replaceAll("#", "-"),
+        ),
+        ...(args.judge ? { judge: args.judge } : {}),
+        ...(args.signal ? { signal: args.signal } : {}),
+      });
+
+      await appendJudgments(directory, judgmentRecords(ratings, row));
+      summary.judged++;
+      args.onProgress?.(
+        `Judged ${String(summary.judged)}/${String(pending.length)} rows`,
+      );
+    } catch (error) {
+      if (args.signal?.aborted) {
+        throw error;
+      }
+
+      const message = error instanceof Error ? error.message : String(error);
+      summary.failed.push(`${rowKey}: ${message}`);
+    }
+  });
+
+  return summary;
+}
+
+function judgmentRecords(
+  ratings: JudgeRating[],
+  row: ImageRecord[],
+): JudgmentRecord[] {
+  const at = new Date().toISOString();
+  const records: JudgmentRecord[] = [];
+
+  for (const rating of ratings) {
+    const image = row.find((entry) => entry.item.key === rating.key);
+
+    if (!image?.result) {
+      continue;
+    }
+
+    records.push({
+      at,
+      judge_version: JUDGE_VERSION,
+      key: rating.key,
+      row: image.item.rowKey,
+      prompt: image.item.promptId,
+      attempt: Number(image.result.attempt),
+      master_sha256: String(image.result.master_sha256),
+      rank: rating.rank,
+      stars: rating.stars,
+      tags: rating.tags,
+      note: rating.note,
+      confidence: rating.confidence,
+    });
+  }
+
+  return records;
 }
 
 export interface JudgeCheckArgs {

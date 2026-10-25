@@ -7,7 +7,9 @@ import sharp from "sharp";
 import { parse, stringify } from "yaml";
 
 import { replaceSuiteIdea } from "../src/evals/ideas.ts";
+import { readLatestJudgments } from "../src/evals/judgments.ts";
 import {
+  judgeRound,
   runJudgeCheck,
   stabilityAcross,
   summarize,
@@ -153,6 +155,28 @@ async function roundFixture(): Promise<RoundFixture> {
     }),
   };
 }
+
+// Ranks images in the order shown and gives everything three stars.
+const fakeJudge: Judge = async (input) => {
+  const text = input.input
+    .map((part) => (part.type === "text" ? part.text : ""))
+    .join("\n");
+  const images = (text.match(/Image \d+: poster/g) ?? []).length;
+
+  return Promise.resolve({
+    response: JSON.stringify({
+      ranking: Array.from({ length: images }, (_, index) => index + 1),
+      ratings: Array.from({ length: images }, (_, index) => ({
+        image: index + 1,
+        stars: 3,
+        tags: [],
+        note: `Shown ${String(index + 1)}`,
+        confidence: "medium",
+      })),
+    }),
+    usage: null,
+  });
+};
 
 function fakeGenerator(
   prompts: string[],
@@ -521,6 +545,7 @@ describe("next rounds", () => {
       targetRegistry: join(fixture.root, "targets.yaml"),
       writer: fakeWriter([], [{ id: "solid-block", template: VALID_TEMPLATE }]),
       generate: fakeGenerator(generated),
+      judge: fakeJudge,
     });
     const base = `http://127.0.0.1:${String(server.port)}`;
 
@@ -601,6 +626,7 @@ describe("next rounds", () => {
       suiteDirectory: join(fixture.root, "suite"),
       targetRegistry: join(fixture.root, "targets.yaml"),
       generate: fakeGenerator(generated, ["#563E4B"], gate),
+      judge: fakeJudge,
     });
     const regenerate = async (key: string): Promise<Response> =>
       fetch(
@@ -663,6 +689,7 @@ describe("next rounds", () => {
       ideaGenerator: fakeIdeaGenerator(
         responseEvents(JSON.stringify(ideasResponse("fresh", 3))),
       ),
+      judge: fakeJudge,
     });
     const base = `http://127.0.0.1:${String(server.port)}`;
 
@@ -947,5 +974,121 @@ describe("AI judge check", () => {
       pair_agreement: 0.833,
       rounds: [{ round: "round-1", winners: ["a", "a"], stable: true }],
     });
+  });
+});
+
+describe("judged rounds", () => {
+  test("a round started from the page is judged, and the judge's winner becomes the next control", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    await rate(fixture.root, [{ prompt: "flat", stars: 4, note: "Good" }]);
+    const output = join(fixture.root, "output");
+    const { server, tasks } = startPortal({
+      outputRoot: output,
+      port: 0,
+      suiteDirectory: join(fixture.root, "suite"),
+      targetRegistry: join(fixture.root, "targets.yaml"),
+      writer: fakeWriter([], [{ id: "solid-block", template: VALID_TEMPLATE }]),
+      generate: fakeGenerator([]),
+      judge: fakeJudge,
+    });
+    const base = `http://127.0.0.1:${String(server.port)}`;
+
+    try {
+      await fetch(`${base}/api/next`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ kind: "image", direction: "", newPrompts: 1 }),
+      });
+      await tasks.idle();
+
+      const view = (await (
+        await fetch(`${base}/api/rounds/round-2`)
+      ).json()) as { cells: { judgment: { rank: number } | null }[] };
+      expect(view.cells).toHaveLength(2);
+      expect(view.cells.map((cell) => cell.judgment?.rank).sort()).toEqual([
+        1, 2,
+      ]);
+    } finally {
+      await server.stop();
+    }
+
+    const judgments = await readLatestJudgments(
+      join(output, "evals", "rounds", "round-2"),
+    );
+    const winner = [...judgments.values()].find((record) => record.rank === 1);
+
+    const planned = await planNextRound({
+      outputRoot: output,
+      kind: "image",
+      direction: "",
+      newPrompts: 1,
+      suiteDirectory: join(fixture.root, "suite"),
+      writer: fakeWriter([], [{ id: "next-try", template: VALID_TEMPLATE }]),
+    });
+
+    expect(
+      await Bun.file(
+        join(planned.promptsDirectory, `${winner?.prompt ?? ""}.prompt.md`),
+      ).exists(),
+    ).toBe(true);
+  });
+
+  test("judging skips rows already judged, and regenerating an image judges its row again", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    const output = join(fixture.root, "output");
+    const round = join(output, "evals", "rounds", "round-1");
+    const judge = {
+      outputRoot: output,
+      roundId: "round-1",
+      concurrency: 2,
+      suiteDirectory: join(fixture.root, "suite"),
+      judge: fakeJudge,
+    };
+
+    expect(await judgeRound(judge)).toMatchObject({ rows: 1, judged: 1 });
+    expect(await judgeRound(judge)).toMatchObject({ judged: 0 });
+
+    const { server, tasks } = startPortal({
+      outputRoot: output,
+      port: 0,
+      suiteDirectory: join(fixture.root, "suite"),
+      targetRegistry: join(fixture.root, "targets.yaml"),
+      generate: fakeGenerator([]),
+      judge: fakeJudge,
+    });
+
+    try {
+      await fetch(
+        `http://127.0.0.1:${String(server.port)}/api/rounds/round-1/regenerate`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            key: "flat/the-great-gatsby/the-weight-of-shirts",
+          }),
+        },
+      );
+      await tasks.idle();
+    } finally {
+      await server.stop();
+    }
+
+    const judgments = await readLatestJudgments(round);
+    expect(
+      judgments.get("flat/the-great-gatsby/the-weight-of-shirts"),
+    ).toMatchObject({ attempt: 2 });
+    const lines = (await readFile(join(round, "judge.jsonl"), "utf8"))
+      .trim()
+      .split("\n");
+    // Two images judged initially, then the whole row again.
+    expect(lines).toHaveLength(4);
   });
 });

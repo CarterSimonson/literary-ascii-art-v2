@@ -21,7 +21,7 @@ import {
   MAX_SEPARATION_RADIUS,
 } from "./render/convert.ts";
 import { runRound } from "./evals/round.ts";
-import { runJudgeCheck } from "./evals/judge.ts";
+import { judgeRound, runJudgeCheck } from "./evals/judge.ts";
 import { startPortal } from "./evals/serve.ts";
 
 interface GenerationFlags {
@@ -442,6 +442,44 @@ export async function runCli(
           throw new Error(
             "Some images failed; rerun the same command to retry them",
           );
+        }
+      },
+    );
+
+  evals
+    .command("judge")
+    .description(
+      "Have the AI judge rank and rate a round's images that are not judged yet",
+    )
+    .argument("<round-id>", "Round ID, e.g. round-4")
+    .option(
+      "--concurrency <count>",
+      "Rows judged at once",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (
+        roundId: string,
+        flags: { concurrency: number; output: string },
+      ): Promise<void> => {
+        const summary = await judgeRound({
+          outputRoot: flags.output,
+          roundId,
+          concurrency: flags.concurrency,
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message: string): void => {
+            stderr(`${message}\n`);
+          },
+        });
+
+        stdout(
+          `Judged ${String(summary.judged)} of ${String(summary.rows)} rows\n`,
+        );
+
+        if (summary.failed.length > 0) {
+          throw new Error(`Judging failed: ${summary.failed.join("; ")}`);
         }
       },
     );

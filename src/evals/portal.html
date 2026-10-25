@@ -363,6 +363,24 @@
         min-height: 30px;
         height: 30px;
       }
+      .judge {
+        font-size: 12px;
+        color: var(--muted);
+        border-left: 3px solid var(--line);
+        padding: 2px 0 2px 8px;
+      }
+      .judge b {
+        color: var(--text);
+      }
+      .judge.top {
+        border-left-color: var(--star);
+      }
+      .toggle {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        font-size: 13px;
+      }
       .saved {
         font-size: 11px;
         color: var(--muted);
@@ -436,6 +454,11 @@
       <div class="stats" id="stats"></div>
       <div class="spacer"></div>
       <span class="keys">Click a card · 1–5 stars · arrows move</span>
+      <label class="toggle">
+        <input type="checkbox" id="top-picks" />
+        Judge's top picks only
+      </label>
+      <button type="button" class="quiet" id="judge" hidden>Judge round</button>
       <button type="button" class="quiet" id="retry" hidden>
         Retry failed
       </button>
@@ -492,6 +515,7 @@
         suite: [],
         tasks: [],
         selected: null,
+        topPicks: false,
       };
       const $ = (id) => document.getElementById(id);
 
@@ -624,7 +648,11 @@
         renderNotes();
         renderTasks();
         const rows = new Map();
-        for (const cell of state.data.cells) {
+        // Spot-checking: only each row's top-ranked image.
+        const cells = state.data.cells.filter(
+          (cell) => !state.topPicks || cell.judgment?.rank === 1,
+        );
+        for (const cell of cells) {
           if (!rows.has(cell.row)) {
             rows.set(cell.row, []);
           }
@@ -662,15 +690,26 @@
               1,
             );
           }
+          const ranks = cells
+            .filter((c) => c.prompt === prompt.id && c.judgment)
+            .map((c) => c.judgment.rank);
+          let rank = "";
+          if (ranks.length > 0) {
+            rank = ` · rank ${(ranks.reduce((a, b) => a + b, 0) / ranks.length).toFixed(1)}`;
+          }
           parts.push(
             el("span", {}, [
               el("b", { text: letterFor(prompt.id) }),
-              ` ★${average}`,
+              ` ★${average}${rank}`,
             ]),
           );
         }
         $("stats").replaceChildren(...parts);
         $("retry").hidden = failed === 0;
+        const unjudged = cells.some(
+          (c) => c.result?.status === "done" && !c.judgment,
+        );
+        $("judge").hidden = !unjudged || running(`judge:${state.round}`);
       }
 
       function renderNotes() {
@@ -868,6 +907,24 @@
             figure(cell, "Poster", result.files.preview, "", 0),
           ]),
         );
+        if (cell.judgment) {
+          const judgment = cell.judgment;
+          body.push(
+            el(
+              "div",
+              {
+                class: judgment.rank === 1 ? "judge top" : "judge",
+                title: `Judge confidence: ${judgment.confidence}`,
+              },
+              [
+                el("b", {
+                  text: `Judge #${judgment.rank} · ★${judgment.stars}`,
+                }),
+                ` — ${judgment.note}`,
+              ],
+            ),
+          );
+        }
         body.push(...ratingControls(cell));
 
         return el(
@@ -1028,7 +1085,7 @@
           return;
         }
         event.preventDefault();
-        const perRow = state.data.prompts.length;
+        const perRow = state.topPicks ? 1 : state.data.prompts.length;
         const steps = {
           ArrowRight: 1,
           ArrowLeft: -1,
@@ -1135,6 +1192,14 @@
       $("next-toggle").addEventListener("click", () => {
         $("next").hidden = !$("next").hidden;
       });
+      $("top-picks").addEventListener("change", () => {
+        state.topPicks = $("top-picks").checked;
+        state.selected = null;
+        render();
+      });
+      $("judge").addEventListener("click", () =>
+        startTask(`/api/rounds/${state.round}/judge`, {}),
+      );
       $("retry").addEventListener("click", () =>
         startTask(`/api/rounds/${state.round}/resume`, {}),
       );

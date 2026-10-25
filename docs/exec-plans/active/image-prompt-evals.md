@@ -62,11 +62,22 @@ exact and within-one-star agreement, correlation, whether the judge orders
 images within a row as the user did, and whether it picks the same winning
 prompt per round.
 
-Next, only if the check is good enough: judge each new round automatically,
-show the judge's stars on the page, ask the user to review only the judge's
-top picks and low-confidence cards, and let the prompt agent use judged
-ratings where no human rating exists. Recheck agreement as new human ratings
-arrive.
+The judge now runs in the loop:
+
+- Rounds started from the page are judged once their images exist, and a
+  regenerated image's row is judged again. `bookgen eval judge <round>` or
+  **Judge round** on the page judges any round's unjudged rows. Judgments are
+  appended to the round's `judge.jsonl` (rank, stars, tags, note, confidence,
+  and the attempt and master hash judged), with each row's brief and response
+  under `judge/`.
+- The page shows each card's judge rank, stars, and note, and each prompt's
+  mean judge rank. **Judge's top picks only** shows just each row's #1, for the
+  user to spot-check and rate; those ratings become examples for later judging.
+- The prompt agent's winner for a round is the prompt with the best mean judge
+  rank (the user's mean stars for rounds without judgments). Since every round
+  carries the best prompt so far as its control, the latest round's winner is
+  carried forward. Its brief shows judge ranks and notes beside any user
+  ratings, and user ratings outweigh the judge where they disagree.
 
 ## Decisions
 
@@ -111,6 +122,9 @@ images/<prompt>/<book>/<idea>/
                            generated.png (native), master.png, preview.png
 feedback.jsonl             append-only ratings: stars, tags, note, time, and
                            the attempt and master hash they judged
+judge.jsonl                append-only AI judgments: rank within the row,
+                           stars, tags, note, confidence, attempt, master hash
+judge/<row>/               the judge's latest brief, images, and response
 agent/                     for rounds the page wrote: request.md (the brief),
                            thumbnails/, events.jsonl, response.json, prompts/
 ```
@@ -136,8 +150,8 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
       ideas prompt v7.
 - [x] AI judge and agreement check.
 - [x] Judge v3 with a repeatable stability check (`judge-check --repeat`).
-- [ ] Judge each new round automatically and show its ranking on the page;
-      the user spot-checks top picks.
+- [x] Judge each new round automatically and show its ranking on the page;
+      the user spot-checks top picks; the prompt agent follows judge ranks.
 
 ## Findings
 

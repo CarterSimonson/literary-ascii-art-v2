@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { readLatestFeedback, type FeedbackRecord } from "./feedback.ts";
+import { readLatestJudgments, type JudgmentRecord } from "./judgments.ts";
 import {
   listRoundIds,
   loadRoundItems,
@@ -13,8 +14,8 @@ import {
   type RoundKind,
 } from "./round.ts";
 
-// Every round with its templates, cells, results, and current human ratings,
-// oldest first. Shared by the prompt agent and the AI judge.
+// Every round with its templates, cells, results, current human ratings, and
+// current AI judgments, oldest first. Shared by the prompt agent and the judge.
 export interface Template {
   id: string;
   sha256: string;
@@ -25,6 +26,7 @@ export interface ImageRecord {
   item: RoundItem;
   result: Record<string, unknown> | null;
   feedback: FeedbackRecord | null;
+  judgment: JudgmentRecord | null;
 }
 
 export interface RoundHistory {
@@ -47,6 +49,7 @@ export async function loadHistory(
     const round = roundDirectory(outputRoot, roundId);
     const roundFile = await readRoundFile(round);
     const feedback = await readLatestFeedback(round);
+    const judgments = await readLatestJudgments(round);
 
     const prompts: Template[] = [];
 
@@ -77,6 +80,7 @@ export async function loadHistory(
         item,
         result: result,
         feedback: currentFeedback(feedback.get(item.key), result?.attempt),
+        judgment: currentJudgment(judgments.get(item.key), result?.attempt),
       });
     }
 
@@ -98,6 +102,17 @@ function currentFeedback(
   record: FeedbackRecord | undefined,
   attempt: number | undefined,
 ): FeedbackRecord | null {
+  if (!record || record.attempt !== attempt) {
+    return null;
+  }
+
+  return record;
+}
+
+function currentJudgment(
+  record: JudgmentRecord | undefined,
+  attempt: number | undefined,
+): JudgmentRecord | null {
   if (!record || record.attempt !== attempt) {
     return null;
   }

@@ -3,7 +3,8 @@
 // conflicting kinds wait their turn: a new round never starts while ideas are
 // being replaced, and ideas are not replaced while a round is being planned.
 
-export type TaskKind = "next-round" | "replace-idea" | "regenerate" | "resume";
+export type TaskKind =
+  "next-round" | "replace-idea" | "regenerate" | "resume" | "judge";
 
 export interface TaskStatus {
   id: number;
@@ -42,6 +43,7 @@ const CONFLICTS: Record<TaskKind, TaskKind[]> = {
   "replace-idea": ["next-round"],
   regenerate: [],
   resume: [],
+  judge: [],
 };
 
 // Finished tasks stay listed so failures remain visible.

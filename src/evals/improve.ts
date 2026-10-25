@@ -43,8 +43,6 @@ export const REQUIRED_PHRASES = [
 ];
 export const REQUIRED_IDEAS_PLACEHOLDERS = ["book", "count"];
 
-// A prompt needs this many ratings before it can be carried forward as best.
-const MINIMUM_RATINGS_FOR_BEST = 3;
 const THUMBNAIL_WIDTH = 400;
 
 const writerResponseSchema = z.strictObject({
@@ -104,15 +102,15 @@ export async function planNextRound(
     throw new Error("No rounds yet; run the first round with bookgen eval run");
   }
 
-  if (!history.some((round) => round.images.some((image) => image.feedback))) {
-    throw new Error("Rate some images before starting the next round");
+  const judgedOrRated = history.some((round) =>
+    round.images.some((image) => image.feedback || image.judgment),
+  );
+
+  if (!judgedOrRated) {
+    throw new Error("Rate or judge some images before starting the next round");
   }
 
   const bestImage = bestTemplate(history, "image") ?? committedImagePrompt();
-
-  if (args.kind === "image" && bestImage.stars.length === 0) {
-    throw new Error("Rate some images before starting the next round");
-  }
 
   const bestIdeas = bestTemplate(history, "idea") ?? committedIdeasPrompt();
   let control = bestImage;
@@ -266,32 +264,86 @@ function average(values: number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
+// Each round carries the best prompt so far forward as its control, so the
+// latest round's winner is the best so far. A round's winner has the judge's
+// best mean rank; rounds without judgments fall back to the user's stars.
 function bestTemplate(
   history: RoundHistory[],
   kind: RoundKind,
 ): PooledTemplate | null {
-  const rated = poolTemplates(history, kind).filter(
-    (entry) => entry.stars.length > 0,
-  );
-  const qualified = rated.filter(
-    (entry) => entry.stars.length >= MINIMUM_RATINGS_FOR_BEST,
-  );
-
-  let candidates = qualified;
-
-  if (candidates.length === 0) {
-    candidates = rated;
-  }
-
+  const pooled = poolTemplates(history, kind);
   let best: PooledTemplate | null = null;
 
-  for (const entry of candidates) {
-    if (!best || average(entry.stars) >= average(best.stars)) {
+  for (const round of history) {
+    if (round.kind !== kind) {
+      continue;
+    }
+
+    const winnerId = roundWinner(round);
+    const prompt = round.prompts.find((entry) => entry.id === winnerId);
+    const entry = pooled.find((item) => item.sha256 === prompt?.sha256);
+
+    if (entry) {
       best = entry;
     }
   }
 
   return best;
+}
+
+interface PromptResult {
+  prompt: string;
+  meanRank: number | null;
+  judged: number;
+  meanStars: number | null;
+  rated: number;
+}
+
+function roundResults(round: RoundHistory): PromptResult[] {
+  return round.prompts.map((prompt) => {
+    const images = round.images.filter(
+      (image) => image.item.promptId === prompt.id,
+    );
+    const ranks = images.flatMap((image) =>
+      image.judgment ? [image.judgment.rank] : [],
+    );
+    const stars = images.flatMap((image) =>
+      image.feedback?.stars ? [image.feedback.stars] : [],
+    );
+
+    return {
+      prompt: prompt.id,
+      meanRank: ranks.length > 0 ? average(ranks) : null,
+      judged: ranks.length,
+      meanStars: stars.length > 0 ? average(stars) : null,
+      rated: stars.length,
+    };
+  });
+}
+
+function roundWinner(round: RoundHistory): string | null {
+  const results = roundResults(round);
+  const judged = results.every((result) => result.meanRank !== null);
+  let winner: string | null = null;
+  let bestValue = Infinity;
+
+  for (const result of results) {
+    let value: number | null = null;
+
+    if (judged) {
+      value = result.meanRank;
+    } else if (result.meanStars !== null) {
+      // Higher stars are better; negate so lower is better for both.
+      value = -result.meanStars;
+    }
+
+    if (value !== null && value < bestValue) {
+      winner = result.prompt;
+      bestValue = value;
+    }
+  }
+
+  return winner;
 }
 
 function committed(
@@ -369,7 +421,7 @@ async function writeThumbnails(
       .toFile(path);
 
     thumbnails.push({
-      caption: `Rendered poster: ${imageLabel(round.roundId, image.item)} — ${feedbackSummary(image.feedback)}`,
+      caption: `Rendered poster: ${imageLabel(round.roundId, image.item)} — ${feedbackSummary(image.feedback)}; ${judgmentSummary(image)}`,
       path,
     });
   }
@@ -418,7 +470,7 @@ interface WriterBriefArgs {
 
 const PIPELINE_SUMMARY = `This is a literary character-art poster pipeline. An ideas prompt asks an agent for poster composition ideas for a book. An image prompt turns each idea into one transparent PNG source master. The master is cleaned (binary alpha, palette colors), then every opaque pixel becomes a monospaced character from the book on a 24 × 36 inch poster, and transparent pixels stay blank paper. The target look: one calm rectangular text field in one ink, one instantly readable iconic subject cut out of it as negative space, interior details as bold transparent channels, clean vector contours, and at most one accent ringed by a gap.
 
-The user rates every rendered poster 1–5 stars, with optional tags and notes.`;
+An AI judge ranks every rendered poster within its idea and rates it 1–5 stars with a note; the user spot-checks some images with their own stars, tags, and notes, which outweigh the judge where they disagree.`;
 
 function writerBrief(brief: WriterBriefArgs): string {
   const { history, control, bestImage, args } = brief;
@@ -526,24 +578,45 @@ function leaderboard(
   kind: RoundKind,
   title: string,
 ): string {
-  const pooled = poolTemplates(history, kind).sort(
-    (left, right) => average(right.stars) - average(left.stars),
-  );
+  const rounds = history.filter((round) => round.kind === kind);
 
-  if (pooled.length === 0) {
+  if (rounds.length === 0) {
     return `${title}: no ${kind} rounds yet.`;
   }
 
-  const lines = pooled.map((entry) => {
-    const tags = [...entry.tags.entries()]
-      .sort((left, right) => right[1] - left[1])
-      .map(([tag, count]) => `${tag}×${String(count)}`)
-      .join(", ");
+  const lines = rounds.map((round) => {
+    const results = roundResults(round).map((result) => {
+      const parts: string[] = [];
 
-    return `- ${entry.labels.join(", ")}: ${average(entry.stars).toFixed(2)} stars from ${String(entry.stars.length)} ratings; failures ${String(entry.failures)}; tags: ${tags || "none"}`;
+      if (result.meanRank !== null) {
+        parts.push(
+          `judge mean rank ${result.meanRank.toFixed(2)} over ${String(result.judged)}`,
+        );
+      }
+
+      if (result.meanStars !== null) {
+        parts.push(
+          `user ${result.meanStars.toFixed(2)} stars over ${String(result.rated)}`,
+        );
+      }
+
+      return `${result.prompt} (${parts.join("; ") || "no results"})`;
+    });
+
+    return `- ${round.roundId}: winner ${roundWinner(round) ?? "none"}; ${results.join(", ")}`;
   });
 
-  return `${title} (ratings pooled across rounds):\n${lines.join("\n")}`;
+  return `${title} (judge ranks are within each idea, 1 = best; the user spot-checks some images):\n${lines.join("\n")}`;
+}
+
+function judgmentSummary(image: ImageRecord): string {
+  const judgment = image.judgment;
+
+  if (!judgment) {
+    return "not judged";
+  }
+
+  return `judge: rank ${String(judgment.rank)} in its idea, ${String(judgment.stars)}/5, "${judgment.note}"`;
 }
 
 function imageLine(roundId: string, image: ImageRecord): string {
@@ -566,7 +639,10 @@ function imageLine(roundId: string, image: ImageRecord): string {
   const metrics = image.result.metrics as
     { native_haze: number; accent_contact: number | null } | undefined;
   const notes = (image.result.review_notes as string[] | undefined) ?? [];
-  const parts = [feedbackSummary(image.feedback)];
+  const parts = [
+    `user: ${feedbackSummary(image.feedback)}`,
+    judgmentSummary(image),
+  ];
 
   if (metrics) {
     parts.push(`native haze ${metrics.native_haze.toFixed(2)}`);
@@ -689,7 +765,7 @@ function roundNotes(notes: RoundNotesArgs): string {
     "",
     "## Prompts",
     "",
-    `- ${notes.control.id} (control): best so far (${notes.control.labels.join(", ")}), ${average(notes.control.stars).toFixed(2)} stars from ${String(notes.control.stars.length)} ratings. Unchanged.`,
+    `- ${notes.control.id} (control): best so far (${notes.control.labels.join(", ")}), carried forward unchanged.`,
   );
 
   for (const prompt of notes.response.prompts) {

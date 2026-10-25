@@ -17,6 +17,8 @@ import {
 } from "./feedback.ts";
 import { replaceSuiteIdea } from "./ideas.ts";
 import { planNextRound, type PromptWriter } from "./improve.ts";
+import { judgeRound, type Judge } from "./judge.ts";
+import { readLatestJudgments } from "./judgments.ts";
 import {
   listRoundIds,
   loadRoundItems,
@@ -41,6 +43,8 @@ export interface StartPortalArgs {
   writer?: PromptWriter;
   generate?: ImageGenerator;
   ideaGenerator?: IdeaGenerator;
+  judge?: Judge;
+  rubricPath?: string;
 }
 
 export interface Portal {
@@ -205,12 +209,38 @@ async function route(
       kind: "regenerate",
       key: `image:${roundId}/${body.key}`,
       label: `Regenerate ${body.key}`,
-      run: async (report) =>
-        generate(
+      run: async (report) => {
+        // The judge ranks a row together, so the whole row is judged again.
+        const roundFile = await readRoundFile(round);
+        const items = await loadRoundItems(
+          round,
+          roundFile,
+          args.suiteDirectory,
+        );
+        const rowKey = items.find((item) => item.key === body.key)?.rowKey;
+
+        return generate(
           args,
-          { roundId, only: [body.key], retry: [body.key] },
+          {
+            roundId,
+            only: [body.key],
+            retry: [body.key],
+            ...(rowKey ? { judgeRows: [rowKey] } : {}),
+          },
           report,
-        ),
+        );
+      },
+    });
+
+    return Response.json(task);
+  }
+
+  if (parts[3] === "judge" && post) {
+    const task = tasks.start({
+      kind: "judge",
+      key: `judge:${roundId}`,
+      label: `Judge ${roundId}`,
+      run: async (report) => judge(args, roundId, undefined, report),
     });
 
     return Response.json(task);
@@ -244,6 +274,8 @@ interface GenerateTarget {
   promptsDirectory?: string;
   only?: string[];
   retry?: string[];
+  // Rows to judge again after generating; by default, rows not yet judged.
+  judgeRows?: string[];
 }
 
 async function generate(
@@ -272,7 +304,38 @@ async function generate(
     },
   });
 
-  return `${target.roundId}: ${String(summary.done)} generated, ${String(summary.failed)} failed`;
+  const generated = `${target.roundId}: ${String(summary.done)} generated, ${String(summary.failed)} failed`;
+  const judged = await judge(args, target.roundId, target.judgeRows, report);
+
+  return `${generated}; ${judged}`;
+}
+
+// Ranks the round's rows with the AI judge once images exist.
+async function judge(
+  args: StartPortalArgs,
+  roundId: string,
+  rows: string[] | undefined,
+  report: (update: TaskReport) => void,
+): Promise<string> {
+  const summary = await judgeRound({
+    outputRoot: args.outputRoot,
+    roundId,
+    concurrency: args.concurrency ?? 3,
+    ...(rows ? { rows } : {}),
+    ...(args.suiteDirectory ? { suiteDirectory: args.suiteDirectory } : {}),
+    ...(args.rubricPath ? { rubricPath: args.rubricPath } : {}),
+    ...(args.judge ? { judge: args.judge } : {}),
+    onProgress: (message) => {
+      report({ message, round: roundId });
+    },
+  });
+
+  // Generated images stay usable when judging fails; report it instead.
+  if (summary.failed.length > 0) {
+    return `judged ${String(summary.judged)} rows; judging failed for ${String(summary.failed.length)}: ${summary.failed.join("; ")}`;
+  }
+
+  return `judged ${String(summary.judged)} rows`;
 }
 
 // Resized copies for the page, keyed by path, size, and modification time.
@@ -334,6 +397,7 @@ async function roundView(
 ): Promise<Record<string, unknown>> {
   const roundFile = await readRoundFile(round);
   const feedback = await readLatestFeedback(round);
+  const judgments = await readLatestJudgments(round);
   const items = await loadRoundItems(round, roundFile, args.suiteDirectory);
 
   const prompts = [];
@@ -354,6 +418,14 @@ async function roundView(
   const cells = [];
 
   for (const item of items) {
+    const result = await readResult(item.directory);
+    let judgment = judgments.get(item.key) ?? null;
+
+    // A judgment of an earlier attempt does not describe the current image.
+    if (judgment && judgment.attempt !== Number(result?.attempt)) {
+      judgment = null;
+    }
+
     cells.push({
       key: item.key,
       prompt: item.promptId,
@@ -362,8 +434,9 @@ async function roundView(
       idea: item.idea,
       ideas_error: item.ideasError,
       directory: relative(round, item.directory),
-      result: await readResult(item.directory),
+      result,
       feedback: feedback.get(item.key) ?? null,
+      judgment,
     });
   }
 

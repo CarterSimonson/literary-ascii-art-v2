@@ -56,9 +56,10 @@ retry semantics. Modules have these responsibilities:
 - `src/evals/metrics.ts`: native haze and accent contact hints for eval review.
 - `src/evals/improve.ts`: prompt agent that reads all rounds and ratings and
   writes the next round's templates; the best-rated prompt carries forward.
-- `src/evals/judge.ts`, `src/evals/history.ts`, and `src/evals/codex.ts`: AI
-  judge that predicts the user's ratings from a rubric and rated examples, its
-  agreement check, the shared round history, and structured Codex calls.
+- `src/evals/judge.ts`, `src/evals/judgments.ts`, `src/evals/history.ts`, and
+  `src/evals/codex.ts`: AI judge that ranks and rates each idea row from a rubric
+  and the user's rated examples, judging rounds into `judge.jsonl`, its agreement
+  and stability checks, the shared round history, and structured Codex calls.
 - `src/evals/ideas.ts`: replaces a suite idea with a new one and retires the old.
 - `src/evals/tasks.ts`: parallel background tasks for the rating page, with
   duplicate and conflict checks.
