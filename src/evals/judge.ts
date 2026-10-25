@@ -10,11 +10,11 @@ import { codexStructuredRunner, type StructuredRunner } from "./codex.ts";
 import { FEEDBACK_TAGS } from "./feedback.ts";
 import { loadHistory, type ImageRecord, type RoundHistory } from "./history.ts";
 import { appendJudgments, type JudgmentRecord } from "./judgments.ts";
-import { roundDirectory, runPool } from "./round.ts";
+import { roundDirectory, runPool, type RoundKind } from "./round.ts";
 
 // Bump when the brief, rubric handling, or example selection changes, so
 // judgments from different versions are not compared.
-export const JUDGE_VERSION = 3;
+export const JUDGE_VERSION = 4;
 export const DEFAULT_RUBRIC = "evals/judge/rubric.md";
 
 // Rated examples shown to the judge, spread across the star scale.
@@ -58,6 +58,8 @@ export interface JudgeRating {
 export interface JudgeRowArgs {
   rubric: string;
   roundId: string;
+  // Idea rounds draw a different idea per image, so each gets its own scene.
+  kind: RoundKind;
   row: ImageRecord[];
   examples: ImageRecord[];
   traceDirectory: string;
@@ -87,7 +89,7 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
   }
 
   const input: UserInput[] = [
-    { type: "text", text: judgeBrief(args.rubric, first) },
+    { type: "text", text: judgeBrief(args.rubric, first, args.kind) },
   ];
 
   input.push({
@@ -108,7 +110,7 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
 
   input.push({
     type: "text",
-    text: `Now judge these ${String(order.length)} images of the idea above. Each has its rendered poster (the product) followed by the raw image the generator produced before cleanup; gray shows transparent areas.`,
+    text: `Now judge these ${String(order.length)} images. Each has its rendered poster (the product) followed by the raw image the generator produced before cleanup; gray shows transparent areas.`,
   });
 
   for (const [index, image] of order.entries()) {
@@ -124,6 +126,16 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
     );
     await thumbnail(image, "preview", POSTER_WIDTH, poster);
     await thumbnail(image, "native", RAW_WIDTH, raw);
+
+    // In idea rounds each image draws a different idea, so each gets its own
+    // scene text; giving one image's idea to all would favor that image.
+    if (args.kind === "idea") {
+      input.push({
+        type: "text",
+        text: `Image ${String(index + 1)} intended scene, for context only: ${sceneText(image)}`,
+      });
+    }
+
     input.push({ type: "text", text: `Image ${String(index + 1)}: poster` });
     input.push({ type: "local_image", path: poster });
     input.push({ type: "text", text: `Image ${String(index + 1)}: raw` });
@@ -190,17 +202,32 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
   return ratings;
 }
 
-function judgeBrief(rubric: string, image: ImageRecord): string {
+function sceneText(image: ImageRecord): string {
   const idea = image.item.idea;
+
+  return `${idea?.name ?? "unknown"}. ${idea?.composition ?? ""}`;
+}
+
+function judgeBrief(
+  rubric: string,
+  first: ImageRecord,
+  kind: RoundKind,
+): string {
+  let scene = `Intended scene of every image below, for context only: ${sceneText(first)}`;
+
+  if (kind === "idea") {
+    scene =
+      "Each image below shows a different idea; its intended scene is given just before it, for context only.";
+  }
 
   return `You are judging literary character-art posters for a print shop. Judge each poster as a product by the rubric below. The user's rated examples illustrate the rubric; use them to understand what it means, not as answers to copy.
 
 ${rubric.trim()}
 
-Book: ${image.item.book.title} by ${image.item.book.author}.
-Intended scene, for context only: ${idea?.name ?? "unknown"}. ${idea?.composition ?? ""}
+Book: ${first.item.book.title} by ${first.item.book.author}.
+${scene}
 
-Judge only the rendered poster, the product someone would hang. The raw image is there to help you read the shapes; haze, soft or partial transparency, and blotches in the raw image do not count against a poster unless they show in the poster itself as holes, stray fragments, or ragged edges. Do not penalize a poster for departing from the intended scene; judge whether the poster is good and recognizably this book.
+Judge only the rendered poster, the product someone would hang. The raw image is there to help you read the shapes; haze, soft or partial transparency, and blotches in the raw image do not count against a poster unless they show in the poster itself as holes, stray fragments, or ragged edges. Do not penalize a poster for departing from its intended scene; judge whether the poster is good and recognizably this book.
 
 First rank all the images from best to worst in "ranking", using every image number exactly once with no ties; when two are close, decide anyway. Then give each image stars on the rubric's scale, any tags that clearly apply, a one-sentence note on what decided its place, and your confidence.`;
 }
@@ -384,6 +411,7 @@ export async function judgeRound(
       const ratings = await judgeRow({
         rubric,
         roundId: args.roundId,
+        kind: round.kind,
         row,
         examples: pickExamples(history, args.roundId),
         traceDirectory: join(
@@ -518,14 +546,18 @@ export async function runJudgeCheck(
     "utf8",
   );
   const history = await loadHistory(args.outputRoot, args.suiteDirectory);
-  const rounds = history.filter(
-    (round) =>
-      (!args.rounds || args.rounds.includes(round.roundId)) &&
-      round.images.some((image) => image.feedback?.stars),
-  );
+  // By default only rated rounds; rounds named explicitly are judged even if
+  // unrated, which still measures stability across repeated runs.
+  const rounds = history.filter((round) => {
+    if (args.rounds) {
+      return args.rounds.includes(round.roundId);
+    }
+
+    return round.images.some((image) => image.feedback?.stars);
+  });
 
   if (rounds.length === 0) {
-    throw new Error("No rated rounds to check the judge against");
+    throw new Error("No rounds to check the judge against");
   }
 
   const stamp = new Date().toISOString().replaceAll(":", "-").slice(0, 19);
@@ -602,8 +634,12 @@ async function runOnce(input: RunOnceArgs): Promise<RunResult> {
       grouped.set(image.item.rowKey, group);
     }
 
+    // In a rated round, only rows the user rated can be compared; in an
+    // unrated round every row counts for stability.
+    const rated = round.images.some((image) => image.feedback?.stars);
+
     for (const row of grouped.values()) {
-      if (row.some((image) => image.feedback?.stars)) {
+      if (!rated || row.some((image) => image.feedback?.stars)) {
         rows.push({ round, row });
       }
     }
@@ -623,6 +659,7 @@ async function runOnce(input: RunOnceArgs): Promise<RunResult> {
     const ratings = await judgeRow({
       rubric,
       roundId: round.roundId,
+      kind: round.kind,
       row,
       examples: pickExamples(history, round.roundId),
       traceDirectory: join(directory, round.roundId, rowName),

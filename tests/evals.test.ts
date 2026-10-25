@@ -178,6 +178,19 @@ const fakeJudge: Judge = async (input) => {
   });
 };
 
+// The fake judge, keeping the text of every brief it was sent.
+function recordingJudge(briefs: string[]): Judge {
+  return async (input) => {
+    briefs.push(
+      input.input
+        .map((part) => (part.type === "text" ? part.text : ""))
+        .join("\n"),
+    );
+
+    return fakeJudge(input);
+  };
+}
+
 function fakeGenerator(
   prompts: string[],
   colors = ["#563E4B"],
@@ -671,6 +684,7 @@ describe("next rounds", () => {
     });
     await rate(fixture.root, [{ prompt: "flat", stars: 4, note: "Good" }]);
     const generated: string[] = [];
+    const briefs: string[] = [];
     const { server, tasks } = startPortal({
       outputRoot: join(fixture.root, "output"),
       port: 0,
@@ -689,7 +703,7 @@ describe("next rounds", () => {
       ideaGenerator: fakeIdeaGenerator(
         responseEvents(JSON.stringify(ideasResponse("fresh", 3))),
       ),
-      judge: fakeJudge,
+      judge: recordingJudge(briefs),
     });
     const base = `http://127.0.0.1:${String(server.port)}`;
 
@@ -715,6 +729,15 @@ describe("next rounds", () => {
         true,
       );
       expect(generated).toContain("Draw fresh 1 as a flat screen print.");
+
+      // Each image in an ideas row draws a different idea, so the judge gets
+      // each image's own scene rather than one shared scene.
+      expect(briefs.length).toBeGreaterThan(0);
+      for (const brief of briefs) {
+        expect(brief).toContain("Image 1 intended scene");
+        expect(brief).toContain("Image 2 intended scene");
+        expect(brief).not.toContain("Intended scene of every image");
+      }
     } finally {
       await server.stop();
     }
@@ -1044,16 +1067,20 @@ describe("judged rounds", () => {
       promptsDirectory: fixture.prompts,
     });
     const output = join(fixture.root, "output");
+    const briefs: string[] = [];
     const round = join(output, "evals", "rounds", "round-1");
     const judge = {
       outputRoot: output,
       roundId: "round-1",
       concurrency: 2,
       suiteDirectory: join(fixture.root, "suite"),
-      judge: fakeJudge,
+      judge: recordingJudge(briefs),
     };
 
     expect(await judgeRound(judge)).toMatchObject({ rows: 1, judged: 1 });
+    expect(briefs[0]).toContain(
+      "Intended scene of every image below, for context only: The Weight of Shirts",
+    );
     expect(await judgeRound(judge)).toMatchObject({ judged: 0 });
 
     const { server, tasks } = startPortal({
