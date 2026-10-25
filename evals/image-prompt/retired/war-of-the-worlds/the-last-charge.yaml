@@ -5,8 +5,7 @@ source: output/war-of-the-worlds/ideas.yaml, ideas prompt v6, generated 2026-10-
 idea:
   id: the-last-charge
   name: The Last Charge
-  composition:
-    A single rectangle of deep slate-blue text fills the interior with
+  composition: A single rectangle of deep slate-blue text fills the interior with
     a narrow transparent placement margin. The torpedo ram Thunder Child appears
     as one broad transparent ship silhouette across the lower-middle field,
     spanning roughly two thirds of its width. Show it from a low, slightly
@@ -34,3 +33,6 @@ idea:
     omit portholes and rigging. Build the source with smooth vector curves,
     straight edges, solid ink, and complete transparency, with no shading,
     gradients, texture, distress, specks, or detached fragments.
+retired:
+  on: 2026-10-20
+  reason: it's boring, and not very recognizable

@@ -16,8 +16,7 @@ idea:
     essential gaps must be at least about 1% of canvas width. Include no display
     lettering, gradients, shading, texture, distressed edges, tiny decoration,
     isolated fragments, frame, or mockup.
-  literary_basis:
-    "Penelope’s bow contest becomes the decisive test through which
+  literary_basis: "Penelope’s bow contest becomes the decisive test through which
     the disguised Odysseus reasserts his identity: he alone strings his bow and
     completes the challenge. Depicting the bow already under tension
     concentrates the story’s recognition, withheld power, and approaching
@@ -31,3 +30,6 @@ idea:
     unmistakable bow outline with a strong diagonal gesture. Their deliberately
     exaggerated thickness preserves continuity through character spacing, while
     the large enclosed text area avoids dependence on fine detail.
+retired:
+  on: 2026-10-20
+  reason: it's too simple

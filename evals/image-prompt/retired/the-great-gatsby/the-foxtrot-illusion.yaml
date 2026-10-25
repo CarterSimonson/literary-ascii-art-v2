@@ -37,3 +37,6 @@ idea:
     relying on fingers, facial features, or costume ornament. Continuous
     contours and channels at least 1% of the canvas width remain clear when the
     surrounding ink is rebuilt from small book characters.
+retired:
+  on: 2026-10-20
+  reason: directionally correct, but it doesn't scream "gatsby" to me
