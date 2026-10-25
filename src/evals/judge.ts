@@ -13,16 +13,22 @@ import { runPool } from "./round.ts";
 
 // Bump when the brief, rubric handling, or example selection changes, so
 // judgments from different versions are not compared.
-export const JUDGE_VERSION = 1;
+export const JUDGE_VERSION = 2;
 export const DEFAULT_RUBRIC = "evals/judge/rubric.md";
 
 // Rated examples shown to the judge, spread across the star scale.
 const MAXIMUM_EXAMPLES = 10;
 const EXAMPLE_WIDTH = 360;
-const POSTER_WIDTH = 640;
-const SOURCE_WIDTH = 400;
+const POSTER_WIDTH = 1200;
+const RAW_WIDTH = 800;
+
+// Transparent pixels in the raw image show as this gray, so soft or partial
+// transparency reads as a visible blend rather than vanishing into white.
+const RAW_BACKGROUND = "#c8c8c8";
 
 const judgeResponseSchema = z.strictObject({
+  // Image numbers from best to worst, every image exactly once.
+  ranking: z.array(z.number().int().min(1)),
   ratings: z.array(
     z.strictObject({
       image: z.number().int().min(1),
@@ -40,6 +46,8 @@ export const judgeWithCodex: Judge = codexStructuredRunner(judgeResponseSchema);
 
 export interface JudgeRating {
   key: string;
+  // 1 is the best image in its row.
+  rank: number;
   stars: number;
   tags: string[];
   note: string;
@@ -56,8 +64,8 @@ export interface JudgeRowArgs {
   signal?: AbortSignal;
 }
 
-// Rates every finished image in one idea row together, as the user does. The
-// images are shown in a shuffled order without prompt labels.
+// Ranks and rates every finished image in one idea row together. The images
+// are shown in a shuffled order without prompt labels.
 export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
   const images = args.row.filter((image) => image.result?.status === "done");
 
@@ -83,7 +91,7 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
 
   input.push({
     type: "text",
-    text: "Examples the user rated, with their stars and notes:",
+    text: "Examples the user rated, with their stars and notes, to illustrate the rubric:",
   });
 
   for (const [index, example] of args.examples.entries()) {
@@ -99,7 +107,7 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
 
   input.push({
     type: "text",
-    text: `Now rate these ${String(order.length)} posters of the idea above. Each has its rendered poster followed by its source image.`,
+    text: `Now judge these ${String(order.length)} images of the idea above. Each has its rendered poster (the product) followed by the raw image the generator produced before cleanup; gray shows transparent areas.`,
   });
 
   for (const [index, image] of order.entries()) {
@@ -108,17 +116,17 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
       "images",
       `image-${String(index + 1)}-poster.jpg`,
     );
-    const source = join(
+    const raw = join(
       args.traceDirectory,
       "images",
-      `image-${String(index + 1)}-source.png`,
+      `image-${String(index + 1)}-raw.jpg`,
     );
     await thumbnail(image, "preview", POSTER_WIDTH, poster);
-    await thumbnail(image, "master", SOURCE_WIDTH, source);
+    await thumbnail(image, "native", RAW_WIDTH, raw);
     input.push({ type: "text", text: `Image ${String(index + 1)}: poster` });
     input.push({ type: "local_image", path: poster });
-    input.push({ type: "text", text: `Image ${String(index + 1)}: source` });
-    input.push({ type: "local_image", path: source });
+    input.push({ type: "text", text: `Image ${String(index + 1)}: raw` });
+    input.push({ type: "local_image", path: raw });
   }
 
   await writeFile(
@@ -144,6 +152,15 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
   await writeFile(join(args.traceDirectory, "response.json"), output.response);
 
   const response = judgeResponseSchema.parse(JSON.parse(output.response));
+  const expected = order.map((_, index) => index + 1).join(",");
+  const ranked = [...response.ranking].sort((left, right) => left - right);
+
+  if (ranked.join(",") !== expected) {
+    throw new Error(
+      `The judge must rank images ${expected} exactly once, without ties`,
+    );
+  }
+
   const ratings: JudgeRating[] = [];
 
   for (const rating of response.ratings) {
@@ -157,6 +174,7 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
 
     ratings.push({
       key: image.item.key,
+      rank: response.ranking.indexOf(rating.image) + 1,
       stars: rating.stars,
       tags: rating.tags,
       note: rating.note,
@@ -174,14 +192,14 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
 function judgeBrief(rubric: string, image: ImageRecord): string {
   const idea = image.item.idea;
 
-  return `You are judging literary character-art posters on behalf of one specific user. Predict the star rating, tags, and a one-sentence note that this user would give each poster. Match their taste as described by the rubric and shown by their rated examples, not your own.
+  return `You are judging literary character-art posters for a print shop. Judge each poster as a product by the rubric below. The user's rated examples illustrate the rubric; use them to understand what it means, not as answers to copy.
 
 ${rubric.trim()}
 
 Book: ${image.item.book.title} by ${image.item.book.author}.
 Idea: ${idea?.name ?? "unknown"}. ${idea?.composition ?? ""}
 
-Return one rating per image, using the image numbers given. Rate each poster on its own merits against the scale; images in the same set may share a rating. Use confidence "low" when the poster could reasonably get stars two apart.`;
+First rank all the images from best to worst in "ranking", using every image number exactly once with no ties; when two are close, decide anyway. Then give each image stars on the rubric's scale, any tags that clearly apply, a one-sentence note on what decided its place, and your confidence. Judge the poster as the product; use the raw image to see the shapes and defects behind it.`;
 }
 
 function exampleCaption(index: number, example: ImageRecord): string {
@@ -204,7 +222,7 @@ function exampleCaption(index: number, example: ImageRecord): string {
 
 async function thumbnail(
   image: ImageRecord,
-  file: "preview" | "master",
+  file: "preview" | "native",
   width: number,
   path: string,
 ): Promise<void> {
@@ -215,16 +233,16 @@ async function thumbnail(
     throw new Error(`Image ${image.item.key} has no ${file} file`);
   }
 
-  const resized = sharp(join(image.item.directory, relative)).resize({ width });
+  let background = "#ffffff";
 
-  if (path.endsWith(".png")) {
-    await resized.png().toFile(path);
-    return;
+  if (file === "native") {
+    background = RAW_BACKGROUND;
   }
 
-  await resized
-    .flatten({ background: "#ffffff" })
-    .jpeg({ quality: 80 })
+  await sharp(join(image.item.directory, relative))
+    .resize({ width })
+    .flatten({ background })
+    .jpeg({ quality: 85 })
     .toFile(path);
 }
 
@@ -313,9 +331,18 @@ export interface Comparison {
   row: string;
   human: number;
   judge: number;
+  judge_rank: number;
   confidence: string;
   human_note: string;
   judge_note: string;
+}
+
+// Every judged image, rated by the user or not, for ranking prompts.
+export interface RankedImage {
+  round: string;
+  row: string;
+  prompt: string;
+  rank: number;
 }
 
 export interface JudgeCheckSummary {
@@ -333,6 +360,7 @@ export interface JudgeCheckSummary {
     judge_winner: string;
     human_means: Record<string, number>;
     judge_means: Record<string, number>;
+    judge_mean_ranks: Record<string, number>;
   }[];
 }
 
@@ -387,6 +415,7 @@ export async function runJudgeCheck(
   );
 
   const comparisons: Comparison[] = [];
+  const ranked: RankedImage[] = [];
   let finished = 0;
 
   await runPool(rows, args.concurrency, async ({ round, row }) => {
@@ -404,9 +433,21 @@ export async function runJudgeCheck(
 
     for (const rating of ratings) {
       const image = row.find((entry) => entry.item.key === rating.key);
-      const human = image?.feedback?.stars;
 
-      if (!image || !human) {
+      if (!image) {
+        continue;
+      }
+
+      ranked.push({
+        round: round.roundId,
+        row: image.item.rowKey,
+        prompt: image.item.promptId,
+        rank: rating.rank,
+      });
+
+      const human = image.feedback?.stars;
+
+      if (!human) {
         continue;
       }
 
@@ -417,6 +458,7 @@ export async function runJudgeCheck(
         row: image.item.rowKey,
         human,
         judge: rating.stars,
+        judge_rank: rating.rank,
         confidence: rating.confidence,
         human_note: image.feedback?.note ?? "",
         judge_note: rating.note,
@@ -429,7 +471,7 @@ export async function runJudgeCheck(
 
   comparisons.sort((left, right) => left.key.localeCompare(right.key));
 
-  const summary = summarize(comparisons);
+  const summary = summarize(comparisons, ranked);
 
   await writeFile(
     join(directory, "comparisons.jsonl"),
@@ -477,15 +519,18 @@ function correlation(left: number[], right: number[]): number | null {
   return covariance / Math.sqrt(leftVariance * rightVariance);
 }
 
-export function summarize(comparisons: Comparison[]): JudgeCheckSummary {
+export function summarize(
+  comparisons: Comparison[],
+  ranked: RankedImage[],
+): JudgeCheckSummary {
   const humans = comparisons.map((entry) => entry.human);
   const judges = comparisons.map((entry) => entry.judge);
   const differences = comparisons.map((entry) =>
     Math.abs(entry.human - entry.judge),
   );
 
-  // Within a row, for every pair the user rated differently, does the judge
-  // order them the same way? Judge ties count as half.
+  // Within a row, for every pair the user rated differently, does the judge's
+  // ranking put them in the same order? Its ranking has no ties.
   let pairs = 0;
   let agreement = 0;
 
@@ -502,14 +547,11 @@ export function summarize(comparisons: Comparison[]): JudgeCheckSummary {
       pairs++;
 
       const humanOrder = Math.sign(left.human - right.human);
-      const judgeOrder = Math.sign(left.judge - right.judge);
+      // A lower rank is better, so the order flips.
+      const judgeOrder = Math.sign(right.judge_rank - left.judge_rank);
 
       if (judgeOrder === humanOrder) {
         agreement++;
-      }
-
-      if (judgeOrder === 0) {
-        agreement += 0.5;
       }
     }
   }
@@ -520,19 +562,27 @@ export function summarize(comparisons: Comparison[]): JudgeCheckSummary {
       const prompts = [...new Set(entries.map((entry) => entry.prompt))];
       const humanMeans: Record<string, number> = {};
       const judgeMeans: Record<string, number> = {};
+      const judgeRanks: Record<string, number> = {};
 
       for (const prompt of prompts) {
         const own = entries.filter((entry) => entry.prompt === prompt);
         humanMeans[prompt] = round3(mean(own.map((entry) => entry.human)));
         judgeMeans[prompt] = round3(mean(own.map((entry) => entry.judge)));
+
+        // Ranks cover every judged image in the round, rated by the user or not.
+        const ranks = ranked
+          .filter((entry) => entry.round === round && entry.prompt === prompt)
+          .map((entry) => entry.rank);
+        judgeRanks[prompt] = round3(mean(ranks));
       }
 
       return {
         round,
         human_winner: winner(humanMeans),
-        judge_winner: winner(judgeMeans),
+        judge_winner: lowest(judgeRanks),
         human_means: humanMeans,
         judge_means: judgeMeans,
+        judge_mean_ranks: judgeRanks,
       };
     },
   );
@@ -576,6 +626,20 @@ function winner(means: Record<string, number>): string {
   return best;
 }
 
+function lowest(values: Record<string, number>): string {
+  let best = "";
+  let bestValue = Infinity;
+
+  for (const [prompt, value] of Object.entries(values)) {
+    if (value < bestValue) {
+      best = prompt;
+      bestValue = value;
+    }
+  }
+
+  return best;
+}
+
 function percent(value: number | null): string {
   if (value === null) {
     return "n/a";
@@ -588,17 +652,17 @@ function report(summary: JudgeCheckSummary, comparisons: Comparison[]): string {
   const lines = [
     `# AI judge check (judge v${String(summary.judge_version)})`,
     "",
-    `Compared on ${String(summary.rated_images)} images the user rated.`,
+    `Compared on ${String(summary.rated_images)} images the user rated. The judge ranks each idea's images; a round's winner is the prompt with the best mean rank.`,
     "",
+    `- Same order within a row: ${percent(summary.row_order_agreement)} of ${String(summary.row_pairs)} pairs the user rated differently`,
     `- Exact star match: ${percent(summary.exact)}`,
     `- Within one star: ${percent(summary.within_one)}`,
     `- Mean absolute error: ${summary.mean_absolute_error.toFixed(2)} stars`,
     `- Correlation with the user's stars: ${summary.correlation?.toFixed(2) ?? "n/a"}`,
-    `- Same order within a row: ${percent(summary.row_order_agreement)} of ${String(summary.row_pairs)} pairs the user rated differently`,
     "",
     "## Round winners",
     "",
-    "| Round | User's winner | Judge's winner | User means | Judge means |",
+    "| Round | User's winner | Judge's winner | User mean stars | Judge mean rank (1 = best) |",
     "| --- | --- | --- | --- | --- |",
   ];
 
@@ -609,7 +673,7 @@ function report(summary: JudgeCheckSummary, comparisons: Comparison[]): string {
         .join(", ");
 
     lines.push(
-      `| ${round.round} | ${round.human_winner} | ${round.judge_winner} | ${format(round.human_means)} | ${format(round.judge_means)} |`,
+      `| ${round.round} | ${round.human_winner} | ${round.judge_winner} | ${format(round.human_means)} | ${format(round.judge_mean_ranks)} |`,
     );
   }
 

@@ -49,10 +49,11 @@ templates.
 
 Rating every image is slow, so an AI judge (`src/evals/judge.ts`) predicts the
 user's rating. It sees one idea row at a time, in a shuffled order without
-prompt labels: each poster and its source image, the rubric in
+prompt labels: each poster (1200 px) and its raw generated image, the rubric in
 `evals/judge/rubric.md` (distilled from the user's notes), and up to ten
 examples the user rated, spread across the star scale. When checking a round,
-examples come only from other rounds.
+examples come only from other rounds. It ranks each row best to worst with no
+ties, then gives stars; a round's winner is the prompt with the best mean rank.
 
 `bookgen eval judge-check` judges every rated round and writes
 `output/evals/judge/check-<time>/` with `report.md`, `summary.json`,
@@ -155,5 +156,14 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   some "unclear" and "doesn't say this book" judgments, and once punished
   blotches harder than the user did. Good enough to rank prompts when the gap
   is clear; not yet a substitute for spot checks.
+- Judge v2 ranks each row (no ties) before rating, sees the poster at 1200 px
+  and the raw generated image at 800 px (transparency on gray), and treats the
+  user's examples as illustrations rather than answers. Same order within a row
+  73% (v1 71%); within one star 74% (v1 83%), correlation 0.42 (v1 0.57). It
+  matched the round 3 winner, the only round with a clear human gap; rounds 1
+  and 2 differ by 0.2 mean rank, which is noise for both judge and user. Seeing
+  the raw image made it stricter about haze and cutouts that cleanup removes
+  (14 of 54 notes), which penalized posters the user rated 5, and it marked
+  down posters that departed from the idea text, which the user does not.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.

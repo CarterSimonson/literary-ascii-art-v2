@@ -805,6 +805,7 @@ describe("AI judge check", () => {
 
       return Promise.resolve({
         response: JSON.stringify({
+          ranking: Array.from({ length: images }, (_, index) => index + 1),
           ratings: Array.from({ length: images }, (_, index) => ({
             image: index + 1,
             stars: 3,
@@ -836,12 +837,13 @@ describe("AI judge check", () => {
     );
   });
 
-  test("agreement counts exact matches, near misses, row order, and round winners", () => {
+  test("the judge's ranking decides row order and round winners; stars give agreement", () => {
     const entry = (
       prompt: string,
       row: string,
       human: number,
       judge: number,
+      rank: number,
     ): Comparison => ({
       round: "round-1",
       key: `${prompt}/${row}`,
@@ -849,27 +851,40 @@ describe("AI judge check", () => {
       row,
       human,
       judge,
+      judge_rank: rank,
       confidence: "high",
       human_note: "",
       judge_note: "",
     });
+    const comparisons = [
+      entry("a", "x", 5, 4, 1),
+      entry("b", "x", 2, 2, 2),
+      entry("a", "y", 3, 1, 2),
+      entry("b", "y", 1, 2, 1),
+    ];
+    // Row z was judged but never rated by the user; it still counts for ranks.
+    const ranked = [
+      ...comparisons.map((item) => ({
+        round: item.round,
+        row: item.row,
+        prompt: item.prompt,
+        rank: item.judge_rank,
+      })),
+      { round: "round-1", row: "z", prompt: "b", rank: 1 },
+      { round: "round-1", row: "z", prompt: "a", rank: 2 },
+    ];
 
-    const summary = summarize([
-      entry("a", "x", 5, 4),
-      entry("b", "x", 2, 2),
-      entry("a", "y", 3, 1),
-      entry("b", "y", 1, 2),
-    ]);
+    const summary = summarize(comparisons, ranked);
 
     expect(summary.exact).toBe(0.25);
     expect(summary.within_one).toBe(0.75);
-    expect(summary.mean_absolute_error).toBe(1);
     // Row x keeps the user's order; row y reverses it.
     expect(summary.row_pairs).toBe(2);
     expect(summary.row_order_agreement).toBe(0.5);
     expect(summary.rounds[0]).toMatchObject({
       human_winner: "a",
-      judge_winner: "a",
+      judge_winner: "b",
+      judge_mean_ranks: { a: 1.667, b: 1.333 },
     });
   });
 });
