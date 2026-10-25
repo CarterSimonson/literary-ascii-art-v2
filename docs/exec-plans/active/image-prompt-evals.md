@@ -228,5 +228,13 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   great designs with blotches got 2 where the user gave 4–5. The user wants a
   great design with blotches pursued, since blotches can be patched in post;
   judge v6 rates the design and treats patchable defects as at most one star.
+- Judge v6 check on rounds 1–3: the first judge to pick the user's winner in
+  all three rounds (round 1 flat-print, tied with stencil on mean rank; round 2
+  chromatic-relief; round 3 defining-scene). 79% same order within rows,
+  correlation 0.55, 76% within one star, mean error 0.96. Its stars now follow
+  artistic (0.90) and recognition (0.86) rather than correctness (0.31).
+  Bound-within-hearing (user 5) rose from 2 to 4 and won its row. Clean but
+  boring posters still drew 3 stars in places (the-single-eye,
+  ashes-at-the-party; user 1), so star agreement did not improve.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.
