@@ -264,9 +264,12 @@ function average(values: number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-// Each round carries the best prompt so far forward as its control, so the
-// latest round's winner is the best so far. A round's winner has the judge's
-// best mean rank; rounds without judgments fall back to the user's stars.
+// A variant replaces the current best only when its mean judge rank is at
+// least this much better. Repeated judge runs showed smaller gaps can flip.
+export const REPLACE_MARGIN = 0.4;
+
+// Each round carries the best prompt so far forward as its control, and each
+// round's results decide whether a variant takes over (see `successor`).
 function bestTemplate(
   history: RoundHistory[],
   kind: RoundKind,
@@ -279,17 +282,12 @@ function bestTemplate(
       continue;
     }
 
-    const winners = roundWinners(round)
-      .map((id) => round.prompts.find((entry) => entry.id === id))
-      .map((prompt) => pooled.find((item) => item.sha256 === prompt?.sha256));
-
-    // On a tie the current best stays, so the control only changes when a new
-    // prompt actually beats it.
-    if (best && winners.includes(best)) {
-      continue;
-    }
-
-    const entry = winners[0];
+    const incumbent = round.prompts.find(
+      (prompt) => prompt.sha256 === best?.sha256,
+    );
+    const next = successor(roundResults(round), incumbent?.id);
+    const prompt = round.prompts.find((entry) => entry.id === next);
+    const entry = pooled.find((item) => item.sha256 === prompt?.sha256);
 
     if (entry) {
       best = entry;
@@ -299,7 +297,61 @@ function bestTemplate(
   return best;
 }
 
-interface PromptResult {
+// The best prompt after a round. With judge ranks for every prompt, a variant
+// takes over only by beating the incumbent's mean rank by REPLACE_MARGIN.
+// Otherwise the user's mean stars decide, and a tie keeps the incumbent.
+// Without an incumbent in the round, the best result wins outright.
+export function successor(
+  results: PromptResult[],
+  incumbentId: string | undefined,
+): string | null {
+  const judged = results.every((result) => result.meanRank !== null);
+  const scored: { prompt: string; value: number }[] = [];
+
+  for (const result of results) {
+    if (judged && result.meanRank !== null) {
+      scored.push({ prompt: result.prompt, value: result.meanRank });
+    } else if (!judged && result.meanStars !== null) {
+      // Higher stars are better; negate so lower is better for both.
+      scored.push({ prompt: result.prompt, value: -result.meanStars });
+    }
+  }
+
+  if (scored.length === 0) {
+    return incumbentId ?? null;
+  }
+
+  const challenger = scored.reduce((best, entry) => {
+    if (entry.value < best.value) {
+      return entry;
+    }
+
+    return best;
+  });
+  const incumbent = scored.find((entry) => entry.prompt === incumbentId);
+
+  if (!incumbent) {
+    return challenger.prompt;
+  }
+
+  let margin = 0;
+
+  if (judged) {
+    margin = REPLACE_MARGIN;
+  }
+
+  // Small tolerance so a gap of exactly the margin counts.
+  if (
+    incumbent.value - challenger.value >= margin - 1e-9 &&
+    challenger.value < incumbent.value
+  ) {
+    return challenger.prompt;
+  }
+
+  return incumbent.prompt;
+}
+
+export interface PromptResult {
   prompt: string;
   meanRank: number | null;
   judged: number;
@@ -327,28 +379,6 @@ function roundResults(round: RoundHistory): PromptResult[] {
       rated: stars.length,
     };
   });
-}
-
-// Every prompt tied for the round's best result.
-function roundWinners(round: RoundHistory): string[] {
-  const results = roundResults(round);
-  const judged = results.every((result) => result.meanRank !== null);
-  const scored: { prompt: string; value: number }[] = [];
-
-  for (const result of results) {
-    if (judged && result.meanRank !== null) {
-      scored.push({ prompt: result.prompt, value: result.meanRank });
-    } else if (!judged && result.meanStars !== null) {
-      // Higher stars are better; negate so lower is better for both.
-      scored.push({ prompt: result.prompt, value: -result.meanStars });
-    }
-  }
-
-  const best = Math.min(...scored.map((entry) => entry.value));
-
-  return scored
-    .filter((entry) => Math.abs(entry.value - best) < 1e-9)
-    .map((entry) => entry.prompt);
 }
 
 function committed(
@@ -551,7 +581,7 @@ function imageTask(
   control: PooledTemplate,
   count: number,
 ): string {
-  return `Your job: write ${String(count)} new IMAGE prompt template(s) that should score higher. The ideas are fixed; only the image prompt changes. The best image prompt so far (${control.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it.
+  return `Your job: write ${String(count)} new IMAGE prompt template(s) that should score higher. The ideas are fixed; only the image prompt changes. The best image prompt so far (${control.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it. A variant replaces the control only when its mean judge rank beats the control's by at least ${String(REPLACE_MARGIN)}, so aim for clearly better results, not marginal ones.
 
 Template rules:
 - Templates are complete prompts using placeholders filled per idea: {{title}}, {{author}}, {{size}}, {{name}}, {{composition}}, {{literary_basis}}, {{conversion_resilience}}, {{palette}}. Include at least ${REQUIRED_PLACEHOLDERS.map((name) => `{{${name}}}`).join(", ")}. Any other {{...}} is an error.
@@ -567,7 +597,7 @@ function ideasTask(
   bestImage: PooledTemplate,
   count: number,
 ): string {
-  return `Your job: write ${String(count)} new IDEAS prompt template(s) whose ideas should become higher-rated posters. Each template asks for ${String(IDEAS_PER_BOOK)} ideas per book; every idea is then drawn with one fixed image prompt (${bestImage.labels.join(", ")}), so differences in ratings come from the ideas. The best ideas prompt so far (${control.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it.
+  return `Your job: write ${String(count)} new IDEAS prompt template(s) whose ideas should become higher-rated posters. Each template asks for ${String(IDEAS_PER_BOOK)} ideas per book; every idea is then drawn with one fixed image prompt (${bestImage.labels.join(", ")}), so differences in ratings come from the ideas. The best ideas prompt so far (${control.labels.join(", ")}) is carried forward unchanged as the control, so do not resubmit it. A variant replaces the control only when its mean judge rank beats the control's by at least ${String(REPLACE_MARGIN)}, so aim for clearly better ideas, not marginal ones.
 
 Template rules:
 - Templates are complete prompts using {{book}} (the book's title and author as JSON) and {{count}} (how many ideas to return). Both are required; any other {{...}} is an error.
@@ -608,14 +638,7 @@ function leaderboard(
       return `${result.prompt} (${parts.join("; ") || "no results"})`;
     });
 
-    const winners = roundWinners(round);
-    let winner = "none";
-
-    if (winners.length > 0) {
-      winner = winners.join(" and ");
-    }
-
-    return `- ${round.roundId}: best ${winner}; ${results.join(", ")}`;
+    return `- ${round.roundId}: ${results.join(", ")}`;
   });
 
   return `${title} (judge ranks are within each idea, 1 = best; the user spot-checks some images):\n${lines.join("\n")}`;

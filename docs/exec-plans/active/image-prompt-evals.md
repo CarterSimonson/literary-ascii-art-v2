@@ -73,11 +73,13 @@ The judge now runs in the loop:
 - The page shows each card's judge rank, stars, and note, and each prompt's
   mean judge rank. **Judge's top picks only** shows just each row's #1, for the
   user to spot-check and rate; those ratings become examples for later judging.
-- The prompt agent's winner for a round is the prompt with the best mean judge
-  rank (the user's mean stars for rounds without judgments). Since every round
-  carries the best prompt so far as its control, the latest round's winner is
-  carried forward; on a tie the current best stays. Its brief shows judge ranks and notes beside any user
-  ratings, and user ratings outweigh the judge where they disagree.
+- Every round carries the best prompt so far as its control. A variant
+  replaces it only when its mean judge rank is at least 0.4 better
+  (`REPLACE_MARGIN` in `src/evals/improve.ts`), because repeated judge runs
+  flipped on smaller gaps. Rounds without judgments use the user's mean stars,
+  where any strictly better mean replaces the control. The agent's brief states
+  the margin and shows judge ranks and notes beside any user ratings, which
+  outweigh the judge where they disagree.
 
 ## Decisions
 

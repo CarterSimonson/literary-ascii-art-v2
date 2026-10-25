@@ -17,7 +17,12 @@ import {
   type Judge,
   type RankedImage,
 } from "../src/evals/judge.ts";
-import { planNextRound, type PromptWriter } from "../src/evals/improve.ts";
+import {
+  planNextRound,
+  successor,
+  type PromptResult,
+  type PromptWriter,
+} from "../src/evals/improve.ts";
 import { measureImage } from "../src/evals/metrics.ts";
 import { runRound, type RunRoundArgs } from "../src/evals/round.ts";
 import { startPortal } from "../src/evals/serve.ts";
@@ -1117,5 +1122,39 @@ describe("judged rounds", () => {
       .split("\n");
     // Two images judged initially, then the whole row again.
     expect(lines).toHaveLength(4);
+  });
+
+  test("a variant replaces the best prompt only when it beats it by the margin", () => {
+    const judged = (prompt: string, meanRank: number): PromptResult => ({
+      prompt,
+      meanRank,
+      judged: 9,
+      meanStars: null,
+      rated: 0,
+    });
+    const rated = (prompt: string, meanStars: number): PromptResult => ({
+      prompt,
+      meanRank: null,
+      judged: 0,
+      meanStars,
+      rated: 5,
+    });
+
+    // Judge ranks: a 0.3 gap keeps the incumbent, 0.4 or more replaces it.
+    expect(successor([judged("best", 2.1), judged("new", 1.8)], "best")).toBe(
+      "best",
+    );
+    expect(successor([judged("best", 2.2), judged("new", 1.8)], "best")).toBe(
+      "new",
+    );
+    // Without an incumbent in the round, the best result wins outright.
+    expect(successor([judged("a", 2.0), judged("b", 1.9)], undefined)).toBe(
+      "b",
+    );
+    // User stars: a tie keeps the incumbent; any better mean replaces it.
+    expect(successor([rated("best", 3), rated("new", 3)], "best")).toBe("best");
+    expect(successor([rated("best", 3), rated("new", 3.2)], "best")).toBe(
+      "new",
+    );
   });
 });
