@@ -196,5 +196,16 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   defining-scene tied at mean rank 1.89, signature-action 2.22. On a tie the
   current best stays the control, so defining-scene carries forward until a
   variant actually beats it. Readable-encounter took 5 of 9 row wins.
+- Judge v1–v3 showed every image in an ideas row the first image's idea as
+  the intended scene, singling it out. Judge v4 gives each image its own scene
+  in ideas rounds. Re-judged, round 4's shown-first image won 3 of 9 rows
+  (chance) instead of 4, and defining-scene won outright (mean rank 1.78,
+  readable-encounter 1.89, signature-action 2.33) instead of tying.
+- Judge v4 stability, two runs over rounds 1–4 (28 rows): 89% of image pairs
+  and 71% of rows kept the same order. Winners held in rounds 1, 3, and 4;
+  round 2 flipped between story-relief and chromatic-relief, which are 0.2–0.4
+  mean rank apart. Round 3 (ideas, now judged fairly) went to defining-scene
+  by a wide margin (1.11 and 1.33). Agreement with the user's order within
+  rows stayed at 70–79%. Margins under about 0.4 mean rank are not reliable.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.
