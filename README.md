@@ -338,7 +338,7 @@ page for 1–5 star ratings, tags, and notes, saved to the round's
 `feedback.jsonl`. From the page, **Next round** has a Codex prompt agent read all
 ratings and write new image or ideas prompt templates, keeping the best so far
 as the control, then generates that round. **Regenerate** and **Replace idea**
-run in parallel. Rounds started from the page are ranked by an AI judge, whose ranks pick each round's winner; tick **Judge's top picks only** to spot-check them. `bookgen eval judge <round>` judges an existing round. `bookgen eval judge-check` has the AI judge rank and rate already-rated rounds and reports how well it agrees with you; `--repeat 2` also reports how stable its rankings are. See the [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
+run in parallel. Rounds started from the page are ranked by an AI judge, which also scores each poster 0–5 on correctness, representation, recognition, and artistic interest; its ranks pick each round's winner; tick **Judge's top picks only** to spot-check them. `bookgen eval judge <round>` judges an existing round. `bookgen eval judge-check` has the AI judge rank and rate already-rated rounds and reports how well it agrees with you; `--repeat 2` also reports how stable its rankings are. See the [image-prompt evals plan](docs/exec-plans/active/image-prompt-evals.md).
 
 ## Development and verification
 

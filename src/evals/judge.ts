@@ -9,12 +9,18 @@ import { z } from "zod";
 import { codexStructuredRunner, type StructuredRunner } from "./codex.ts";
 import { FEEDBACK_TAGS } from "./feedback.ts";
 import { loadHistory, type ImageRecord, type RoundHistory } from "./history.ts";
-import { appendJudgments, type JudgmentRecord } from "./judgments.ts";
+import {
+  appendJudgments,
+  scoresDetail,
+  scoresSummary,
+  type JudgeScores,
+  type JudgmentRecord,
+} from "./judgments.ts";
 import { roundDirectory, runPool, type RoundKind } from "./round.ts";
 
 // Bump when the brief, rubric handling, or example selection changes, so
 // judgments from different versions are not compared.
-export const JUDGE_VERSION = 4;
+export const JUDGE_VERSION = 6;
 export const DEFAULT_RUBRIC = "evals/judge/rubric.md";
 
 // Rated examples shown to the judge, spread across the star scale.
@@ -27,12 +33,24 @@ const RAW_WIDTH = 800;
 // transparency reads as a visible blend rather than vanishing into white.
 const RAW_BACKGROUND = "#c8c8c8";
 
+const axisScoreSchema = z.strictObject({
+  score: z.number().int().min(0).max(5),
+  reason: z.string(),
+});
+
 const judgeResponseSchema = z.strictObject({
   // Image numbers from best to worst, every image exactly once.
   ranking: z.array(z.number().int().min(1)),
   ratings: z.array(
     z.strictObject({
       image: z.number().int().min(1),
+      // Scored before the stars so the overall rating follows from them.
+      scores: z.strictObject({
+        correctness: axisScoreSchema,
+        representation: axisScoreSchema,
+        recognition: axisScoreSchema,
+        artistic: axisScoreSchema,
+      }),
       stars: z.number().int().min(1).max(5),
       tags: z.array(z.enum(FEEDBACK_TAGS)),
       note: z.string(),
@@ -49,6 +67,7 @@ export interface JudgeRating {
   key: string;
   // 1 is the best image in its row.
   rank: number;
+  scores: JudgeScores;
   stars: number;
   tags: string[];
   note: string;
@@ -188,6 +207,7 @@ export async function judgeRow(args: JudgeRowArgs): Promise<JudgeRating[]> {
     ratings.push({
       key: image.item.key,
       rank: response.ranking.indexOf(rating.image) + 1,
+      scores: rating.scores,
       stars: rating.stars,
       tags: rating.tags,
       note: rating.note,
@@ -229,7 +249,7 @@ ${scene}
 
 Judge only the rendered poster, the product someone would hang. The raw image is there to help you read the shapes; haze, soft or partial transparency, and blotches in the raw image do not count against a poster unless they show in the poster itself as holes, stray fragments, or ragged edges. Do not penalize a poster for departing from its intended scene; judge whether the poster is good and recognizably this book.
 
-First rank all the images from best to worst in "ranking", using every image number exactly once with no ties; when two are close, decide anyway. Then give each image stars on the rubric's scale, any tags that clearly apply, a one-sentence note on what decided its place, and your confidence.`;
+First rank all the images from best to worst in "ranking", using every image number exactly once with no ties; when two are close, decide anyway. Then, for each image, score every axis in "scores" from 0 to 5 on the rubric's axis scales, each with a one-sentence reason naming what you see; then give its overall stars on the rubric's star scale, any tags that clearly apply, a one-sentence note on what decided its place, and your confidence. Score the axes independently: a clean but boring poster can score high on correctness and low on artistic. Stars and ranking follow the design: a great design whose blotches could be patched in post beats a clean but plain one.`;
 }
 
 function exampleCaption(index: number, example: ImageRecord): string {
@@ -464,6 +484,7 @@ function judgmentRecords(
       attempt: Number(image.result.attempt),
       master_sha256: String(image.result.master_sha256),
       rank: rating.rank,
+      scores: rating.scores,
       stars: rating.stars,
       tags: rating.tags,
       note: rating.note,
@@ -496,6 +517,7 @@ export interface Comparison {
   human: number;
   judge: number;
   judge_rank: number;
+  judge_scores: JudgeScores;
   confidence: string;
   human_note: string;
   judge_note: string;
@@ -695,6 +717,7 @@ async function runOnce(input: RunOnceArgs): Promise<RunResult> {
         human,
         judge: rating.stars,
         judge_rank: rating.rank,
+        judge_scores: rating.scores,
         confidence: rating.confidence,
         human_note: image.feedback?.note ?? "",
         judge_note: rating.note,
@@ -1066,8 +1089,12 @@ function report(summary: JudgeCheckSummary, comparisons: Comparison[]): string {
 
   for (const entry of worst) {
     lines.push(
-      `- ${entry.round}/${entry.key}: user ${String(entry.human)}, judge ${String(entry.judge)} (${entry.confidence}). User: "${entry.human_note}" Judge: "${entry.judge_note}"`,
+      `- ${entry.round}/${entry.key}: user ${String(entry.human)}, judge ${String(entry.judge)} (${entry.confidence}; ${scoresSummary(entry.judge_scores)}). User: "${entry.human_note}" Judge: "${entry.judge_note}"`,
     );
+
+    for (const line of scoresDetail(entry.judge_scores)) {
+      lines.push(`  - ${line}`);
+    }
   }
 
   return lines.join("\n") + "\n";

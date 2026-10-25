@@ -53,7 +53,11 @@ prompt labels: each poster (1200 px) and its raw generated image, the rubric in
 `evals/judge/rubric.md` (distilled from the user's notes), and up to ten
 examples the user rated, spread across the star scale. When checking a round,
 examples come only from other rounds. It ranks each row best to worst with no
-ties, then gives stars; a round's winner is the prompt with the best mean rank.
+ties, then scores each image 0–5 with a reason on four axes (correctness:
+clean, solid, well-drawn shapes; representation: faithful to the book;
+recognition: a reader would know the book; artistic: interesting rather than
+plain) before giving overall 1–5 stars. Stars stay the number compared with the
+user's ratings; a round's winner is the prompt with the best mean rank.
 
 `bookgen eval judge-check` judges every rated round and writes
 `output/evals/judge/check-<time>/` with `report.md`, `summary.json`,
@@ -67,10 +71,12 @@ The judge now runs in the loop:
 - Rounds started from the page are judged once their images exist, and a
   regenerated image's row is judged again. `bookgen eval judge <round>` or
   **Judge round** on the page judges any round's unjudged rows. Judgments are
-  appended to the round's `judge.jsonl` (rank, stars, tags, note, confidence,
+  appended to the round's `judge.jsonl` (rank, axis scores and reasons, stars,
+  tags, note, confidence,
   and the attempt and master hash judged), with each row's brief and response
   under `judge/`.
-- The page shows each card's judge rank, stars, and note, and each prompt's
+- The page shows each card's judge rank, stars, note, and axis scores with
+  reasons, and each prompt's
   mean judge rank. **Judge's top picks only** shows just each row's #1, for the
   user to spot-check and rate; those ratings become examples for later judging.
 - Every round carries the best prompt so far as its control. A variant
@@ -125,7 +131,8 @@ images/<prompt>/<book>/<idea>/
 feedback.jsonl             append-only ratings: stars, tags, note, time, and
                            the attempt and master hash they judged
 judge.jsonl                append-only AI judgments: rank within the row,
-                           stars, tags, note, confidence, attempt, master hash
+                           axis scores and reasons, stars, tags, note,
+                           confidence, attempt, master hash
 judge/<row>/               the judge's latest brief, images, and response
 agent/                     for rounds the page wrote: request.md (the brief),
                            thumbnails/, events.jsonl, response.json, prompts/
@@ -154,6 +161,10 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
 - [x] Judge v3 with a repeatable stability check (`judge-check --repeat`).
 - [x] Judge each new round automatically and show its ranking on the page;
       the user spot-checks top picks; the prompt agent follows judge ranks.
+- [x] Judge v5 scores correctness, representation, recognition, and artistic
+      0–5 with reasons.
+- [x] Judge v6: patchable blotches cost at most one star, because a great
+      design is still worth pursuing and can be patched in post.
 
 ## Findings
 
@@ -209,5 +220,13 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   mean rank apart. Round 3 (ideas, now judged fairly) went to defining-scene
   by a wide margin (1.11 and 1.33). Agreement with the user's order within
   rows stayed at 70–79%. Margins under about 0.4 mean rank are not reliable.
+- Judge v5 check on rounds 1–3 (54 rated images): 82% within one star, mean
+  error 0.91, correlation 0.52, 73% same order within rows; round winners as
+  v4. Axis correlation with the user's stars: artistic 0.49, recognition 0.40,
+  representation 0.30, correctness 0.23. Its stars followed correctness more
+  than the user does: clean but boring posters got 3 where the user gave 1, and
+  great designs with blotches got 2 where the user gave 4–5. The user wants a
+  great design with blotches pursued, since blotches can be patched in post;
+  judge v6 rates the design and treats patchable defects as at most one star.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.

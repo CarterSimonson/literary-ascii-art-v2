@@ -372,6 +372,10 @@
       .judge b {
         color: var(--text);
       }
+      .judge .axes {
+        margin: 4px 0 0;
+        padding-left: 14px;
+      }
       .judge.top {
         border-left-color: var(--star);
       }
@@ -518,6 +522,30 @@
         topPicks: false,
       };
       const $ = (id) => document.getElementById(id);
+
+      const JUDGE_AXES = [
+        ["correctness", "Correctness"],
+        ["representation", "Representation"],
+        ["recognition", "Recognition"],
+        ["artistic", "Artistic"],
+      ];
+
+      // Judgments before judge v5 have no axis scores.
+      function judgeScores(scores) {
+        if (!scores) {
+          return null;
+        }
+        return el(
+          "ul",
+          { class: "axes" },
+          JUDGE_AXES.map(([axis, label]) =>
+            el("li", {}, [
+              el("b", { text: `${label} ${scores[axis].score}/5` }),
+              ` — ${scores[axis].reason}`,
+            ]),
+          ),
+        );
+      }
 
       function el(tag, attributes = {}, children = []) {
         const node = document.createElement(tag);
@@ -921,6 +949,7 @@
                   text: `Judge #${judgment.rank} · ★${judgment.stars}`,
                 }),
                 ` — ${judgment.note}`,
+                judgeScores(judgment.scores),
               ],
             ),
           );
