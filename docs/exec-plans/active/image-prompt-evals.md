@@ -45,6 +45,28 @@ templates.
   prompt (the best so far, a single `*.prompt.md`). Rows are book × idea
   number; each card shows its own idea.
 
+## AI judge
+
+Rating every image is slow, so an AI judge (`src/evals/judge.ts`) predicts the
+user's rating. It sees one idea row at a time, in a shuffled order without
+prompt labels: each poster and its source image, the rubric in
+`evals/judge/rubric.md` (distilled from the user's notes), and up to ten
+examples the user rated, spread across the star scale. When checking a round,
+examples come only from other rounds.
+
+`bookgen eval judge-check` judges every rated round and writes
+`output/evals/judge/check-<time>/` with `report.md`, `summary.json`,
+`comparisons.jsonl`, and each row's brief, images, and response. It reports
+exact and within-one-star agreement, correlation, whether the judge orders
+images within a row as the user did, and whether it picks the same winning
+prompt per round.
+
+Next, only if the check is good enough: judge each new round automatically,
+show the judge's stars on the page, ask the user to review only the judge's
+top picks and low-confidence cards, and let the prompt agent use judged
+ratings where no human rating exists. Recheck agreement as new human ratings
+arrive.
+
 ## Decisions
 
 - Suite: three ideas each from The Great Gatsby, The Odyssey, and The War of the
@@ -109,7 +131,10 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
 - [x] Idea rounds.
 - [x] Round 1 (control, flat-print, stencil) and round 2 (flat-print carried
       forward, chromatic-relief, story-relief), both run and partly rated.
-- [ ] First idea round from the page.
+- [x] First idea round from the page (round 3); defining-scene won and is now
+      ideas prompt v7.
+- [x] AI judge and agreement check.
+- [ ] Decide from the check whether the judge can stand in for most ratings.
 
 ## Findings
 
@@ -122,5 +147,13 @@ stay as history. Future agents should read `round.yaml`, `prompts/`, every
   on the subject than the wording: `the-rooted-bed` was hazy under all three.
 - The user replaced five suite ideas after round 1, with reasons recorded in
   `retired/`; most asked for more interesting, dynamic subjects.
+- Judge v1 check on rounds 1–3 (54 rated images): 28% exact, 83% within one
+  star, mean error 0.94, correlation 0.57, same order within a row for 71% of
+  33 pairs. It picked the user's winning prompt in rounds 2 and 3 (clear wins)
+  and missed round 1, where the user's means were within 0.6 stars. It rates
+  about 0.4 stars high, overrates clean but plain or generic images, misses
+  some "unclear" and "doesn't say this book" judgments, and once punished
+  blotches harder than the user did. Good enough to rank prompts when the gap
+  is clear; not yet a substitute for spot checks.
 - The War of the Worlds fetch needed `--edition-context` for a stray `/` line
   after the Gutenberg start marker.

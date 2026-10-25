@@ -7,6 +7,12 @@ import sharp from "sharp";
 import { parse, stringify } from "yaml";
 
 import { replaceSuiteIdea } from "../src/evals/ideas.ts";
+import {
+  runJudgeCheck,
+  summarize,
+  type Comparison,
+  type Judge,
+} from "../src/evals/judge.ts";
 import { planNextRound, type PromptWriter } from "../src/evals/improve.ts";
 import { measureImage } from "../src/evals/metrics.ts";
 import { runRound, type RunRoundArgs } from "../src/evals/round.ts";
@@ -405,13 +411,14 @@ function fakeWriter(
 async function rate(
   root: string,
   ratings: { prompt: string; stars: number; note: string }[],
+  roundId = "round-1",
 ): Promise<void> {
   const { server } = startPortal({ outputRoot: join(root, "output"), port: 0 });
 
   try {
     for (const rating of ratings) {
       await fetch(
-        `http://127.0.0.1:${String(server.port)}/api/rounds/round-1/feedback`,
+        `http://127.0.0.1:${String(server.port)}/api/rounds/${roundId}/feedback`,
         {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -761,5 +768,108 @@ describe("image metrics", () => {
     expect(measureImage(ringed, ringed).accent_contact).toBe(0);
     expect(measureImage(touching, touching).accent_contact).toBe(1);
     expect(measureImage(plain, plain).accent_contact).toBeNull();
+  });
+});
+
+describe("AI judge check", () => {
+  test("the judge is scored against my ratings and never sees the round it is judging", async () => {
+    const fixture = await roundFixture();
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      promptsDirectory: fixture.prompts,
+    });
+    await runRound({
+      ...fixture.args(fakeGenerator([])),
+      roundId: "round-2",
+      promptsDirectory: fixture.prompts,
+    });
+    await rate(fixture.root, [
+      { prompt: "control", stars: 3, note: "first round control" },
+      { prompt: "flat", stars: 3, note: "first round flat" },
+    ]);
+    await rate(
+      fixture.root,
+      [
+        { prompt: "control", stars: 3, note: "second round control" },
+        { prompt: "flat", stars: 3, note: "second round flat" },
+      ],
+      "round-2",
+    );
+    const briefs: string[] = [];
+    const judge: Judge = async (input) => {
+      const text = input.input
+        .map((part) => (part.type === "text" ? part.text : ""))
+        .join("\n");
+      briefs.push(text);
+      const images = (text.match(/Image \d+: poster/g) ?? []).length;
+
+      return Promise.resolve({
+        response: JSON.stringify({
+          ratings: Array.from({ length: images }, (_, index) => ({
+            image: index + 1,
+            stars: 3,
+            tags: [],
+            note: "Clean but plain",
+            confidence: "medium",
+          })),
+        }),
+        usage: null,
+      });
+    };
+
+    const { directory, summary } = await runJudgeCheck({
+      outputRoot: join(fixture.root, "output"),
+      rubricPath: "evals/judge/rubric.md",
+      concurrency: 2,
+      judge,
+    });
+
+    expect(summary).toMatchObject({ rated_images: 4, exact: 1, within_one: 1 });
+    const roundOneBrief = briefs.find((brief) =>
+      brief.includes("second round"),
+    );
+    const roundTwoBrief = briefs.find((brief) => brief.includes("first round"));
+    expect(roundOneBrief).not.toContain("first round");
+    expect(roundTwoBrief).not.toContain("second round");
+    expect(await readFile(join(directory, "report.md"), "utf8")).toContain(
+      "Within one star: 100%",
+    );
+  });
+
+  test("agreement counts exact matches, near misses, row order, and round winners", () => {
+    const entry = (
+      prompt: string,
+      row: string,
+      human: number,
+      judge: number,
+    ): Comparison => ({
+      round: "round-1",
+      key: `${prompt}/${row}`,
+      prompt,
+      row,
+      human,
+      judge,
+      confidence: "high",
+      human_note: "",
+      judge_note: "",
+    });
+
+    const summary = summarize([
+      entry("a", "x", 5, 4),
+      entry("b", "x", 2, 2),
+      entry("a", "y", 3, 1),
+      entry("b", "y", 1, 2),
+    ]);
+
+    expect(summary.exact).toBe(0.25);
+    expect(summary.within_one).toBe(0.75);
+    expect(summary.mean_absolute_error).toBe(1);
+    // Row x keeps the user's order; row y reverses it.
+    expect(summary.row_pairs).toBe(2);
+    expect(summary.row_order_agreement).toBe(0.5);
+    expect(summary.rounds[0]).toMatchObject({
+      human_winner: "a",
+      judge_winner: "a",
+    });
   });
 });

@@ -1,38 +1,23 @@
-import {
-  appendFile,
-  mkdir,
-  mkdtemp,
-  readFile,
-  rm,
-  writeFile,
-} from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { appendFile, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import {
-  Codex,
-  type ThreadEvent,
-  type Usage,
-  type UserInput,
-} from "@openai/codex-sdk";
+import type { UserInput } from "@openai/codex-sdk";
 import sharp from "sharp";
 import { z } from "zod";
 
-import {
-  ART_GENERATION_MODEL,
-  ART_GENERATION_REASONING_EFFORT,
-} from "../generation-settings.ts";
 import { fillIdeasPrompt, IDEAS_PROMPT_TEMPLATE } from "../ideas/prompt.ts";
 import { slugSchema } from "../ideas/schema.ts";
 import { fillImagePrompt, IMAGE_PROMPT_TEMPLATE } from "../images/prompt.ts";
-import { readLatestFeedback, type FeedbackRecord } from "./feedback.ts";
+import { codexStructuredRunner, type StructuredRunner } from "./codex.ts";
+import type { FeedbackRecord } from "./feedback.ts";
+import {
+  loadHistory,
+  type ImageRecord,
+  type RoundHistory,
+  type Template,
+} from "./history.ts";
 import {
   IDEAS_PER_BOOK,
-  listRoundIds,
-  loadRoundItems,
-  readImageResult,
-  readRoundFile,
-  readVerified,
   roundDirectory,
   sha256,
   type RoundItem,
@@ -78,77 +63,10 @@ const writerResponseSchema = z.strictObject({
 
 type WriterResponse = z.infer<typeof writerResponseSchema>;
 
-export interface PromptWriterInput {
-  input: UserInput[];
-  signal: AbortSignal;
-  onEvent: (event: ThreadEvent) => Promise<void>;
-}
+export type PromptWriter = StructuredRunner;
 
-export interface PromptWriterOutput {
-  response: string;
-  usage: Usage | null;
-}
-
-export type PromptWriter = (
-  input: PromptWriterInput,
-) => Promise<PromptWriterOutput>;
-
-export const writePromptsWithCodex: PromptWriter = async (input) => {
-  const workingDirectory = await mkdtemp(join(tmpdir(), "bookgen-prompts-"));
-
-  try {
-    const codex = new Codex();
-    const thread = codex.startThread({
-      model: ART_GENERATION_MODEL,
-      modelReasoningEffort: ART_GENERATION_REASONING_EFFORT,
-      workingDirectory,
-      skipGitRepoCheck: true,
-      sandboxMode: "read-only",
-      approvalPolicy: "never",
-      webSearchMode: "disabled",
-    });
-    const { events } = await thread.runStreamed(input.input, {
-      outputSchema: z.toJSONSchema(writerResponseSchema),
-      signal: input.signal,
-    });
-
-    let response = "";
-    let usage: Usage | null = null;
-    let completed = false;
-
-    for await (const event of events) {
-      await input.onEvent(event);
-
-      if (event.type === "turn.failed") {
-        throw new Error(event.error.message);
-      }
-
-      if (event.type === "error") {
-        throw new Error(event.message);
-      }
-
-      if (event.type === "turn.completed") {
-        completed = true;
-        usage = event.usage;
-      }
-
-      if (
-        event.type === "item.completed" &&
-        event.item.type === "agent_message"
-      ) {
-        response = event.item.text;
-      }
-    }
-
-    if (!completed) {
-      throw new Error("Codex stream ended without a completed turn");
-    }
-
-    return { response, usage };
-  } finally {
-    await rm(workingDirectory, { recursive: true, force: true });
-  }
-};
+export const writePromptsWithCodex: PromptWriter =
+  codexStructuredRunner(writerResponseSchema);
 
 export interface PlanNextRoundArgs {
   outputRoot: string;
@@ -278,96 +196,6 @@ export async function planNextRound(
   );
 
   return { roundId, promptsDirectory };
-}
-
-interface Template {
-  id: string;
-  sha256: string;
-  template: string;
-}
-
-interface ImageRecord {
-  item: RoundItem;
-  result: Record<string, unknown> | null;
-  feedback: FeedbackRecord | null;
-}
-
-interface RoundHistory {
-  roundId: string;
-  kind: RoundKind;
-  notes: string;
-  // The varied templates: image prompts or ideas prompts, by kind.
-  prompts: Template[];
-  imagePrompt: Template | null;
-  images: ImageRecord[];
-}
-
-async function loadHistory(
-  outputRoot: string,
-  suiteDirectory: string | undefined,
-): Promise<RoundHistory[]> {
-  const history: RoundHistory[] = [];
-
-  for (const roundId of await listRoundIds(outputRoot)) {
-    const round = roundDirectory(outputRoot, roundId);
-    const roundFile = await readRoundFile(round);
-    const feedback = await readLatestFeedback(round);
-
-    const prompts: Template[] = [];
-
-    for (const prompt of roundFile.prompts) {
-      prompts.push({
-        id: prompt.id,
-        sha256: prompt.sha256,
-        template: await readVerified(round, prompt),
-      });
-    }
-
-    let imagePrompt: Template | null = null;
-
-    if (roundFile.image_prompt) {
-      imagePrompt = {
-        id: roundFile.image_prompt.id,
-        sha256: roundFile.image_prompt.sha256,
-        template: await readVerified(round, roundFile.image_prompt),
-      };
-    }
-
-    const images: ImageRecord[] = [];
-
-    for (const item of await loadRoundItems(round, roundFile, suiteDirectory)) {
-      const result = await readImageResult(item.directory);
-
-      images.push({
-        item,
-        result: result,
-        feedback: currentFeedback(feedback.get(item.key), result?.attempt),
-      });
-    }
-
-    history.push({
-      roundId,
-      kind: roundFile.kind,
-      notes: await readOptional(join(round, "prompts", "notes.md")),
-      prompts,
-      imagePrompt,
-      images,
-    });
-  }
-
-  return history;
-}
-
-// Ratings of an earlier attempt do not describe the current image.
-function currentFeedback(
-  record: FeedbackRecord | undefined,
-  attempt: number | undefined,
-): FeedbackRecord | null {
-  if (!record || record.attempt !== attempt) {
-    return null;
-  }
-
-  return record;
 }
 
 interface PooledTemplate extends Template {
@@ -869,16 +697,4 @@ function roundNotes(notes: RoundNotesArgs): string {
   }
 
   return lines.join("\n") + "\n";
-}
-
-async function readOptional(path: string): Promise<string> {
-  try {
-    return await readFile(path, "utf8");
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-      return "";
-    }
-
-    throw error;
-  }
 }

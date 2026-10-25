@@ -21,6 +21,7 @@ import {
   MAX_SEPARATION_RADIUS,
 } from "./render/convert.ts";
 import { runRound } from "./evals/round.ts";
+import { runJudgeCheck } from "./evals/judge.ts";
 import { startPortal } from "./evals/serve.ts";
 
 interface GenerationFlags {
@@ -442,6 +443,45 @@ export async function runCli(
             "Some images failed; rerun the same command to retry them",
           );
         }
+      },
+    );
+
+  evals
+    .command("judge-check")
+    .description(
+      "Have the AI judge rate already-rated rounds and report how well it agrees with your ratings",
+    )
+    .option(
+      "--rounds <round-id...>",
+      "Rounds to check (default: every rated round)",
+    )
+    .option(
+      "--concurrency <count>",
+      "Rows judged at once",
+      (value: string): number => parsePositiveInteger(value, 8),
+      3,
+    )
+    .option("--output <directory>", "Output root", "output")
+    .action(
+      async (flags: {
+        rounds?: string[];
+        concurrency: number;
+        output: string;
+      }): Promise<void> => {
+        const { directory, summary } = await runJudgeCheck({
+          outputRoot: flags.output,
+          concurrency: flags.concurrency,
+          ...(flags.rounds ? { rounds: flags.rounds } : {}),
+          ...(options.signal ? { signal: options.signal } : {}),
+          onProgress: (message: string): void => {
+            stderr(`${message}\n`);
+          },
+        });
+
+        stderr(
+          `Within one star: ${String(Math.round(summary.within_one * 100))}%, correlation: ${String(summary.correlation)}\n`,
+        );
+        stdout(`${directory}/report.md\n`);
       },
     );
 
